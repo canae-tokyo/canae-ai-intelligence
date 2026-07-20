@@ -56,6 +56,7 @@ export default function RankingTable({ tools }: { tools: Tool[] }) {
               <th className="px-4 py-2 font-medium">運営企業</th>
               <th className="px-4 py-2 font-medium">{activeAxis.label}</th>
               <th className="px-4 py-2 font-medium">公開Bmk順位</th>
+              <th className="px-4 py-2 font-medium">公開Bmk出典</th>
               <th className="px-4 py-2 font-medium">自社評価</th>
               <th className="px-4 py-2 font-medium">価格</th>
             </tr>
@@ -72,6 +73,10 @@ export default function RankingTable({ tools }: { tools: Tool[] }) {
                 <td className="px-4 py-2 text-ink">{t.scores[axis]}</td>
                 <td className="px-4 py-2 text-ink-muted">
                   {t.benchmarkRank ? `${t.benchmarkRank}位` : "—"}
+                </td>
+                <td className="px-4 py-2 text-ink-muted">
+                  {t.benchmarkSource}
+                  <span className="ml-1 text-[11px]">({t.benchmarkCheckedAt})</span>
                 </td>
                 <td className={`px-4 py-2 font-semibold ${GRADE_STYLE[t.internalGrade]}`}>
                   {t.internalGrade}
