@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  background-color: #101114;
+  color: #f2f1ed;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #2a2b30 #101114;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #2a2b30;
+  border-radius: 4px;
+}
+
+.react-flow__attribution {
+  display: none;
+}

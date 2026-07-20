@@ -1,0 +1,830 @@
+[
+  {
+    "id": "co-model-OpenAI",
+    "name": "OpenAI",
+    "category": "model",
+    "children": [
+      {
+        "id": "co-model-OpenAI-line",
+        "name": "OpenAI系AI製品",
+        "children": [
+          {
+            "id": "prod-model-chatgpt",
+            "name": "ChatGPT",
+            "toolId": "model-chatgpt"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "co-model-Anthropic",
+    "name": "Anthropic",
+    "category": "model",
+    "children": [
+      {
+        "id": "co-model-Anthropic-line",
+        "name": "Anthropic系AI製品",
+        "children": [
+          {
+            "id": "prod-model-claude",
+            "name": "Claude",
+            "toolId": "model-claude"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "co-model-Google",
+    "name": "Google",
+    "category": "model",
+    "children": [
+      {
+        "id": "co-model-Google-line",
+        "name": "Google系AI製品",
+        "children": [
+          {
+            "id": "prod-model-gemini",
+            "name": "Gemini",
+            "toolId": "model-gemini"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "co-model-xAI",
+    "name": "xAI",
+    "category": "model",
+    "children": [
+      {
+        "id": "co-model-xAI-line",
+        "name": "xAI系AI製品",
+        "children": [
+          {
+            "id": "prod-model-grok",
+            "name": "Grok",
+            "toolId": "model-grok"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "co-model-Meta",
+    "name": "Meta",
+    "category": "model",
+    "children": [
+      {
+        "id": "co-model-Meta-line",
+        "name": "Meta系AI製品",
+        "children": [
+          {
+            "id": "prod-model-llama",
+            "name": "Llama",
+            "toolId": "model-llama"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "co-model-Mistral_AI",
+    "name": "Mistral AI",
+    "category": "model",
+    "children": [
+      {
+        "id": "co-model-Mistral_AI-line",
+        "name": "Mistral AI系AI製品",
+        "children": [
+          {
+            "id": "prod-model-mistral",
+            "name": "Le Chat",
+            "toolId": "model-mistral"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "co-model-Perplexity_AI",
+    "name": "Perplexity AI",
+    "category": "model",
+    "children": [
+      {
+        "id": "co-model-Perplexity_AI-line",
+        "name": "Perplexity AI系AI製品",
+        "children": [
+          {
+            "id": "prod-model-perplexity",
+            "name": "Perplexity",
+            "toolId": "model-perplexity"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "co-model-Microsoft",
+    "name": "Microsoft",
+    "category": "model",
+    "children": [
+      {
+        "id": "co-model-Microsoft-line",
+        "name": "Microsoft系AI製品",
+        "children": [
+          {
+            "id": "prod-model-copilot",
+            "name": "Microsoft Copilot",
+            "toolId": "model-copilot"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "co-model-DeepSeek",
+    "name": "DeepSeek",
+    "category": "model",
+    "children": [
+      {
+        "id": "co-model-DeepSeek-line",
+        "name": "DeepSeek系AI製品",
+        "children": [
+          {
+            "id": "prod-model-deepseek",
+            "name": "DeepSeek Chat",
+            "toolId": "model-deepseek"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "co-model-Alibaba",
+    "name": "Alibaba",
+    "category": "model",
+    "children": [
+      {
+        "id": "co-model-Alibaba-line",
+        "name": "Alibaba系AI製品",
+        "children": [
+          {
+            "id": "prod-model-qwen",
+            "name": "Qwen Chat",
+            "toolId": "model-qwen"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "co-coding-Microsoft_GitHub",
+    "name": "Microsoft/GitHub",
+    "category": "coding",
+    "children": [
+      {
+        "id": "co-coding-Microsoft_GitHub-line",
+        "name": "Microsoft/GitHub系AI製品",
+        "children": [
+          {
+            "id": "prod-coding-copilot",
+            "name": "GitHub Copilot",
+            "toolId": "coding-copilot"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "co-coding-Anysphere",
+    "name": "Anysphere",
+    "category": "coding",
+    "children": [
+      {
+        "id": "co-coding-Anysphere-line",
+        "name": "Anysphere系AI製品",
+        "children": [
+          {
+            "id": "prod-coding-cursor",
+            "name": "Cursor",
+            "toolId": "coding-cursor"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "co-coding-Anthropic",
+    "name": "Anthropic",
+    "category": "coding",
+    "children": [
+      {
+        "id": "co-coding-Anthropic-line",
+        "name": "Anthropic系AI製品",
+        "children": [
+          {
+            "id": "prod-coding-claudecode",
+            "name": "Claude Code",
+            "toolId": "coding-claudecode"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "co-coding-OpenAI",
+    "name": "OpenAI",
+    "category": "coding",
+    "children": [
+      {
+        "id": "co-coding-OpenAI-line",
+        "name": "OpenAI系AI製品",
+        "children": [
+          {
+            "id": "prod-coding-codex",
+            "name": "Codex",
+            "toolId": "coding-codex"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "co-coding-Codeium",
+    "name": "Codeium",
+    "category": "coding",
+    "children": [
+      {
+        "id": "co-coding-Codeium-line",
+        "name": "Codeium系AI製品",
+        "children": [
+          {
+            "id": "prod-coding-windsurf",
+            "name": "Windsurf",
+            "toolId": "coding-windsurf"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "co-coding-Replit",
+    "name": "Replit",
+    "category": "coding",
+    "children": [
+      {
+        "id": "co-coding-Replit-line",
+        "name": "Replit系AI製品",
+        "children": [
+          {
+            "id": "prod-coding-replit",
+            "name": "Replit Agent",
+            "toolId": "coding-replit"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "co-coding-OSS_Community",
+    "name": "OSS Community",
+    "category": "coding",
+    "children": [
+      {
+        "id": "co-coding-OSS_Community-line",
+        "name": "OSS Community系AI製品",
+        "children": [
+          {
+            "id": "prod-coding-cline",
+            "name": "Cline",
+            "toolId": "coding-cline"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "co-coding-Amazon",
+    "name": "Amazon",
+    "category": "coding",
+    "children": [
+      {
+        "id": "co-coding-Amazon-line",
+        "name": "Amazon系AI製品",
+        "children": [
+          {
+            "id": "prod-coding-amazonq",
+            "name": "Amazon Q Developer",
+            "toolId": "coding-amazonq"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "co-image-Midjourney_Inc.",
+    "name": "Midjourney Inc.",
+    "category": "image",
+    "children": [
+      {
+        "id": "co-image-Midjourney_Inc.-line",
+        "name": "Midjourney Inc.系AI製品",
+        "children": [
+          {
+            "id": "prod-image-midjourney",
+            "name": "Midjourney",
+            "toolId": "image-midjourney"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "co-image-OpenAI",
+    "name": "OpenAI",
+    "category": "image",
+    "children": [
+      {
+        "id": "co-image-OpenAI-line",
+        "name": "OpenAI系AI製品",
+        "children": [
+          {
+            "id": "prod-image-dalle",
+            "name": "GPT Image",
+            "toolId": "image-dalle"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "co-image-Stability_AI",
+    "name": "Stability AI",
+    "category": "image",
+    "children": [
+      {
+        "id": "co-image-Stability_AI-line",
+        "name": "Stability AI系AI製品",
+        "children": [
+          {
+            "id": "prod-image-sd",
+            "name": "Stable Diffusion",
+            "toolId": "image-sd"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "co-image-Adobe",
+    "name": "Adobe",
+    "category": "image",
+    "children": [
+      {
+        "id": "co-image-Adobe-line",
+        "name": "Adobe系AI製品",
+        "children": [
+          {
+            "id": "prod-image-firefly",
+            "name": "Adobe Firefly",
+            "toolId": "image-firefly"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "co-image-Ideogram_AI",
+    "name": "Ideogram AI",
+    "category": "image",
+    "children": [
+      {
+        "id": "co-image-Ideogram_AI-line",
+        "name": "Ideogram AI系AI製品",
+        "children": [
+          {
+            "id": "prod-image-ideogram",
+            "name": "Ideogram",
+            "toolId": "image-ideogram"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "co-image-Leonardo_Interactive",
+    "name": "Leonardo Interactive",
+    "category": "image",
+    "children": [
+      {
+        "id": "co-image-Leonardo_Interactive-line",
+        "name": "Leonardo Interactive系AI製品",
+        "children": [
+          {
+            "id": "prod-image-leonardo",
+            "name": "Leonardo AI",
+            "toolId": "image-leonardo"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "co-image-Google",
+    "name": "Google",
+    "category": "image",
+    "children": [
+      {
+        "id": "co-image-Google-line",
+        "name": "Google系AI製品",
+        "children": [
+          {
+            "id": "prod-image-imagefx",
+            "name": "Imagen (ImageFX)",
+            "toolId": "image-imagefx"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "co-image-Recraft",
+    "name": "Recraft",
+    "category": "image",
+    "children": [
+      {
+        "id": "co-image-Recraft-line",
+        "name": "Recraft系AI製品",
+        "children": [
+          {
+            "id": "prod-image-recraft",
+            "name": "Recraft",
+            "toolId": "image-recraft"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "co-video-Runway",
+    "name": "Runway",
+    "category": "video",
+    "children": [
+      {
+        "id": "co-video-Runway-line",
+        "name": "Runway系AI製品",
+        "children": [
+          {
+            "id": "prod-video-runway",
+            "name": "Runway",
+            "toolId": "video-runway"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "co-video-OpenAI",
+    "name": "OpenAI",
+    "category": "video",
+    "children": [
+      {
+        "id": "co-video-OpenAI-line",
+        "name": "OpenAI系AI製品",
+        "children": [
+          {
+            "id": "prod-video-sora",
+            "name": "Sora",
+            "toolId": "video-sora"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "co-video-Kuaishou",
+    "name": "Kuaishou",
+    "category": "video",
+    "children": [
+      {
+        "id": "co-video-Kuaishou-line",
+        "name": "Kuaishou系AI製品",
+        "children": [
+          {
+            "id": "prod-video-kling",
+            "name": "Kling AI",
+            "toolId": "video-kling"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "co-video-Pika_Labs",
+    "name": "Pika Labs",
+    "category": "video",
+    "children": [
+      {
+        "id": "co-video-Pika_Labs-line",
+        "name": "Pika Labs系AI製品",
+        "children": [
+          {
+            "id": "prod-video-pika",
+            "name": "Pika",
+            "toolId": "video-pika"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "co-video-Luma_AI",
+    "name": "Luma AI",
+    "category": "video",
+    "children": [
+      {
+        "id": "co-video-Luma_AI-line",
+        "name": "Luma AI系AI製品",
+        "children": [
+          {
+            "id": "prod-video-luma",
+            "name": "Luma Dream Machine",
+            "toolId": "video-luma"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "co-video-Google",
+    "name": "Google",
+    "category": "video",
+    "children": [
+      {
+        "id": "co-video-Google-line",
+        "name": "Google系AI製品",
+        "children": [
+          {
+            "id": "prod-video-veo",
+            "name": "Veo",
+            "toolId": "video-veo"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "co-audio-ElevenLabs",
+    "name": "ElevenLabs",
+    "category": "audio",
+    "children": [
+      {
+        "id": "co-audio-ElevenLabs-line",
+        "name": "ElevenLabs系AI製品",
+        "children": [
+          {
+            "id": "prod-audio-elevenlabs",
+            "name": "ElevenLabs",
+            "toolId": "audio-elevenlabs"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "co-audio-Suno",
+    "name": "Suno",
+    "category": "audio",
+    "children": [
+      {
+        "id": "co-audio-Suno-line",
+        "name": "Suno系AI製品",
+        "children": [
+          {
+            "id": "prod-audio-suno",
+            "name": "Suno",
+            "toolId": "audio-suno"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "co-audio-Udio",
+    "name": "Udio",
+    "category": "audio",
+    "children": [
+      {
+        "id": "co-audio-Udio-line",
+        "name": "Udio系AI製品",
+        "children": [
+          {
+            "id": "prod-audio-udio",
+            "name": "Udio",
+            "toolId": "audio-udio"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "co-audio-OpenAI",
+    "name": "OpenAI",
+    "category": "audio",
+    "children": [
+      {
+        "id": "co-audio-OpenAI-line",
+        "name": "OpenAI系AI製品",
+        "children": [
+          {
+            "id": "prod-audio-whisper",
+            "name": "Whisper",
+            "toolId": "audio-whisper"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "co-audio-Google",
+    "name": "Google",
+    "category": "audio",
+    "children": [
+      {
+        "id": "co-audio-Google-line",
+        "name": "Google系AI製品",
+        "children": [
+          {
+            "id": "prod-audio-notebooklm",
+            "name": "NotebookLM（音声解説）",
+            "toolId": "audio-notebooklm"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "co-audio-Adobe",
+    "name": "Adobe",
+    "category": "audio",
+    "children": [
+      {
+        "id": "co-audio-Adobe-line",
+        "name": "Adobe系AI製品",
+        "children": [
+          {
+            "id": "prod-audio-podcast",
+            "name": "Adobe Podcast",
+            "toolId": "audio-podcast"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "co-agent-OSS_Community",
+    "name": "OSS Community",
+    "category": "agent",
+    "children": [
+      {
+        "id": "co-agent-OSS_Community-line",
+        "name": "OSS Community系AI製品",
+        "children": [
+          {
+            "id": "prod-agent-autogpt",
+            "name": "AutoGPT",
+            "toolId": "agent-autogpt"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "co-agent-Zapier",
+    "name": "Zapier",
+    "category": "agent",
+    "children": [
+      {
+        "id": "co-agent-Zapier-line",
+        "name": "Zapier系AI製品",
+        "children": [
+          {
+            "id": "prod-agent-zapier",
+            "name": "Zapier AI Agents",
+            "toolId": "agent-zapier"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "co-agent-Cognition",
+    "name": "Cognition",
+    "category": "agent",
+    "children": [
+      {
+        "id": "co-agent-Cognition-line",
+        "name": "Cognition系AI製品",
+        "children": [
+          {
+            "id": "prod-agent-devin",
+            "name": "Devin",
+            "toolId": "agent-devin"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "co-agent-Monica_Manus_AI",
+    "name": "Monica/Manus AI",
+    "category": "agent",
+    "children": [
+      {
+        "id": "co-agent-Monica_Manus_AI-line",
+        "name": "Monica/Manus AI系AI製品",
+        "children": [
+          {
+            "id": "prod-agent-manus",
+            "name": "Manus",
+            "toolId": "agent-manus"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "co-agent-LangGenius",
+    "name": "LangGenius",
+    "category": "agent",
+    "children": [
+      {
+        "id": "co-agent-LangGenius-line",
+        "name": "LangGenius系AI製品",
+        "children": [
+          {
+            "id": "prod-agent-dify",
+            "name": "Dify",
+            "toolId": "agent-dify"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "co-agent-n8n",
+    "name": "n8n",
+    "category": "agent",
+    "children": [
+      {
+        "id": "co-agent-n8n-line",
+        "name": "n8n系AI製品",
+        "children": [
+          {
+            "id": "prod-agent-n8n",
+            "name": "n8n（AI連携）",
+            "toolId": "agent-n8n"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "co-agent-Microsoft",
+    "name": "Microsoft",
+    "category": "agent",
+    "children": [
+      {
+        "id": "co-agent-Microsoft-line",
+        "name": "Microsoft系AI製品",
+        "children": [
+          {
+            "id": "prod-agent-copilotstudio",
+            "name": "Copilot Studio",
+            "toolId": "agent-copilotstudio"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "co-agent-Anthropic",
+    "name": "Anthropic",
+    "category": "agent",
+    "children": [
+      {
+        "id": "co-agent-Anthropic-line",
+        "name": "Anthropic系AI製品",
+        "children": [
+          {
+            "id": "prod-agent-mcp",
+            "name": "Claude + MCP連携",
+            "toolId": "agent-mcp"
+          }
+        ]
+      }
+    ]
+  }
+]

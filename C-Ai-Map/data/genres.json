@@ -1,0 +1,32 @@
+[
+  {
+    "id": "model",
+    "label": "総合AI・基盤モデル",
+    "description": "GPT、Claude、Gemini など汎用の基盤モデルとチャットサービス"
+  },
+  {
+    "id": "coding",
+    "label": "コーディング",
+    "description": "コード生成・補完・エージェント型開発支援ツール"
+  },
+  {
+    "id": "image",
+    "label": "画像生成",
+    "description": "静止画像の生成・編集を行うAIツール"
+  },
+  {
+    "id": "video",
+    "label": "動画生成",
+    "description": "動画の生成・編集・アニメーションを行うAIツール"
+  },
+  {
+    "id": "audio",
+    "label": "音声・音楽",
+    "description": "音声合成・音楽生成・文字起こしを行うAIツール"
+  },
+  {
+    "id": "agent",
+    "label": "AIエージェント・自動化",
+    "description": "業務自動化・マルチステップタスクを担うエージェント基盤"
+  }
+]
