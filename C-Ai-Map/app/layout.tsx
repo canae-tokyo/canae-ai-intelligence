@@ -4,7 +4,15 @@ import Sidebar from "@/components/Sidebar";
 
 export const metadata: Metadata = {
   title: "CANAE AI Intelligence Map",
-  description: "CANAE社内向け AI情報管理ダッシュボード（社内限定）",
+  description: "CANAE社内向け AI情報管理ダッシュボード。Powered by Web Assist.",
+  robots: {
+    index: false,
+    follow: false,
+    googleBot: {
+      index: false,
+      follow: false,
+    },
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
