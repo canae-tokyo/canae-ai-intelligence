@@ -17,9 +17,12 @@ const ROW_HEIGHT = 64;
 const baseNodeStyle = {
   border: "1px solid #2a2b30",
   borderRadius: 8,
-  padding: "8px 14px",
+  minHeight: 44,
+  padding: "10px 14px",
   fontSize: 12,
   color: "#f2f1ed",
+  maxWidth: 160,
+  overflowWrap: "anywhere" as const,
 };
 
 export default function CorrelationDiagram({
@@ -137,20 +140,25 @@ export default function CorrelationDiagram({
     return map;
   }, [data]);
 
-  const height = Math.max(320, Math.min(720, nodes.length * 26));
+  const height = Math.max(360, Math.min(720, nodes.length * 26));
 
   return (
     <div
       className="overflow-hidden rounded-lg border border-base-border bg-base-card"
-      style={{ height }}
+      style={{ height: `clamp(360px, 76vw, ${height}px)` }}
     >
       <ReactFlow
         nodes={nodes}
         edges={edges}
         fitView
+        minZoom={0.35}
+        maxZoom={1.4}
         proOptions={{ hideAttribution: true }}
         nodesDraggable={false}
         nodesConnectable={false}
+        panOnScroll={false}
+        zoomOnScroll={false}
+        preventScrolling
         onNodeClick={(_, node) => {
           const toolId = toolIdByProductId[node.id];
           if (toolId) onSelectTool(toolId);
