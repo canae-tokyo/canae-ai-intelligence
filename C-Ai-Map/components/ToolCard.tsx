@@ -25,6 +25,9 @@ export default function ToolCard({ tool }: { tool: Tool }) {
         <span>{tool.price}</span>
         <span>{tool.apiAvailable ? "API：あり" : "API：なし"}</span>
       </div>
+      <p className="mt-2 text-[11px] text-ink-muted">
+        公開Bmk：{tool.benchmarkSource} / 確認日：{tool.benchmarkCheckedAt}
+      </p>
     </div>
   );
 }
