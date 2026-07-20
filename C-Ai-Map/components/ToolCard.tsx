@@ -1,7 +1,7 @@
 import type { Tool } from "@/lib/types";
 
 export default function ToolCard({ tool }: { tool: Tool }) {
-  const benchmarkSource = tool.benchmarkSource ?? "公開Bmkサンプル値";
+  const benchmarkSource = tool.benchmarkSource ?? "サンプル値（未検証）";
   const benchmarkCheckedAt = tool.benchmarkCheckedAt ?? tool.lastUpdated;
 
   return (
