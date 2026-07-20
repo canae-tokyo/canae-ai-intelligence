@@ -63,7 +63,7 @@ export default function RankingTable({ tools }: { tools: Tool[] }) {
           </thead>
           <tbody>
             {sorted.map((t, i) => {
-              const benchmarkSource = t.benchmarkSource ?? "公開Bmkサンプル値";
+              const benchmarkSource = t.benchmarkSource ?? "サンプル値（未検証）";
               const benchmarkCheckedAt = t.benchmarkCheckedAt ?? t.lastUpdated;
               return (
                 <tr
@@ -92,7 +92,7 @@ export default function RankingTable({ tools }: { tools: Tool[] }) {
         </table>
       </div>
       <p className="border-t border-base-border px-4 py-2 text-[11px] text-ink-muted">
-        「公開Bmk順位」は公開ベンチマークの順位、「自社評価」はCANAE実務評価（S/A/B/C）です。両者は明確に区別して表示しています。
+        「公開Bmk順位」は公開ベンチマークの順位、「自社評価」はCANAE実務評価（S/A/B/C）です。サンプル値（未検証）は実データへ置換するまで参考値として扱います。
       </p>
     </div>
   );
