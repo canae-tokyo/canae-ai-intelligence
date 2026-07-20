@@ -12,6 +12,9 @@ import {
 export default function DashboardPage() {
   const topNews = getTopNewsToday();
   const recentNews = getRecentNews(7).slice(0, 8);
+  const topRankedTools = [...tools]
+    .sort((a, b) => b.scores.overall - a.scores.overall)
+    .slice(0, 5);
 
   const topToolsByGenre = genres.map((g) => {
     const genreTools = tools
@@ -23,12 +26,12 @@ export default function DashboardPage() {
   return (
     <div>
       <Header title="ダッシュボード" />
-      <main className="space-y-10 px-4 py-6 md:px-8">
+      <main className="min-w-0 space-y-10 px-4 py-6 md:px-8">
         <section>
           <div className="mb-4 rounded-lg border border-base-border bg-base-card p-4">
             <p className="text-xs uppercase tracking-wide text-accent">Powered by Web Assist</p>
-            <h1 className="mt-1 text-xl font-semibold text-ink">CANAE AI Intelligence</h1>
-            <p className="mt-2 text-sm leading-relaxed text-ink-muted">
+            <h1 className="mt-1 break-words text-xl font-semibold text-ink">CANAE AI Intelligence</h1>
+            <p className="mt-2 text-base leading-relaxed text-ink-muted md:text-sm">
               AI業界を構造化・可視化し、公開ベンチマークとCANAE実務評価を分離して管理する社内知識基盤です。
             </p>
           </div>
@@ -38,7 +41,7 @@ export default function DashboardPage() {
           {topNews.length === 0 ? (
             <p className="text-sm text-ink-muted">本日登録されたニュースはありません。</p>
           ) : (
-            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
               {topNews.map((n) => (
                 <NewsCard key={n.id} item={n} showCategory />
               ))}
@@ -60,11 +63,11 @@ export default function DashboardPage() {
               <p className="p-4 text-sm text-ink-muted">直近7日間の更新はありません。</p>
             ) : (
               recentNews.map((n) => (
-                <div key={n.id} className="flex flex-wrap items-center gap-3 p-3">
+                <div key={n.id} className="grid gap-2 p-3 sm:flex sm:flex-wrap sm:items-center sm:gap-3">
                   <ImportanceBadge level={n.importance} />
-                  <span className="text-sm text-ink">{n.title}</span>
-                  <span className="text-xs text-accent">{n.company}</span>
-                  <span className="ml-auto text-xs text-ink-muted">{n.publishedAt}</span>
+                  <span className="text-base text-ink sm:text-sm">{n.title}</span>
+                  <span className="text-sm text-accent sm:text-xs">{n.company}</span>
+                  <span className="text-xs text-ink-muted sm:ml-auto">{n.publishedAt}</span>
                 </div>
               ))
             )}
@@ -75,7 +78,7 @@ export default function DashboardPage() {
           <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-ink-muted">
             ジャンル別注目ツール
           </h2>
-          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
             {topToolsByGenre.map(({ genre, top, second }) => (
               <Link
                 key={genre.id}
@@ -86,7 +89,7 @@ export default function DashboardPage() {
                   {genre.label}
                 </p>
                 {top && (
-                  <p className="text-sm font-semibold text-ink">
+                  <p className="break-words text-base font-semibold text-ink sm:text-sm">
                     {top.name}
                     <span className="ml-1 text-xs font-normal text-ink-muted">
                       （{top.company}）
@@ -105,7 +108,7 @@ export default function DashboardPage() {
           <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-ink-muted">
             ランキング変動（総合評価トップ5）
           </h2>
-          <div className="overflow-x-auto rounded-lg border border-base-border bg-base-card">
+          <div className="hidden overflow-x-auto rounded-lg border border-base-border bg-base-card md:block">
             <table className="w-full text-left text-sm">
               <thead>
                 <tr className="text-xs text-ink-muted">
@@ -117,22 +120,43 @@ export default function DashboardPage() {
                 </tr>
               </thead>
               <tbody>
-                {[...tools]
-                  .sort((a, b) => b.scores.overall - a.scores.overall)
-                  .slice(0, 5)
-                  .map((t, i) => (
-                    <tr key={t.id} className="border-t border-base-border">
-                      <td className="px-4 py-2 text-ink-muted">{i + 1}</td>
-                      <td className="px-4 py-2 font-medium text-ink">{t.name}</td>
-                      <td className="px-4 py-2 text-ink-muted">
-                        {genres.find((g) => g.id === t.category)?.label}
-                      </td>
-                      <td className="px-4 py-2 text-ink">{t.scores.overall}</td>
-                      <td className="px-4 py-2 text-accent">{t.internalGrade}</td>
-                    </tr>
-                  ))}
+                {topRankedTools.map((t, i) => (
+                  <tr key={t.id} className="border-t border-base-border">
+                    <td className="px-4 py-2 text-ink-muted">{i + 1}</td>
+                    <td className="px-4 py-2 font-medium text-ink">{t.name}</td>
+                    <td className="px-4 py-2 text-ink-muted">
+                      {genres.find((g) => g.id === t.category)?.label}
+                    </td>
+                    <td className="px-4 py-2 text-ink">{t.scores.overall}</td>
+                    <td className="px-4 py-2 text-accent">{t.internalGrade}</td>
+                  </tr>
+                ))}
               </tbody>
             </table>
+          </div>
+          <div className="space-y-3 md:hidden">
+            {topRankedTools.map((t, i) => (
+              <article key={t.id} className="rounded-lg border border-base-border bg-base-card p-4">
+                <div className="flex items-start gap-3">
+                  <span className="flex size-8 shrink-0 items-center justify-center rounded-full border border-accent/40 text-sm font-semibold text-accent">
+                    {i + 1}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <h3 className="break-words text-base font-semibold text-ink">{t.name}</h3>
+                    <p className="break-words text-sm text-ink-muted">
+                      {genres.find((g) => g.id === t.category)?.label}
+                    </p>
+                  </div>
+                  <span className="shrink-0 font-semibold text-accent">{t.internalGrade}</span>
+                </div>
+                <div className="mt-3 grid grid-cols-2 gap-2 border-t border-base-border/60 pt-3 text-sm">
+                  <span className="text-ink-muted">総合評価</span>
+                  <span className="text-right text-ink">{t.scores.overall}</span>
+                  <span className="text-ink-muted">運営企業</span>
+                  <span className="break-words text-right text-ink-muted">{t.company}</span>
+                </div>
+              </article>
+            ))}
           </div>
         </section>
 
@@ -140,7 +164,7 @@ export default function DashboardPage() {
           <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-ink-muted">
             AI業界全体相関図
           </h2>
-          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
             {genres.map((g) => (
               <Link
                 key={g.id}
