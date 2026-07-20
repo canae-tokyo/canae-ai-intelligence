@@ -43,17 +43,17 @@ export default function GenreView({
   const selectedTool = tools.find((t) => t.id === selectedToolId) ?? null;
 
   return (
-    <div className="space-y-8">
+    <div className="min-w-0 space-y-8">
       <div>
-        <h1 className="text-xl font-semibold text-ink">{genre.label}</h1>
-        <p className="mt-1 text-sm text-ink-muted">{genre.description}</p>
+        <h1 className="break-words text-xl font-semibold text-ink">{genre.label}</h1>
+        <p className="mt-1 break-words text-base leading-relaxed text-ink-muted md:text-sm">{genre.description}</p>
       </div>
 
       <section>
         <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-ink-muted">
           相関図
         </h2>
-        <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
+        <div className="grid min-w-0 gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
           <CorrelationDiagram data={companies} onSelectTool={setSelectedToolId} />
           <ToolDetailPanel tool={selectedTool} onClose={() => setSelectedToolId(null)} />
         </div>
@@ -67,7 +67,7 @@ export default function GenreView({
       </section>
 
       <section>
-        <div className="mb-3 flex flex-wrap items-center gap-3">
+        <div className="mb-3 grid gap-3 sm:flex sm:flex-wrap sm:items-center">
           <h2 className="text-sm font-semibold uppercase tracking-wide text-ink-muted">
             主要ツール一覧
           </h2>
@@ -75,13 +75,13 @@ export default function GenreView({
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
             placeholder="ツール名・企業名で検索"
-            className="ml-auto w-full max-w-xs rounded-md border border-base-border bg-base-card px-3 py-1.5 text-sm text-ink placeholder:text-ink-muted focus:border-accent/50 focus:outline-none"
+            className="min-h-11 w-full rounded-md border border-base-border bg-base-card px-3 text-base text-ink placeholder:text-ink-muted focus:border-accent/50 focus:outline-none sm:ml-auto sm:max-w-xs sm:text-sm"
           />
         </div>
         <div className="mb-4 flex flex-wrap gap-1.5">
           <button
             onClick={() => setActiveTag(null)}
-            className={`rounded-full border px-3 py-1 text-xs ${
+            className={`min-h-11 rounded-full border px-3 text-sm md:min-h-0 md:py-1 md:text-xs ${
               !activeTag
                 ? "border-accent/50 bg-accent/10 text-accent"
                 : "border-base-border text-ink-muted"
@@ -93,7 +93,7 @@ export default function GenreView({
             <button
               key={tag}
               onClick={() => setActiveTag(tag === activeTag ? null : tag)}
-              className={`rounded-full border px-3 py-1 text-xs ${
+              className={`min-h-11 rounded-full border px-3 text-sm md:min-h-0 md:py-1 md:text-xs ${
                 activeTag === tag
                   ? "border-accent/50 bg-accent/10 text-accent"
                   : "border-base-border text-ink-muted"
@@ -108,7 +108,7 @@ export default function GenreView({
             条件に一致するツールがありません
           </p>
         ) : (
-          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
             {filteredTools.map((t) => (
               <ToolCard key={t.id} tool={t} />
             ))}
@@ -125,7 +125,7 @@ export default function GenreView({
             このジャンルのニュースはまだありません
           </p>
         ) : (
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {news.map((n) => (
               <NewsCard key={n.id} item={n} />
             ))}

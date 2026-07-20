@@ -8,6 +8,26 @@ body {
   color: #f2f1ed;
 }
 
+body {
+  overflow-x: hidden;
+}
+
+main,
+section,
+article,
+p,
+h1,
+h2,
+h3,
+a,
+span,
+button,
+td,
+th {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
 * {
   scrollbar-width: thin;
   scrollbar-color: #2a2b30 #101114;

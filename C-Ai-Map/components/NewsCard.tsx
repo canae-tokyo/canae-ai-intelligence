@@ -37,20 +37,20 @@ export default function NewsCard({ item, showCategory = false }: { item: NewsIte
         </span>
         <span className="ml-auto text-xs text-ink-muted">{item.publishedAt}</span>
       </div>
-      <h3 className="mb-1 text-sm font-semibold text-ink">{item.title}</h3>
-      <p className="mb-2 text-xs text-accent">{item.company}</p>
-      <p className="mb-2 text-sm leading-relaxed text-ink-muted">{item.summary}</p>
-      <p className="mb-2 text-xs leading-relaxed text-ink">
+      <h3 className="mb-1 break-words text-base font-semibold text-ink sm:text-sm">{item.title}</h3>
+      <p className="mb-2 break-words text-sm text-accent sm:text-xs">{item.company}</p>
+      <p className="mb-2 text-base leading-relaxed text-ink-muted sm:text-sm">{item.summary}</p>
+      <p className="mb-2 text-sm leading-relaxed text-ink sm:text-xs">
         <span className="text-ink-muted">影響：</span>
         {item.impact}
       </p>
-      <div className="flex items-center justify-between text-xs text-ink-muted">
+      <div className="grid gap-2 text-xs text-ink-muted sm:flex sm:items-center sm:justify-between">
         <span>出典：{SOURCE_LABEL[item.sourceType]} / 確認日：{item.sourceCheckedAt}</span>
         <a
           href={item.sourceUrl}
           target="_blank"
           rel="noreferrer"
-          className="text-accent hover:underline"
+          className="inline-flex min-h-11 items-center text-accent hover:underline sm:min-h-0"
         >
           原文を見る
         </a>
