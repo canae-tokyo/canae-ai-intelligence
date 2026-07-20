@@ -1,7 +1,7 @@
 import type { Tool } from "@/lib/types";
 import { tools as allTools } from "@/lib/data";
 
-const ROW = "flex justify-between gap-3 py-1.5 text-sm border-b border-base-border/60";
+const ROW = "flex justify-between gap-3 border-b border-base-border/60 py-2 text-sm";
 
 export default function ToolDetailPanel({
   tool,
@@ -12,10 +12,10 @@ export default function ToolDetailPanel({
 }) {
   if (!tool) {
     return (
-      <div className="flex h-full items-center justify-center rounded-lg border border-dashed border-base-border p-6 text-center text-sm text-ink-muted">
+      <div className="flex min-h-32 items-center justify-center rounded-lg border border-dashed border-base-border p-6 text-center text-sm text-ink-muted lg:h-full">
         相関図のノードをクリックすると
         <br />
-        詳細情報がここに表示されます
+        詳細情報が下に表示されます
       </div>
     );
   }
@@ -28,13 +28,13 @@ export default function ToolDetailPanel({
   return (
     <div className="rounded-lg border border-base-border bg-base-card p-4">
       <div className="mb-3 flex items-start justify-between">
-        <div>
-          <h3 className="text-base font-semibold text-ink">{tool.name}</h3>
-          <p className="text-xs text-accent">{tool.company}</p>
+        <div className="min-w-0">
+          <h3 className="break-words text-base font-semibold text-ink">{tool.name}</h3>
+          <p className="break-words text-xs text-accent">{tool.company}</p>
         </div>
         <button
           onClick={onClose}
-          className="rounded px-2 py-1 text-xs text-ink-muted hover:bg-base-hover hover:text-ink"
+          className="min-h-11 shrink-0 rounded px-3 text-sm text-ink-muted hover:bg-base-hover hover:text-ink md:min-h-0 md:py-1 md:text-xs"
         >
           閉じる
         </button>
@@ -44,15 +44,15 @@ export default function ToolDetailPanel({
       <div className="mb-4">
         <div className={ROW}>
           <span className="text-ink-muted">運営企業</span>
-          <span className="text-ink">{tool.company}</span>
+          <span className="max-w-[58%] break-words text-right text-ink">{tool.company}</span>
         </div>
         <div className={ROW}>
           <span className="text-ink-muted">主な用途</span>
-          <span className="text-ink">{tool.tags.join(" / ")}</span>
+          <span className="max-w-[58%] break-words text-right text-ink">{tool.tags.join(" / ")}</span>
         </div>
         <div className={ROW}>
           <span className="text-ink-muted">料金</span>
-          <span className="text-ink">{tool.price}</span>
+          <span className="max-w-[58%] break-words text-right text-ink">{tool.price}</span>
         </div>
         <div className={ROW}>
           <span className="text-ink-muted">API有無</span>
@@ -81,9 +81,9 @@ export default function ToolDetailPanel({
           <p className="mb-2 text-xs uppercase tracking-wide text-ink-muted">競合ツール</p>
           <ul className="space-y-1">
             {competitors.map((c) => (
-              <li key={c.id} className="flex justify-between text-sm">
-                <span className="text-ink">{c.name}</span>
-                <span className="text-ink-muted">{c.company}</span>
+              <li key={c.id} className="flex justify-between gap-3 text-sm">
+                <span className="break-words text-ink">{c.name}</span>
+                <span className="max-w-[48%] break-words text-right text-ink-muted">{c.company}</span>
               </li>
             ))}
           </ul>
