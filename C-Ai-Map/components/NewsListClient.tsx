@@ -41,11 +41,11 @@ export default function NewsListClient({ news }: { news: NewsItem[] }) {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="grid gap-2 sm:flex sm:flex-wrap sm:items-center">
         <select
           value={category}
           onChange={(e) => setCategory(e.target.value)}
-          className="rounded-md border border-base-border bg-base-card px-3 py-1.5 text-sm text-ink focus:border-accent/50 focus:outline-none"
+          className="min-h-11 w-full rounded-md border border-base-border bg-base-card px-3 text-base text-ink focus:border-accent/50 focus:outline-none sm:w-auto sm:text-sm"
         >
           <option value="all">すべてのジャンル</option>
           {genres.map((g) => (
@@ -59,7 +59,7 @@ export default function NewsListClient({ news }: { news: NewsItem[] }) {
             <button
               key={opt.value}
               onClick={() => setImportance(opt.value)}
-              className={`rounded-full border px-3 py-1 text-xs ${
+              className={`min-h-11 rounded-full border px-3 text-sm md:min-h-0 md:py-1 md:text-xs ${
                 importance === opt.value
                   ? "border-accent/50 bg-accent/10 text-accent"
                   : "border-base-border text-ink-muted"
@@ -72,7 +72,7 @@ export default function NewsListClient({ news }: { news: NewsItem[] }) {
         <select
           value={status}
           onChange={(e) => setStatus(e.target.value as NewsItem["status"] | "all")}
-          className="rounded-md border border-base-border bg-base-card px-3 py-1.5 text-sm text-ink focus:border-accent/50 focus:outline-none"
+          className="min-h-11 w-full rounded-md border border-base-border bg-base-card px-3 text-base text-ink focus:border-accent/50 focus:outline-none sm:w-auto sm:text-sm"
         >
           {STATUS_OPTIONS.map((opt) => (
             <option key={opt.value} value={opt.value}>
@@ -84,7 +84,7 @@ export default function NewsListClient({ news }: { news: NewsItem[] }) {
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
           placeholder="タイトル・企業名で検索"
-          className="ml-auto w-full max-w-xs rounded-md border border-base-border bg-base-card px-3 py-1.5 text-sm text-ink placeholder:text-ink-muted focus:border-accent/50 focus:outline-none"
+          className="min-h-11 w-full rounded-md border border-base-border bg-base-card px-3 text-base text-ink placeholder:text-ink-muted focus:border-accent/50 focus:outline-none sm:ml-auto sm:max-w-xs sm:text-sm"
         />
       </div>
 
@@ -95,7 +95,7 @@ export default function NewsListClient({ news }: { news: NewsItem[] }) {
           条件に一致するニュースがありません
         </p>
       ) : (
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {filtered.map((n) => (
             <NewsCard key={n.id} item={n} showCategory />
           ))}
