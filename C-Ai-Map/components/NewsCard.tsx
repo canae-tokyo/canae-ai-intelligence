@@ -8,6 +8,18 @@ const SOURCE_LABEL: Record<string, string> = {
   sns: "SNS",
 };
 
+const STATUS_LABEL: Record<NewsItem["status"], string> = {
+  draft: "Draft",
+  verified: "Verified",
+  archived: "Archived",
+};
+
+const STATUS_STYLE: Record<NewsItem["status"], string> = {
+  draft: "border-signal-update/30 text-signal-update",
+  verified: "border-signal-new/30 text-signal-new",
+  archived: "border-base-border text-ink-muted",
+};
+
 export default function NewsCard({ item, showCategory = false }: { item: NewsItem; showCategory?: boolean }) {
   const genreLabel = genres.find((g) => g.id === item.category)?.label;
 
@@ -20,11 +32,9 @@ export default function NewsCard({ item, showCategory = false }: { item: NewsIte
             {genreLabel}
           </span>
         )}
-        {item.status === "unverified" && (
-          <span className="rounded-full border border-signal-important/30 px-2.5 py-0.5 text-xs text-signal-important">
-            未検証
-          </span>
-        )}
+        <span className={`rounded-full border px-2.5 py-0.5 text-xs ${STATUS_STYLE[item.status]}`}>
+          {STATUS_LABEL[item.status]}
+        </span>
         <span className="ml-auto text-xs text-ink-muted">{item.publishedAt}</span>
       </div>
       <h3 className="mb-1 text-sm font-semibold text-ink">{item.title}</h3>
@@ -35,7 +45,7 @@ export default function NewsCard({ item, showCategory = false }: { item: NewsIte
         {item.impact}
       </p>
       <div className="flex items-center justify-between text-xs text-ink-muted">
-        <span>出典：{SOURCE_LABEL[item.sourceType]}</span>
+        <span>出典：{SOURCE_LABEL[item.sourceType]} / 確認日：{item.sourceCheckedAt}</span>
         <a
           href={item.sourceUrl}
           target="_blank"
