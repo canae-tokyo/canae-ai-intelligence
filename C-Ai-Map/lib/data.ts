@@ -9,6 +9,9 @@ export const tools = toolsRaw as Tool[];
 export const news = newsRaw as NewsItem[];
 export const companies = companiesRaw as CompanyNode[];
 
+export const verifiedNews = news.filter((n) => n.status === "verified");
+export const activeNews = news.filter((n) => n.status !== "archived");
+
 export function getGenre(id: string): Genre | undefined {
   return genres.find((g) => g.id === id);
 }
@@ -18,7 +21,7 @@ export function getToolsByGenre(id: GenreId): Tool[] {
 }
 
 export function getNewsByGenre(id: GenreId): NewsItem[] {
-  return news
+  return verifiedNews
     .filter((n) => n.category === id)
     .sort((a, b) => (a.publishedAt < b.publishedAt ? 1 : -1));
 }
@@ -30,13 +33,13 @@ export function getCompaniesByGenre(id: GenreId): CompanyNode[] {
 export function getRecentNews(days: number = 7): NewsItem[] {
   const cutoff = new Date();
   cutoff.setDate(cutoff.getDate() - days);
-  return news
+  return verifiedNews
     .filter((n) => new Date(n.publishedAt) >= cutoff)
     .sort((a, b) => (a.publishedAt < b.publishedAt ? 1 : -1));
 }
 
 export function getTopNewsToday(): NewsItem[] {
-  const sorted = [...news].sort((a, b) =>
+  const sorted = [...verifiedNews].sort((a, b) =>
     a.publishedAt < b.publishedAt ? 1 : -1
   );
   const latestDate = sorted[0]?.publishedAt;
@@ -44,7 +47,7 @@ export function getTopNewsToday(): NewsItem[] {
 }
 
 export function getLastUpdated(): string {
-  const dates = [...tools.map((t) => t.lastUpdated), ...news.map((n) => n.publishedAt)];
+  const dates = [...tools.map((t) => t.lastUpdated), ...activeNews.map((n) => n.publishedAt)];
   return dates.sort().reverse()[0] ?? "";
 }
 
