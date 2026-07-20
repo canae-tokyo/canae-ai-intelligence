@@ -62,28 +62,32 @@ export default function RankingTable({ tools }: { tools: Tool[] }) {
             </tr>
           </thead>
           <tbody>
-            {sorted.map((t, i) => (
-              <tr
-                key={t.id}
-                className="border-t border-base-border hover:bg-base-hover"
-              >
-                <td className="px-4 py-2 text-ink-muted">{i + 1}</td>
-                <td className="px-4 py-2 font-medium text-ink">{t.name}</td>
-                <td className="px-4 py-2 text-ink-muted">{t.company}</td>
-                <td className="px-4 py-2 text-ink">{t.scores[axis]}</td>
-                <td className="px-4 py-2 text-ink-muted">
-                  {t.benchmarkRank ? `${t.benchmarkRank}位` : "—"}
-                </td>
-                <td className="px-4 py-2 text-ink-muted">
-                  {t.benchmarkSource}
-                  <span className="ml-1 text-[11px]">({t.benchmarkCheckedAt})</span>
-                </td>
-                <td className={`px-4 py-2 font-semibold ${GRADE_STYLE[t.internalGrade]}`}>
-                  {t.internalGrade}
-                </td>
-                <td className="px-4 py-2 text-ink-muted">{t.price}</td>
-              </tr>
-            ))}
+            {sorted.map((t, i) => {
+              const benchmarkSource = t.benchmarkSource ?? "公開Bmkサンプル値";
+              const benchmarkCheckedAt = t.benchmarkCheckedAt ?? t.lastUpdated;
+              return (
+                <tr
+                  key={t.id}
+                  className="border-t border-base-border hover:bg-base-hover"
+                >
+                  <td className="px-4 py-2 text-ink-muted">{i + 1}</td>
+                  <td className="px-4 py-2 font-medium text-ink">{t.name}</td>
+                  <td className="px-4 py-2 text-ink-muted">{t.company}</td>
+                  <td className="px-4 py-2 text-ink">{t.scores[axis]}</td>
+                  <td className="px-4 py-2 text-ink-muted">
+                    {t.benchmarkRank ? `${t.benchmarkRank}位` : "—"}
+                  </td>
+                  <td className="px-4 py-2 text-ink-muted">
+                    {benchmarkSource}
+                    <span className="ml-1 text-[11px]">({benchmarkCheckedAt})</span>
+                  </td>
+                  <td className={`px-4 py-2 font-semibold ${GRADE_STYLE[t.internalGrade]}`}>
+                    {t.internalGrade}
+                  </td>
+                  <td className="px-4 py-2 text-ink-muted">{t.price}</td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
