@@ -22,6 +22,7 @@ export default function Sidebar() {
           <br />
           Map
         </h1>
+        <p className="mt-2 text-[11px] text-ink-muted">Powered by Web Assist</p>
       </div>
       <nav className="flex flex-1 flex-col gap-1">
         {NAV.map((item) => {
@@ -42,7 +43,11 @@ export default function Sidebar() {
           );
         })}
       </nav>
-      <p className="px-3 pt-4 text-[11px] text-ink-muted">社内限定・非公開運用</p>
+      <p className="px-3 pt-4 text-[11px] text-ink-muted">
+        社内限定・非公開運用
+        <br />
+        A service by CANAE Inc.
+      </p>
     </aside>
   );
 }
