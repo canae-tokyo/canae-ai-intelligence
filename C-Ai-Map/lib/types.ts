@@ -27,6 +27,8 @@ export interface Tool {
     overall: number; // 自社用途を基準
   };
   benchmarkRank: number | null; // 公開ベンチマーク順位（同カテゴリ内）
+  benchmarkSource?: string; // 公開ベンチマークまたはサンプル値の出典
+  benchmarkCheckedAt?: string; // YYYY-MM-DD
   internalGrade: "S" | "A" | "B" | "C"; // 自社実務評価
   price: string; // 例: "月額$20〜" / "無料枠あり"
   apiAvailable: boolean;
@@ -35,6 +37,8 @@ export interface Tool {
   officialUrl: string;
   tags: string[];
 }
+
+export type NewsStatus = "draft" | "verified" | "archived";
 
 export interface NewsItem {
   id: string;
@@ -47,7 +51,8 @@ export interface NewsItem {
   impact: string;
   sourceType: "official" | "media" | "sns";
   sourceUrl: string;
-  status: "verified" | "unverified";
+  sourceCheckedAt: string;
+  status: NewsStatus;
 }
 
 export interface CompanyNode {

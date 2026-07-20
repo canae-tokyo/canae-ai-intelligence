@@ -1,6 +1,9 @@
 import type { Tool } from "@/lib/types";
 
 export default function ToolCard({ tool }: { tool: Tool }) {
+  const benchmarkSource = tool.benchmarkSource ?? "サンプル値（未検証）";
+  const benchmarkCheckedAt = tool.benchmarkCheckedAt ?? tool.lastUpdated;
+
   return (
     <div className="rounded-lg border border-base-border bg-base-card p-4 transition-colors hover:border-accent/30">
       <div className="mb-1 flex items-start justify-between gap-2">
@@ -25,6 +28,9 @@ export default function ToolCard({ tool }: { tool: Tool }) {
         <span>{tool.price}</span>
         <span>{tool.apiAvailable ? "API：あり" : "API：なし"}</span>
       </div>
+      <p className="mt-2 text-[11px] text-ink-muted">
+        公開Bmk：{benchmarkSource} / 確認日：{benchmarkCheckedAt}
+      </p>
     </div>
   );
 }

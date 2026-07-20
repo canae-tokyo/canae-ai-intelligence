@@ -25,6 +25,13 @@ export default function DashboardPage() {
       <Header title="ダッシュボード" />
       <main className="space-y-10 px-4 py-6 md:px-8">
         <section>
+          <div className="mb-4 rounded-lg border border-base-border bg-base-card p-4">
+            <p className="text-xs uppercase tracking-wide text-accent">Powered by Web Assist</p>
+            <h1 className="mt-1 text-xl font-semibold text-ink">CANAE AI Intelligence</h1>
+            <p className="mt-2 text-sm leading-relaxed text-ink-muted">
+              AI業界を構造化・可視化し、公開ベンチマークとCANAE実務評価を分離して管理する社内知識基盤です。
+            </p>
+          </div>
           <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-ink-muted">
             本日の重要ニュース
           </h2>
