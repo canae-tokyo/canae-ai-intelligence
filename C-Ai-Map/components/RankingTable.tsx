@@ -19,6 +19,8 @@ const GRADE_STYLE: Record<string, string> = {
   C: "text-ink-muted",
 };
 
+const mobileRow = "flex justify-between gap-3 border-t border-base-border/60 py-2 text-sm";
+
 export default function RankingTable({ tools }: { tools: Tool[] }) {
   const [axis, setAxis] = useState<(typeof AXES)[number]["key"]>("overall");
 
@@ -36,7 +38,7 @@ export default function RankingTable({ tools }: { tools: Tool[] }) {
           <button
             key={a.key}
             onClick={() => setAxis(a.key)}
-            className={`rounded-full border px-3 py-1 text-xs transition-colors ${
+            className={`min-h-11 rounded-full border px-3 text-sm transition-colors md:min-h-0 md:py-1 md:text-xs ${
               axis === a.key
                 ? "border-accent/50 bg-accent/10 text-accent"
                 : "border-base-border text-ink-muted hover:text-ink"
@@ -45,9 +47,11 @@ export default function RankingTable({ tools }: { tools: Tool[] }) {
             {a.label}
           </button>
         ))}
-        <span className="ml-auto text-xs text-ink-muted">評価方法：{activeAxis.method}</span>
+        <span className="w-full text-xs text-ink-muted md:ml-auto md:w-auto">
+          評価方法：{activeAxis.method}
+        </span>
       </div>
-      <div className="overflow-x-auto">
+      <div className="hidden md:block md:overflow-x-auto">
         <table className="w-full text-left text-sm">
           <thead>
             <tr className="text-xs text-ink-muted">
@@ -90,6 +94,50 @@ export default function RankingTable({ tools }: { tools: Tool[] }) {
             })}
           </tbody>
         </table>
+      </div>
+      <div className="space-y-3 p-3 md:hidden">
+        {sorted.map((t, i) => {
+          const benchmarkSource = t.benchmarkSource ?? "サンプル値（未検証）";
+          const benchmarkCheckedAt = t.benchmarkCheckedAt ?? t.lastUpdated;
+          return (
+            <article key={t.id} className="rounded-md border border-base-border bg-base-bg/40 p-3">
+              <div className="flex items-start gap-3">
+                <span className="flex size-8 shrink-0 items-center justify-center rounded-full border border-accent/40 text-sm font-semibold text-accent">
+                  {i + 1}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <h3 className="break-words text-base font-semibold text-ink">{t.name}</h3>
+                  <p className="break-words text-sm text-ink-muted">{t.company}</p>
+                </div>
+                <span className={`shrink-0 text-base font-semibold ${GRADE_STYLE[t.internalGrade]}`}>
+                  {t.internalGrade}
+                </span>
+              </div>
+              <div className="mt-3">
+                <div className={mobileRow}>
+                  <span className="text-ink-muted">{activeAxis.label}</span>
+                  <span className="font-medium text-ink">{t.scores[axis]}</span>
+                </div>
+                <div className={mobileRow}>
+                  <span className="text-ink-muted">公開Bmk順位</span>
+                  <span className="text-ink-muted">{t.benchmarkRank ? `${t.benchmarkRank}位` : "—"}</span>
+                </div>
+                <div className={mobileRow}>
+                  <span className="text-ink-muted">公開Bmk出典</span>
+                  <span className="max-w-[58%] break-words text-right text-ink-muted">
+                    {benchmarkSource}
+                    <br />
+                    <span className="text-[11px]">確認日：{benchmarkCheckedAt}</span>
+                  </span>
+                </div>
+                <div className={mobileRow}>
+                  <span className="text-ink-muted">価格</span>
+                  <span className="max-w-[58%] break-words text-right text-ink-muted">{t.price}</span>
+                </div>
+              </div>
+            </article>
+          );
+        })}
       </div>
       <p className="border-t border-base-border px-4 py-2 text-[11px] text-ink-muted">
         「公開Bmk順位」は公開ベンチマークの順位、「自社評価」はCANAE実務評価（S/A/B/C）です。サンプル値（未検証）は実データへ置換するまで参考値として扱います。
