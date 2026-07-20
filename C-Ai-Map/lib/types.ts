@@ -27,8 +27,8 @@ export interface Tool {
     overall: number; // 自社用途を基準
   };
   benchmarkRank: number | null; // 公開ベンチマーク順位（同カテゴリ内）
-  benchmarkSource: string; // 公開ベンチマークまたはサンプル値の出典
-  benchmarkCheckedAt: string; // YYYY-MM-DD
+  benchmarkSource?: string; // 公開ベンチマークまたはサンプル値の出典
+  benchmarkCheckedAt?: string; // YYYY-MM-DD
   internalGrade: "S" | "A" | "B" | "C"; // 自社実務評価
   price: string; // 例: "月額$20〜" / "無料枠あり"
   apiAvailable: boolean;
