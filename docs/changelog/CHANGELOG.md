@@ -28,6 +28,11 @@
 - 実在日付検証、重複`sourceId`拒否、最終URL・ホスト・クロスドメインリダイレクト記録、Content-Type許可判定を追加。
 - HTTPエラーは取得結果として記録し、レポート生成成功とは分離する`executionStatus`と`exitPolicy`を追加。
 - `update-candidates.json`、`news.json`、`tools.json`、`benchmarks.json`、`canae-evaluations.json`への書き込みは行わない。
+- PR #11をSquash Mergeし、External Fetch FoundationをProductionへ反映。
+- Merge Commit `400aab96a1fdbfe95f4c03b3fafd19aa92ee4b3f` を確認。
+- GitHub Actions CIとGitHub Pages deploymentの成功を確認。
+- 本番URL `/`、`/news`、`/genre/coding`、404応答を確認。
+- `noindex`と`X-Robots-Tag: noindex, nofollow`の維持を確認。
 
 ## v1.1.1 - 2026-07-21
 
