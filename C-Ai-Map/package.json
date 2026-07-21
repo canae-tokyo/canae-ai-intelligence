@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "validate:data": "node scripts/validate-data.mjs",
-    "validate:collection": "node scripts/validate-collection.mjs"
+    "validate:collection": "node scripts/validate-collection.mjs",
+    "collection:dry-run": "node scripts/collection-dry-run.mjs --date=2026-07-21"
   },
   "dependencies": {
     "next": "14.2.35",
