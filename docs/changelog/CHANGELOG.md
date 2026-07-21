@@ -18,6 +18,11 @@
 - Collection Helper Foundationとして、外部通信なしの`npm run collection:dry-run`を追加。
 - `collection-sources.json`から`enabled`、`priority`、`cadence`で対象を選び、`reports/collection-dry-run-report.local.json`へ実行予定を保存する構造を追加。
 - dry-run引数の妥当性検証、Asia/Tokyo基準の実行日、固定サンプルレポートを追加。
+- PR #9をSquash Mergeし、Collection Helper FoundationをProductionへ反映。
+- Merge Commit `51486ac796b7f634b73827a729353f3b5c4c5132` を確認。
+- GitHub Actions CIとGitHub Pages deploymentの成功を確認。
+- 本番URL `/`、`/news`、`/genre/coding`、404応答を確認。
+- `noindex`と`X-Robots-Tag: noindex, nofollow`の維持を確認。
 
 ## v1.1.1 - 2026-07-21
 
