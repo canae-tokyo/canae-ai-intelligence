@@ -29,7 +29,22 @@ export function getNewsByGenre(id: GenreId): NewsItem[] {
 }
 
 export function getCompaniesByGenre(id: GenreId): CompanyNode[] {
-  return companies.filter((c) => c.category === id);
+  const visibleToolIds = new Set(tools.map((tool) => tool.id));
+
+  return companies
+    .filter((c) => c.category === id)
+    .map((company) => ({
+      ...company,
+      children: company.children
+        ?.map((model) => ({
+          ...model,
+          children: model.children?.filter(
+            (product) => !product.toolId || visibleToolIds.has(product.toolId)
+          ),
+        }))
+        .filter((model) => (model.children?.length ?? 0) > 0),
+    }))
+    .filter((company) => (company.children?.length ?? 0) > 0);
 }
 
 export function getRecentNews(days: number = 7): NewsItem[] {

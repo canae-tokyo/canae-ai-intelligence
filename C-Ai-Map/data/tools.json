@@ -2603,7 +2603,7 @@
     "dataStatus": "verified",
     "dataQuality": "partial",
     "sourceUrl": "https://www.microsoft.com/microsoft-copilot/microsoft-copilot-studio",
-    "pricingUrl": "https://www.microsoft.com/microsoft-copilot/microsoft-copilot-studio/pricing",
+    "pricingUrl": "https://learn.microsoft.com/en-us/microsoft-copilot-studio/billing-licensing",
     "apiUrl": "https://learn.microsoft.com/microsoft-copilot-studio/",
     "japaneseSupport": "supported",
     "primaryUseCases": [
