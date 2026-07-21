@@ -2,6 +2,14 @@
   "reportType": "collection-helper-dry-run",
   "reportVersion": "1.0",
   "generatedAt": "2026-07-21",
+  "generator": {
+    "script": "scripts/collection-dry-run.mjs",
+    "version": "1.0"
+  },
+  "input": {
+    "sourceFile": "data/collection-sources.json",
+    "sourceCount": 8
+  },
   "mode": "dry-run",
   "externalNetwork": false,
   "writes": {

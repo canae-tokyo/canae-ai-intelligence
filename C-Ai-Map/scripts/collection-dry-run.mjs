@@ -9,11 +9,28 @@ const priorityOrder = new Map([
 ]);
 
 const defaultOptions = {
-  date: "2026-07-21",
-  output: "reports/collection-dry-run-report.json",
+  date: null,
+  output: "reports/collection-dry-run-report.local.json",
   priorities: ["P0", "P1", "P2"],
   cadences: ["daily", "weekly", "monthly"],
 };
+const isoDate = /^\d{4}-\d{2}-\d{2}$/;
+const allowedPriorities = new Set(defaultOptions.priorities);
+const allowedCadences = new Set(defaultOptions.cadences);
+
+function todayIsoDate() {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Tokyo",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date());
+}
+
+function fail(message) {
+  console.error(`Collection dry-run failed: ${message}`);
+  process.exit(1);
+}
 
 function parseList(value) {
   return value
@@ -26,13 +43,49 @@ function parseArgs(argv) {
   const options = { ...defaultOptions };
 
   for (const arg of argv) {
-    if (arg.startsWith("--date=")) options.date = arg.slice("--date=".length);
-    if (arg.startsWith("--output=")) options.output = arg.slice("--output=".length);
-    if (arg.startsWith("--priority=")) options.priorities = parseList(arg.slice("--priority=".length));
-    if (arg.startsWith("--cadence=")) options.cadences = parseList(arg.slice("--cadence=".length));
+    if (arg.startsWith("--date=")) {
+      options.date = arg.slice("--date=".length);
+    } else if (arg.startsWith("--output=")) {
+      options.output = arg.slice("--output=".length);
+    } else if (arg.startsWith("--priority=")) {
+      options.priorities = parseList(arg.slice("--priority=".length));
+    } else if (arg.startsWith("--cadence=")) {
+      options.cadences = parseList(arg.slice("--cadence=".length));
+    } else {
+      fail(`unknown argument: ${arg}`);
+    }
   }
 
+  options.date = options.date ?? todayIsoDate();
+  validateOptions(options);
+
   return options;
+}
+
+function validateList(values, allowedValues, label) {
+  if (values.length === 0) fail(`${label} list must not be empty`);
+
+  const unknownValues = values.filter((value) => !allowedValues.has(value));
+  if (unknownValues.length > 0) {
+    fail(`${label} contains unsupported value(s): ${unknownValues.join(", ")}`);
+  }
+}
+
+function validateOutputPath(output) {
+  const resolved = path.resolve(root, output);
+  const allowedRoot = path.resolve(root, "reports");
+
+  if (path.isAbsolute(output)) fail("--output must be relative to the project root");
+  if (resolved !== allowedRoot && !resolved.startsWith(`${allowedRoot}${path.sep}`)) {
+    fail("--output must stay under reports/");
+  }
+}
+
+function validateOptions(options) {
+  if (!isoDate.test(options.date)) fail("--date must be YYYY-MM-DD");
+  validateList(options.priorities, allowedPriorities, "--priority");
+  validateList(options.cadences, allowedCadences, "--cadence");
+  validateOutputPath(options.output);
 }
 
 function readJson(file) {
@@ -89,6 +142,14 @@ const report = {
   reportType: "collection-helper-dry-run",
   reportVersion: "1.0",
   generatedAt: options.date,
+  generator: {
+    script: "scripts/collection-dry-run.mjs",
+    version: "1.0",
+  },
+  input: {
+    sourceFile: "data/collection-sources.json",
+    sourceCount: sources.length,
+  },
   mode: "dry-run",
   externalNetwork: false,
   writes: {

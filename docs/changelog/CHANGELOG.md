@@ -16,7 +16,8 @@
 - Google AI Blogの収集元URLを正規URLへ更新。
 - 設計リリース時点の`update-candidates.json`は空配列とし、本番表示経路へ候補データを混入させない。
 - Collection Helper Foundationとして、外部通信なしの`npm run collection:dry-run`を追加。
-- `collection-sources.json`から`enabled`、`priority`、`cadence`で対象を選び、`reports/collection-dry-run-report.json`へ実行予定を保存する構造を追加。
+- `collection-sources.json`から`enabled`、`priority`、`cadence`で対象を選び、`reports/collection-dry-run-report.local.json`へ実行予定を保存する構造を追加。
+- dry-run引数の妥当性検証、Asia/Tokyo基準の実行日、固定サンプルレポートを追加。
 
 ## v1.1.1 - 2026-07-21
 
