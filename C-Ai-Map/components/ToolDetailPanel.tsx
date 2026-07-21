@@ -1,5 +1,5 @@
 import type { Tool } from "@/lib/types";
-import { tools as allTools } from "@/lib/data";
+import { getCanaeEvaluationForTool, getPrimaryBenchmarkForTool, tools as allTools } from "@/lib/data";
 
 const ROW = "flex justify-between gap-3 border-b border-base-border/60 py-2 text-sm";
 
@@ -24,6 +24,8 @@ export default function ToolDetailPanel({
     .filter((t) => t.category === tool.category && t.id !== tool.id)
     .sort((a, b) => b.scores.overall - a.scores.overall)
     .slice(0, 3);
+  const benchmark = getPrimaryBenchmarkForTool(tool);
+  const canaeEvaluation = getCanaeEvaluationForTool(tool);
 
   return (
     <div className="rounded-lg border border-base-border bg-base-card p-4">
@@ -74,11 +76,27 @@ export default function ToolDetailPanel({
         </div>
         <div className={ROW}>
           <span className="text-ink-muted">公開Bmk順位</span>
-          <span className="text-ink">{tool.benchmarkRank ? `${tool.benchmarkRank}位` : "—"}（未検証サンプル値を含む）</span>
+          <span className="max-w-[58%] break-words text-right text-ink">
+            {benchmark.rank ? `${benchmark.rank}位` : "—"}
+            {benchmark.source === "tools-fallback" ? "（fallback / 未検証サンプル値を含む）" : ""}
+          </span>
+        </div>
+        <div className={ROW}>
+          <span className="text-ink-muted">公開Bmk出典</span>
+          <span className="max-w-[58%] break-words text-right text-ink">
+            {benchmark.benchmarkName}
+            {benchmark.checkedAt ? ` / ${benchmark.checkedAt}` : ""}
+          </span>
         </div>
         <div className="flex justify-between gap-3 py-1.5 text-sm">
           <span className="text-ink-muted">CANAE実務評価</span>
-          <span className="font-semibold text-accent">{tool.internalGrade}</span>
+          <span className="font-semibold text-accent">{canaeEvaluation.overallGrade}</span>
+        </div>
+        <div className="flex justify-between gap-3 py-1.5 text-sm">
+          <span className="text-ink-muted">CANAE評価ソース</span>
+          <span className="max-w-[58%] break-words text-right text-ink-muted">
+            {canaeEvaluation.source === "canae-evaluations" ? "分離評価データ" : "tools.json fallback"}
+          </span>
         </div>
       </div>
 

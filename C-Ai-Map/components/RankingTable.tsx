@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { getCanaeEvaluationForTool, getPrimaryBenchmarkForTool } from "@/lib/data";
 import type { Tool } from "@/lib/types";
 
 const AXES: { key: keyof Tool["scores"]; label: string; method: string }[] = [
@@ -67,8 +68,10 @@ export default function RankingTable({ tools }: { tools: Tool[] }) {
           </thead>
           <tbody>
             {sorted.map((t, i) => {
-              const benchmarkSource = t.benchmarkSource ?? "サンプル値（未検証）";
-              const benchmarkCheckedAt = t.benchmarkCheckedAt ?? t.lastUpdated;
+              const benchmark = getPrimaryBenchmarkForTool(t);
+              const evaluation = getCanaeEvaluationForTool(t);
+              const benchmarkSource = benchmark.benchmarkName;
+              const benchmarkCheckedAt = benchmark.checkedAt ?? t.lastUpdated;
               return (
                 <tr
                   key={t.id}
@@ -79,14 +82,17 @@ export default function RankingTable({ tools }: { tools: Tool[] }) {
                   <td className="px-4 py-2 text-ink-muted">{t.company}</td>
                   <td className="px-4 py-2 text-ink">{t.scores[axis]}</td>
                   <td className="px-4 py-2 text-ink-muted">
-                    {t.benchmarkRank ? `${t.benchmarkRank}位` : "—"}
+                    {benchmark.rank ? `${benchmark.rank}位` : "—"}
                   </td>
                   <td className="px-4 py-2 text-ink-muted">
                     {benchmarkSource}
+                    {benchmark.source === "tools-fallback" && (
+                      <span className="ml-1 text-[11px] text-signal-update">fallback</span>
+                    )}
                     <span className="ml-1 text-[11px]">({benchmarkCheckedAt})</span>
                   </td>
-                  <td className={`px-4 py-2 font-semibold ${GRADE_STYLE[t.internalGrade]}`}>
-                    {t.internalGrade}
+                  <td className={`px-4 py-2 font-semibold ${GRADE_STYLE[evaluation.overallGrade]}`}>
+                    {evaluation.overallGrade}
                   </td>
                   <td className="px-4 py-2 text-ink-muted">{t.price}</td>
                 </tr>
@@ -97,8 +103,10 @@ export default function RankingTable({ tools }: { tools: Tool[] }) {
       </div>
       <div className="space-y-3 p-3 md:hidden">
         {sorted.map((t, i) => {
-          const benchmarkSource = t.benchmarkSource ?? "サンプル値（未検証）";
-          const benchmarkCheckedAt = t.benchmarkCheckedAt ?? t.lastUpdated;
+          const benchmark = getPrimaryBenchmarkForTool(t);
+          const evaluation = getCanaeEvaluationForTool(t);
+          const benchmarkSource = benchmark.benchmarkName;
+          const benchmarkCheckedAt = benchmark.checkedAt ?? t.lastUpdated;
           return (
             <article key={t.id} className="rounded-md border border-base-border bg-base-bg/40 p-3">
               <div className="flex items-start gap-3">
@@ -109,8 +117,8 @@ export default function RankingTable({ tools }: { tools: Tool[] }) {
                   <h3 className="break-words text-base font-semibold text-ink">{t.name}</h3>
                   <p className="break-words text-sm text-ink-muted">{t.company}</p>
                 </div>
-                <span className={`shrink-0 text-base font-semibold ${GRADE_STYLE[t.internalGrade]}`}>
-                  {t.internalGrade}
+                <span className={`shrink-0 text-base font-semibold ${GRADE_STYLE[evaluation.overallGrade]}`}>
+                  {evaluation.overallGrade}
                 </span>
               </div>
               <div className="mt-3">
@@ -120,12 +128,15 @@ export default function RankingTable({ tools }: { tools: Tool[] }) {
                 </div>
                 <div className={mobileRow}>
                   <span className="text-ink-muted">公開Bmk順位</span>
-                  <span className="text-ink-muted">{t.benchmarkRank ? `${t.benchmarkRank}位` : "—"}</span>
+                  <span className="text-ink-muted">{benchmark.rank ? `${benchmark.rank}位` : "—"}</span>
                 </div>
                 <div className={mobileRow}>
                   <span className="text-ink-muted">公開Bmk出典</span>
                   <span className="max-w-[58%] break-words text-right text-ink-muted">
                     {benchmarkSource}
+                    {benchmark.source === "tools-fallback" && (
+                      <span className="ml-1 text-signal-update">fallback</span>
+                    )}
                     <br />
                     <span className="text-[11px]">確認日：{benchmarkCheckedAt}</span>
                   </span>

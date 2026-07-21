@@ -1,0 +1,77 @@
+[
+  {
+    "id": "benchmark-swebench-verified-codex-2026-001",
+    "toolId": "coding-codex",
+    "benchmarkName": "SWE-bench Verified",
+    "benchmarkVersion": "2025-05",
+    "score": null,
+    "scoreUnit": "percent",
+    "rank": null,
+    "scope": "Software engineering issue resolution",
+    "sourceUrl": "https://openai.com/index/introducing-codex/",
+    "sourceType": "official",
+    "verifiedAt": "2026-07-21",
+    "comparability": "Comparable only within the same benchmark version, model, scaffold, and evaluation conditions.",
+    "dataStatus": "draft",
+    "dataQuality": "partial",
+    "notes": "Source registered for v1.1.1 separation. Numeric score is intentionally unset until benchmark extraction is reviewed.",
+    "changeLog": [
+      {
+        "date": "2026-07-21",
+        "type": "created",
+        "summary": "Created benchmark source record for staged migration from tools.json.",
+        "actor": "Codex"
+      }
+    ]
+  },
+  {
+    "id": "benchmark-swebench-verified-claude-code-2026-001",
+    "toolId": "coding-claudecode",
+    "benchmarkName": "SWE-bench Verified",
+    "benchmarkVersion": "2025-05",
+    "score": null,
+    "scoreUnit": "percent",
+    "rank": null,
+    "scope": "Software engineering issue resolution",
+    "sourceUrl": "https://www.anthropic.com/news/claude-4",
+    "sourceType": "official",
+    "verifiedAt": "2026-07-21",
+    "comparability": "Comparable only within the same benchmark version, model, scaffold, and evaluation conditions.",
+    "dataStatus": "draft",
+    "dataQuality": "partial",
+    "notes": "Source registered for v1.1.1 separation. Numeric score is intentionally unset until benchmark extraction is reviewed.",
+    "changeLog": [
+      {
+        "date": "2026-07-21",
+        "type": "created",
+        "summary": "Created benchmark source record for staged migration from tools.json.",
+        "actor": "Codex"
+      }
+    ]
+  },
+  {
+    "id": "benchmark-swebench-verified-gpt4o-2026-001",
+    "toolId": "model-chatgpt",
+    "benchmarkName": "SWE-bench Verified",
+    "benchmarkVersion": "2024-08",
+    "score": 33.2,
+    "scoreUnit": "percent",
+    "rank": null,
+    "scope": "Software engineering issue resolution using GPT-4o with evaluated scaffolds",
+    "sourceUrl": "https://openai.com/index/introducing-swe-bench-verified/",
+    "sourceType": "official",
+    "verifiedAt": "2026-07-21",
+    "comparability": "This score is benchmark-specific and should not be mixed with product-level rankings or other benchmark families.",
+    "dataStatus": "verified",
+    "dataQuality": "verified",
+    "notes": "Registered as a benchmark example tied to the ChatGPT/OpenAI model family; it is not a product-wide ChatGPT ranking.",
+    "changeLog": [
+      {
+        "date": "2026-07-21",
+        "type": "created",
+        "summary": "Created verified benchmark record from OpenAI SWE-bench Verified publication.",
+        "actor": "Codex"
+      }
+    ]
+  }
+]
