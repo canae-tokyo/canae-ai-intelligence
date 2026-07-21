@@ -48,7 +48,7 @@ export default function RankingTable({ tools }: { tools: Tool[] }) {
           </button>
         ))}
         <span className="w-full text-xs text-ink-muted md:ml-auto md:w-auto">
-          評価方法：{activeAxis.method}
+          評価方法：{activeAxis.method} / v1.1.0では公式メタ情報を先行投入。スコアは未検証サンプル値を含みます。
         </span>
       </div>
       <div className="hidden md:block md:overflow-x-auto">

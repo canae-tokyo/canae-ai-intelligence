@@ -6,6 +6,28 @@ export type GenreId =
   | "audio"
   | "agent";
 
+export type DataStatus = "draft" | "verified" | "archived";
+export type DataQuality = "sample" | "partial" | "verified";
+
+export interface DataChange {
+  date: string;
+  type: "created" | "updated" | "verified" | "archived";
+  summary: string;
+  actor?: string;
+}
+
+export interface BenchmarkMetadata {
+  name: string;
+  score?: number;
+  rank?: number | null;
+  source: string;
+  sourceUrl: string;
+  checkedAt: string;
+  version?: string;
+  scope?: string;
+  notes?: string;
+}
+
 export interface Genre {
   id: GenreId;
   label: string;
@@ -29,6 +51,7 @@ export interface Tool {
   benchmarkRank: number | null; // 公開ベンチマーク順位（同カテゴリ内）
   benchmarkSource?: string; // 公開ベンチマークまたはサンプル値の出典
   benchmarkCheckedAt?: string; // YYYY-MM-DD
+  benchmarkDetails?: BenchmarkMetadata[];
   internalGrade: "S" | "A" | "B" | "C"; // 自社実務評価
   price: string; // 例: "月額$20〜" / "無料枠あり"
   apiAvailable: boolean;
@@ -36,9 +59,20 @@ export interface Tool {
   lastUpdated: string; // ISO date
   officialUrl: string;
   tags: string[];
+  dataStatus?: DataStatus;
+  dataQuality?: DataQuality;
+  sourceUrl?: string;
+  pricingUrl?: string;
+  apiUrl?: string;
+  japaneseSupport?: "native" | "supported" | "limited" | "unknown";
+  primaryUseCases?: string[];
+  limitations?: string[];
+  verifiedAt?: string | null;
+  verifiedBy?: string | null;
+  changeLog?: DataChange[];
 }
 
-export type NewsStatus = "draft" | "verified" | "archived";
+export type NewsStatus = DataStatus;
 
 export interface NewsItem {
   id: string;
@@ -53,6 +87,11 @@ export interface NewsItem {
   sourceUrl: string;
   sourceCheckedAt: string;
   status: NewsStatus;
+  dataQuality?: DataQuality;
+  verifiedAt?: string;
+  verifiedBy?: string;
+  note?: string;
+  changeLog?: DataChange[];
 }
 
 export interface CompanyNode {

@@ -1,338 +1,452 @@
 [
   {
-    "id": "n-001",
-    "title": "新しいコーディング機能を追加",
-    "company": "OpenAI",
-    "category": "coding",
+    "id": "news-2026-03-09-001",
+    "title": "MicrosoftがMicrosoft 365 Copilot Wave 3とAgent 365を発表",
+    "company": "Microsoft",
+    "category": "agent",
     "importance": "high",
-    "publishedAt": "2026-07-20",
-    "summary": "GPT系モデルにエージェント型のコーディング機能が追加された。複数ファイルにまたがる変更を自動生成できる。",
-    "impact": "CANAEの開発フローで並行レビュー体制の検討が必要。",
+    "publishedAt": "2026-03-09",
+    "summary": "MicrosoftはMicrosoft 365 Copilot Wave 3、Frontier Firms構想、Agent 365を発表した。",
+    "impact": "Microsoft 365中心の業務自動化とエージェント管理が進み、CANAEのDX支援で検証対象になる。",
     "sourceType": "official",
-    "sourceUrl": "https://openai.com",
+    "sourceUrl": "https://blogs.microsoft.com/blog/2026/03/09/introducing-the-first-frontier-suite-built-on-intelligence-trust/",
+    "sourceCheckedAt": "2026-07-21",
+    "verifiedAt": "2026-07-21",
     "status": "verified",
-    "sourceCheckedAt": "2026-07-20"
+    "dataQuality": "verified",
+    "verifiedBy": "CANAE/Codex",
+    "changeLog": [
+      {
+        "date": "2026-07-21",
+        "type": "verified",
+        "summary": "v1.1.0初期実データ投入として公式一次情報を確認。",
+        "actor": "CANAE/Codex"
+      }
+    ]
   },
   {
-    "id": "n-002",
-    "title": "新モデル公開",
-    "company": "OpenAI",
-    "category": "image",
+    "id": "news-2026-02-25-001",
+    "title": "GitHub Copilot CLIが一般提供を開始",
+    "company": "GitHub",
+    "category": "coding",
     "importance": "medium",
-    "publishedAt": "2026-07-19",
-    "summary": "画像生成モデルの新版が公開され、テキスト描画精度が向上した。",
-    "impact": "バナー制作の下書き工程に活用できる可能性あり。",
+    "publishedAt": "2026-02-25",
+    "summary": "GitHubはCopilot CLIの一般提供開始を発表した。",
+    "impact": "CLI作業の支援範囲が広がり、開発者向け自動化フローの評価対象になる。",
     "sourceType": "official",
-    "sourceUrl": "https://openai.com",
+    "sourceUrl": "https://github.blog/changelog/2026-02-25-github-copilot-cli-is-now-generally-available/",
+    "sourceCheckedAt": "2026-07-21",
+    "verifiedAt": "2026-07-21",
     "status": "verified",
-    "sourceCheckedAt": "2026-07-19"
+    "dataQuality": "verified",
+    "verifiedBy": "CANAE/Codex",
+    "changeLog": [
+      {
+        "date": "2026-07-21",
+        "type": "verified",
+        "summary": "v1.1.0初期実データ投入として公式一次情報を確認。",
+        "actor": "CANAE/Codex"
+      }
+    ]
   },
   {
-    "id": "n-003",
-    "title": "Claude Codeにサブエージェント機能追加",
+    "id": "news-2026-01-26-001",
+    "title": "GitHubがリポジトリ内Agentsタブを導入",
+    "company": "GitHub",
+    "category": "agent",
+    "importance": "medium",
+    "publishedAt": "2026-01-26",
+    "summary": "GitHubはリポジトリ内でエージェントを確認・管理するAgentsタブを発表した。",
+    "impact": "AIエージェントの作業管理がGitHub UIに近づき、開発運用の監査性向上が期待できる。",
+    "sourceType": "official",
+    "sourceUrl": "https://github.blog/changelog/2026-01-26-introducing-the-agents-tab-in-your-repository/",
+    "sourceCheckedAt": "2026-07-21",
+    "verifiedAt": "2026-07-21",
+    "status": "verified",
+    "dataQuality": "verified",
+    "verifiedBy": "CANAE/Codex",
+    "changeLog": [
+      {
+        "date": "2026-07-21",
+        "type": "verified",
+        "summary": "v1.1.0初期実データ投入として公式一次情報を確認。",
+        "actor": "CANAE/Codex"
+      }
+    ]
+  },
+  {
+    "id": "news-2025-07-17-001",
+    "title": "OpenAIがChatGPT agentを発表",
+    "company": "OpenAI",
+    "category": "agent",
+    "importance": "high",
+    "publishedAt": "2025-07-17",
+    "summary": "OpenAIはChatGPT内でタスクを実行するエージェント機能を発表した。",
+    "impact": "調査、予約、文書操作などの実務フロー検証が必要になる。",
+    "sourceType": "official",
+    "sourceUrl": "https://openai.com/index/introducing-chatgpt-agent/",
+    "sourceCheckedAt": "2026-07-21",
+    "verifiedAt": "2026-07-21",
+    "status": "verified",
+    "dataQuality": "verified",
+    "verifiedBy": "CANAE/Codex",
+    "changeLog": [
+      {
+        "date": "2026-07-21",
+        "type": "verified",
+        "summary": "v1.1.0初期実データ投入として公式一次情報を確認。",
+        "actor": "CANAE/Codex"
+      }
+    ]
+  },
+  {
+    "id": "news-2025-06-18-001",
+    "title": "AnthropicがClaude CodeのRemote MCP対応を発表",
     "company": "Anthropic",
     "category": "coding",
     "importance": "high",
-    "publishedAt": "2026-07-18",
-    "summary": "タスクを分割して並列実行するサブエージェント機能が追加された。",
-    "impact": "大規模リファクタリング作業の効率化に直結。",
+    "publishedAt": "2025-06-18",
+    "summary": "AnthropicはClaude CodeでRemote MCP serversをサポートした。",
+    "impact": "外部ツールや社内データとの接続検証が重要になり、MCP設計の優先度が上がる。",
     "sourceType": "official",
-    "sourceUrl": "https://claude.com",
+    "sourceUrl": "https://www.anthropic.com/news/claude-code-remote-mcp",
+    "sourceCheckedAt": "2026-07-21",
+    "verifiedAt": "2026-07-21",
     "status": "verified",
-    "sourceCheckedAt": "2026-07-18"
+    "dataQuality": "verified",
+    "verifiedBy": "CANAE/Codex",
+    "changeLog": [
+      {
+        "date": "2026-07-21",
+        "type": "verified",
+        "summary": "v1.1.0初期実データ投入として公式一次情報を確認。",
+        "actor": "CANAE/Codex"
+      }
+    ]
   },
   {
-    "id": "n-004",
-    "title": "Gemini APIの料金体系を改定",
+    "id": "news-2025-05-22-001",
+    "title": "AnthropicがClaude 4を発表",
+    "company": "Anthropic",
+    "category": "model",
+    "importance": "high",
+    "publishedAt": "2025-05-22",
+    "summary": "AnthropicはClaude Opus 4とClaude Sonnet 4を発表した。",
+    "impact": "長時間タスクとコーディング性能の比較検証が必要になる。",
+    "sourceType": "official",
+    "sourceUrl": "https://www.anthropic.com/news/claude-4",
+    "sourceCheckedAt": "2026-07-21",
+    "verifiedAt": "2026-07-21",
+    "status": "verified",
+    "dataQuality": "verified",
+    "verifiedBy": "CANAE/Codex",
+    "changeLog": [
+      {
+        "date": "2026-07-21",
+        "type": "verified",
+        "summary": "v1.1.0初期実データ投入として公式一次情報を確認。",
+        "actor": "CANAE/Codex"
+      }
+    ]
+  },
+  {
+    "id": "news-2025-05-22-002",
+    "title": "Anthropic APIにエージェント構築向け機能が追加",
+    "company": "Anthropic",
+    "category": "agent",
+    "importance": "medium",
+    "publishedAt": "2025-05-22",
+    "summary": "AnthropicはAPIにエージェント構築向けの機能を追加した。",
+    "impact": "業務エージェント実装時のツール利用、メモリ、実行制御を評価する必要がある。",
+    "sourceType": "official",
+    "sourceUrl": "https://www.anthropic.com/news/agent-capabilities-api",
+    "sourceCheckedAt": "2026-07-21",
+    "verifiedAt": "2026-07-21",
+    "status": "verified",
+    "dataQuality": "verified",
+    "verifiedBy": "CANAE/Codex",
+    "changeLog": [
+      {
+        "date": "2026-07-21",
+        "type": "verified",
+        "summary": "v1.1.0初期実データ投入として公式一次情報を確認。",
+        "actor": "CANAE/Codex"
+      }
+    ]
+  },
+  {
+    "id": "news-2025-05-20-001",
+    "title": "Google I/O 2025でGemini 2.5の更新を発表",
+    "company": "Google",
+    "category": "model",
+    "importance": "high",
+    "publishedAt": "2025-05-20",
+    "summary": "GoogleはGemini 2.5関連のモデル更新と開発者向け機能を発表した。",
+    "impact": "Google Workspaceや検索連携を含む業務利用評価の再確認が必要になる。",
+    "sourceType": "official",
+    "sourceUrl": "https://blog.google/innovation-and-ai/models-and-research/google-deepmind/google-gemini-updates-io-2025/",
+    "sourceCheckedAt": "2026-07-21",
+    "verifiedAt": "2026-07-21",
+    "status": "verified",
+    "dataQuality": "verified",
+    "verifiedBy": "CANAE/Codex",
+    "changeLog": [
+      {
+        "date": "2026-07-21",
+        "type": "verified",
+        "summary": "v1.1.0初期実データ投入として公式一次情報を確認。",
+        "actor": "CANAE/Codex"
+      }
+    ]
+  },
+  {
+    "id": "news-2025-05-20-002",
+    "title": "Google検索AI Modeが米国で展開開始",
     "company": "Google",
     "category": "model",
     "importance": "medium",
-    "publishedAt": "2026-07-17",
-    "summary": "長文コンテキスト利用時の従量課金が引き下げられた。",
-    "impact": "社内RAGシステムのコスト試算を見直す必要あり。",
+    "publishedAt": "2025-05-20",
+    "summary": "GoogleはSearchのAI Modeを米国で展開し、検索体験のAI化を進めた。",
+    "impact": "調査業務の情報探索プロセスと出典確認の運用に影響する。",
     "sourceType": "official",
-    "sourceUrl": "https://ai.google.dev",
+    "sourceUrl": "https://blog.google/products-and-platforms/products/search/google-search-ai-mode-update/",
+    "sourceCheckedAt": "2026-07-21",
+    "verifiedAt": "2026-07-21",
     "status": "verified",
-    "sourceCheckedAt": "2026-07-17"
+    "dataQuality": "verified",
+    "verifiedBy": "CANAE/Codex",
+    "changeLog": [
+      {
+        "date": "2026-07-21",
+        "type": "verified",
+        "summary": "v1.1.0初期実データ投入として公式一次情報を確認。",
+        "actor": "CANAE/Codex"
+      }
+    ]
   },
   {
-    "id": "n-005",
-    "title": "Cursorが新しいコンテキストエンジンを発表",
-    "company": "Anysphere",
-    "category": "coding",
-    "importance": "medium",
-    "publishedAt": "2026-07-16",
-    "summary": "大規模リポジトリでの検索精度を高める新エンジンが搭載された。",
-    "impact": "既存プロジェクトでの導入検証を優先度高で実施予定。",
-    "sourceType": "media",
-    "sourceUrl": "https://cursor.com",
-    "status": "verified",
-    "sourceCheckedAt": "2026-07-16"
-  },
-  {
-    "id": "n-006",
-    "title": "Sora、商用利用ライセンスを拡充",
-    "company": "OpenAI",
-    "category": "video",
-    "importance": "high",
-    "publishedAt": "2026-07-13",
-    "summary": "企業向けの商用ライセンスプランが追加され、著作権表記の要件が緩和された。",
-    "impact": "プロモーション動画制作での採用を検討可能。",
-    "sourceType": "official",
-    "sourceUrl": "https://openai.com/sora",
-    "status": "verified",
-    "sourceCheckedAt": "2026-07-13"
-  },
-  {
-    "id": "n-007",
-    "title": "ElevenLabs、日本語音声品質を大幅改善",
-    "company": "ElevenLabs",
-    "category": "audio",
-    "importance": "high",
-    "publishedAt": "2026-07-07",
-    "summary": "日本語のイントネーション自然さが向上したとするアップデートが公開された。",
-    "impact": "社内マニュアルの音声化に活用できる可能性。",
-    "sourceType": "official",
-    "sourceUrl": "https://elevenlabs.io",
-    "status": "verified",
-    "sourceCheckedAt": "2026-07-07"
-  },
-  {
-    "id": "n-008",
-    "title": "Perplexity、社内検索連携機能を追加",
-    "company": "Perplexity AI",
-    "category": "model",
-    "importance": "low",
-    "publishedAt": "2026-07-08",
-    "summary": "社内ドキュメントを横断検索できる機能が試験的に公開された。",
-    "impact": "ナレッジベース検索の代替案として要検証。",
-    "sourceType": "media",
-    "sourceUrl": "https://perplexity.ai",
-    "status": "draft",
-    "sourceCheckedAt": "2026-07-08"
-  },
-  {
-    "id": "n-009",
-    "title": "GitHub Copilot、レビュー支援機能を強化",
-    "company": "Microsoft/GitHub",
-    "category": "coding",
-    "importance": "medium",
-    "publishedAt": "2026-07-12",
-    "summary": "プルリクエストの自動レビューコメント精度が改善された。",
-    "impact": "レビュー工数削減の効果測定を実施予定。",
-    "sourceType": "official",
-    "sourceUrl": "https://github.com",
-    "status": "verified",
-    "sourceCheckedAt": "2026-07-12"
-  },
-  {
-    "id": "n-010",
-    "title": "Adobe Firefly、動画生成機能をベータ公開",
-    "company": "Adobe",
-    "category": "video",
-    "importance": "medium",
-    "publishedAt": "2026-07-03",
-    "summary": "Creative Cloud内で動画生成が可能になるベータ機能が公開された。",
-    "impact": "既存のAdobe契約内で試験導入が可能。",
-    "sourceType": "official",
-    "sourceUrl": "https://firefly.adobe.com",
-    "status": "verified",
-    "sourceCheckedAt": "2026-07-03"
-  },
-  {
-    "id": "n-011",
-    "title": "Grok、企業向けAPIプランを発表",
-    "company": "xAI",
-    "category": "model",
-    "importance": "low",
-    "publishedAt": "2026-07-05",
-    "summary": "企業向けの専用APIプランとSLAが発表された。",
-    "impact": "現時点で優先度は低いが動向を継続監視。",
-    "sourceType": "official",
-    "sourceUrl": "https://x.ai",
-    "status": "verified",
-    "sourceCheckedAt": "2026-07-05"
-  },
-  {
-    "id": "n-012",
-    "title": "Runway、リアルタイム編集モードを追加",
-    "company": "Runway",
-    "category": "video",
-    "importance": "medium",
-    "publishedAt": "2026-07-11",
-    "summary": "生成結果をリアルタイムに調整できる編集モードが追加された。",
-    "impact": "制作リードタイム短縮の可能性あり。",
-    "sourceType": "official",
-    "sourceUrl": "https://runwayml.com",
-    "status": "verified",
-    "sourceCheckedAt": "2026-07-11"
-  },
-  {
-    "id": "n-013",
-    "title": "Devin、日本語ドキュメント対応を強化",
-    "company": "Cognition",
-    "category": "agent",
-    "importance": "medium",
-    "publishedAt": "2026-07-10",
-    "summary": "日本語の設計ドキュメントからのタスク分解精度が向上した。",
-    "impact": "国内案件での試験導入を検討可能。",
-    "sourceType": "media",
-    "sourceUrl": "https://cognition.ai",
-    "status": "verified",
-    "sourceCheckedAt": "2026-07-10"
-  },
-  {
-    "id": "n-014",
-    "title": "Suno、商用ライセンス条項を更新",
-    "company": "Suno",
-    "category": "audio",
-    "importance": "high",
-    "publishedAt": "2026-06-24",
-    "summary": "生成楽曲の商用利用に関する規約が明確化された。",
-    "impact": "利用前に必ず最新規約の確認が必要。",
-    "sourceType": "official",
-    "sourceUrl": "https://suno.com",
-    "status": "verified",
-    "sourceCheckedAt": "2026-06-24"
-  },
-  {
-    "id": "n-015",
-    "title": "Copilot Studio、社内システム連携コネクタ追加",
+    "id": "news-2025-05-19-001",
+    "title": "Microsoft Build 2025でAI agentsとopen agentic webを発表",
     "company": "Microsoft",
     "category": "agent",
-    "importance": "medium",
-    "publishedAt": "2026-07-05",
-    "summary": "主要な業務システム向けの標準コネクタが追加された。",
-    "impact": "社内システムとの連携検証がしやすくなった。",
+    "importance": "high",
+    "publishedAt": "2025-05-19",
+    "summary": "MicrosoftはBuild 2025でAIエージェントとopen agentic webの方向性を発表した。",
+    "impact": "Microsoft系業務環境のエージェント活用ロードマップとして追跡が必要。",
     "sourceType": "official",
-    "sourceUrl": "https://copilotstudio.microsoft.com",
+    "sourceUrl": "https://blogs.microsoft.com/blog/2025/05/19/microsoft-build-2025-the-age-of-ai-agents-and-building-the-open-agentic-web/",
+    "sourceCheckedAt": "2026-07-21",
+    "verifiedAt": "2026-07-21",
     "status": "verified",
-    "sourceCheckedAt": "2026-07-05"
+    "dataQuality": "verified",
+    "verifiedBy": "CANAE/Codex",
+    "changeLog": [
+      {
+        "date": "2026-07-21",
+        "type": "verified",
+        "summary": "v1.1.0初期実データ投入として公式一次情報を確認。",
+        "actor": "CANAE/Codex"
+      }
+    ]
   },
   {
-    "id": "n-016",
-    "title": "Ideogram、ロゴ生成テンプレートを拡充",
-    "company": "Ideogram AI",
-    "category": "image",
-    "importance": "low",
-    "publishedAt": "2026-06-27",
-    "summary": "業種別のロゴテンプレートが追加された。",
-    "impact": "軽微な更新のため優先度は低い。",
-    "sourceType": "media",
-    "sourceUrl": "https://ideogram.ai",
-    "status": "draft",
-    "sourceCheckedAt": "2026-06-27"
-  },
-  {
-    "id": "n-017",
-    "title": "Manus、タスク実行ログの可視化機能追加",
-    "company": "Monica/Manus AI",
-    "category": "agent",
-    "importance": "medium",
-    "publishedAt": "2026-06-21",
-    "summary": "エージェントの実行過程を可視化するダッシュボードが公開された。",
-    "impact": "導入時の説明責任確保に有用。",
-    "sourceType": "official",
-    "sourceUrl": "https://manus.im",
-    "status": "verified",
-    "sourceCheckedAt": "2026-06-21"
-  },
-  {
-    "id": "n-018",
-    "title": "DeepSeek、APIの応答速度を改善",
-    "company": "DeepSeek",
-    "category": "model",
-    "importance": "low",
-    "publishedAt": "2026-06-15",
-    "summary": "推論の高速化により応答速度が改善された。",
-    "impact": "コストパフォーマンス比較の再検証対象。",
-    "sourceType": "media",
-    "sourceUrl": "https://deepseek.com",
-    "status": "draft",
-    "sourceCheckedAt": "2026-06-15"
-  },
-  {
-    "id": "n-019",
-    "title": "Kling AI、日本向けサービスを正式開始",
-    "company": "Kuaishou",
-    "category": "video",
-    "importance": "medium",
-    "publishedAt": "2026-06-19",
-    "summary": "日本語UIと国内決済に対応したサービスが正式開始された。",
-    "impact": "国内向け動画制作での選択肢が増加。",
-    "sourceType": "official",
-    "sourceUrl": "https://klingai.com",
-    "status": "verified",
-    "sourceCheckedAt": "2026-06-19"
-  },
-  {
-    "id": "n-020",
-    "title": "Zapier AI Agents、日本語対応を拡充",
-    "company": "Zapier",
-    "category": "agent",
-    "importance": "medium",
-    "publishedAt": "2026-07-06",
-    "summary": "エージェント設定画面と応答の日本語対応が拡充された。",
-    "impact": "ノーコード自動化の社内展開がしやすくなった。",
-    "sourceType": "official",
-    "sourceUrl": "https://zapier.com",
-    "status": "verified",
-    "sourceCheckedAt": "2026-07-06"
-  },
-  {
-    "id": "n-021",
-    "title": "NotebookLM、音声解説の話者数を拡張",
-    "company": "Google",
-    "category": "audio",
-    "importance": "low",
-    "publishedAt": "2026-07-04",
-    "summary": "音声解説機能で選択できる話者のバリエーションが増加した。",
-    "impact": "社内資料の音声化用途で選択肢が拡大。",
-    "sourceType": "official",
-    "sourceUrl": "https://notebooklm.google",
-    "status": "verified",
-    "sourceCheckedAt": "2026-07-04"
-  },
-  {
-    "id": "n-022",
-    "title": "Windsurf、チームプランを刷新",
-    "company": "Codeium",
+    "id": "news-2025-05-19-002",
+    "title": "GitHubがCopilot coding agentを発表",
+    "company": "GitHub",
     "category": "coding",
-    "importance": "low",
-    "publishedAt": "2026-06-25",
-    "summary": "チーム向けプランの価格体系が見直された。",
-    "impact": "複数名導入時のコスト試算に反映。",
+    "importance": "high",
+    "publishedAt": "2025-05-19",
+    "summary": "GitHubはissueを起点に実装作業を進めるCopilot coding agentを発表した。",
+    "impact": "PR作成、レビュー、CI確認を含む開発プロセスの再設計対象になる。",
     "sourceType": "official",
-    "sourceUrl": "https://windsurf.com",
+    "sourceUrl": "https://github.blog/news-insights/product-news/github-copilot-meet-the-new-coding-agent/",
+    "sourceCheckedAt": "2026-07-21",
+    "verifiedAt": "2026-07-21",
     "status": "verified",
-    "sourceCheckedAt": "2026-06-25"
+    "dataQuality": "verified",
+    "verifiedBy": "CANAE/Codex",
+    "changeLog": [
+      {
+        "date": "2026-07-21",
+        "type": "verified",
+        "summary": "v1.1.0初期実データ投入として公式一次情報を確認。",
+        "actor": "CANAE/Codex"
+      }
+    ]
   },
   {
-    "id": "n-023",
-    "title": "Leonardo AI、リアルタイム生成モードを追加",
-    "company": "Leonardo Interactive",
-    "category": "image",
-    "importance": "low",
-    "publishedAt": "2026-06-08",
-    "summary": "プロンプト入力と同時に結果が更新されるモードが追加された。",
-    "impact": "デザイン初期案出しの高速化に寄与する可能性。",
-    "sourceType": "media",
-    "sourceUrl": "https://leonardo.ai",
-    "status": "draft",
-    "sourceCheckedAt": "2026-06-08"
+    "id": "news-2025-04-17-001",
+    "title": "GoogleがGemini 2.5 Flash previewをAPIで提供開始",
+    "company": "Google",
+    "category": "model",
+    "importance": "medium",
+    "publishedAt": "2025-04-17",
+    "summary": "GoogleはGemini 2.5 Flash previewをGemini APIで利用可能にした。",
+    "impact": "速度とコストを重視する業務用途で再評価が必要になる。",
+    "sourceType": "official",
+    "sourceUrl": "https://developers.googleblog.com/en/start-building-with-gemini-25-flash/",
+    "sourceCheckedAt": "2026-07-21",
+    "verifiedAt": "2026-07-21",
+    "status": "verified",
+    "dataQuality": "verified",
+    "verifiedBy": "CANAE/Codex",
+    "changeLog": [
+      {
+        "date": "2026-07-21",
+        "type": "verified",
+        "summary": "v1.1.0初期実データ投入として公式一次情報を確認。",
+        "actor": "CANAE/Codex"
+      }
+    ]
   },
   {
-    "id": "n-024",
-    "title": "Dify、MCPサーバー対応を追加",
-    "company": "LangGenius",
+    "id": "news-2025-04-16-001",
+    "title": "OpenAIがo3とo4-miniを発表",
+    "company": "OpenAI",
+    "category": "model",
+    "importance": "high",
+    "publishedAt": "2025-04-16",
+    "summary": "OpenAIは推論モデルo3とo4-miniを発表した。",
+    "impact": "推論性能を重視する分析、設計、コードレビュー用途の評価軸を更新する必要がある。",
+    "sourceType": "official",
+    "sourceUrl": "https://openai.com/index/introducing-o3-and-o4-mini/",
+    "sourceCheckedAt": "2026-07-21",
+    "verifiedAt": "2026-07-21",
+    "status": "verified",
+    "dataQuality": "verified",
+    "verifiedBy": "CANAE/Codex",
+    "changeLog": [
+      {
+        "date": "2026-07-21",
+        "type": "verified",
+        "summary": "v1.1.0初期実データ投入として公式一次情報を確認。",
+        "actor": "CANAE/Codex"
+      }
+    ]
+  },
+  {
+    "id": "news-2025-04-15-001",
+    "title": "AnthropicがClaude ResearchとGoogle Workspace連携を発表",
+    "company": "Anthropic",
+    "category": "model",
+    "importance": "medium",
+    "publishedAt": "2025-04-15",
+    "summary": "AnthropicはClaude Research機能とGoogle Workspace連携を発表した。",
+    "impact": "調査業務や社内ドキュメント活用で、情報源管理と権限設計の確認が必要になる。",
+    "sourceType": "official",
+    "sourceUrl": "https://www.anthropic.com/news/research",
+    "sourceCheckedAt": "2026-07-21",
+    "verifiedAt": "2026-07-21",
+    "status": "verified",
+    "dataQuality": "verified",
+    "verifiedBy": "CANAE/Codex",
+    "changeLog": [
+      {
+        "date": "2026-07-21",
+        "type": "verified",
+        "summary": "v1.1.0初期実データ投入として公式一次情報を確認。",
+        "actor": "CANAE/Codex"
+      }
+    ]
+  },
+  {
+    "id": "news-2025-04-14-001",
+    "title": "OpenAIがGPT-4.1をAPI向けに発表",
+    "company": "OpenAI",
+    "category": "model",
+    "importance": "high",
+    "publishedAt": "2025-04-14",
+    "summary": "OpenAIはAPI向けにGPT-4.1、GPT-4.1 mini、GPT-4.1 nanoを発表した。",
+    "impact": "コーディング、長文処理、APIコスト比較の基準を更新する必要がある。",
+    "sourceType": "official",
+    "sourceUrl": "https://openai.com/index/gpt-4-1/",
+    "sourceCheckedAt": "2026-07-21",
+    "verifiedAt": "2026-07-21",
+    "status": "verified",
+    "dataQuality": "verified",
+    "verifiedBy": "CANAE/Codex",
+    "changeLog": [
+      {
+        "date": "2026-07-21",
+        "type": "verified",
+        "summary": "v1.1.0初期実データ投入として公式一次情報を確認。",
+        "actor": "CANAE/Codex"
+      }
+    ]
+  },
+  {
+    "id": "news-2025-03-25-001",
+    "title": "GoogleがGemini 2.5 Pro Experimentalを発表",
+    "company": "Google",
+    "category": "model",
+    "importance": "high",
+    "publishedAt": "2025-03-25",
+    "summary": "GoogleはGemini 2.5 Pro Experimentalを発表した。",
+    "impact": "推論、長文処理、マルチモーダル性能の比較軸を更新する必要がある。",
+    "sourceType": "official",
+    "sourceUrl": "https://blog.google/innovation-and-ai/models-and-research/google-deepmind/gemini-model-thinking-updates-march-2025/",
+    "sourceCheckedAt": "2026-07-21",
+    "verifiedAt": "2026-07-21",
+    "status": "verified",
+    "dataQuality": "verified",
+    "verifiedBy": "CANAE/Codex",
+    "changeLog": [
+      {
+        "date": "2026-07-21",
+        "type": "verified",
+        "summary": "v1.1.0初期実データ投入として公式一次情報を確認。",
+        "actor": "CANAE/Codex"
+      }
+    ]
+  },
+  {
+    "id": "news-2025-03-20-001",
+    "title": "AnthropicがClaudeのWeb検索機能を発表",
+    "company": "Anthropic",
+    "category": "model",
+    "importance": "medium",
+    "publishedAt": "2025-03-20",
+    "summary": "AnthropicはClaudeでWeb検索機能を利用可能にした。",
+    "impact": "調査業務での出典確認と引用精度を評価する必要がある。",
+    "sourceType": "official",
+    "sourceUrl": "https://www.anthropic.com/news/web-search",
+    "sourceCheckedAt": "2026-07-21",
+    "verifiedAt": "2026-07-21",
+    "status": "verified",
+    "dataQuality": "verified",
+    "verifiedBy": "CANAE/Codex",
+    "changeLog": [
+      {
+        "date": "2026-07-21",
+        "type": "verified",
+        "summary": "v1.1.0初期実データ投入として公式一次情報を確認。",
+        "actor": "CANAE/Codex"
+      }
+    ]
+  },
+  {
+    "id": "news-2025-03-11-001",
+    "title": "OpenAIがResponses APIとAgents SDKを発表",
+    "company": "OpenAI",
     "category": "agent",
     "importance": "high",
-    "publishedAt": "2026-06-16",
-    "summary": "MCPプロトコルに対応し、外部ツール連携が容易になった。",
-    "impact": "社内ツールとの統合コストが下がる見込み。",
+    "publishedAt": "2025-03-11",
+    "summary": "OpenAIはエージェント構築向けのResponses APIとAgents SDKを発表した。",
+    "impact": "自動化、ツール連携、業務エージェント構築の技術基盤として検証が必要。",
     "sourceType": "official",
-    "sourceUrl": "https://dify.ai",
+    "sourceUrl": "https://openai.com/index/new-tools-for-building-agents/",
+    "sourceCheckedAt": "2026-07-21",
+    "verifiedAt": "2026-07-21",
     "status": "verified",
-    "sourceCheckedAt": "2026-06-16"
+    "dataQuality": "verified",
+    "verifiedBy": "CANAE/Codex",
+    "changeLog": [
+      {
+        "date": "2026-07-21",
+        "type": "verified",
+        "summary": "v1.1.0初期実データ投入として公式一次情報を確認。",
+        "actor": "CANAE/Codex"
+      }
+    ]
   }
 ]

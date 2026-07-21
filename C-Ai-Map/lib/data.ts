@@ -5,12 +5,14 @@ import companiesRaw from "@/data/companies.json";
 import type { Genre, Tool, NewsItem, CompanyNode, GenreId } from "./types";
 
 export const genres = genresRaw as Genre[];
-export const tools = toolsRaw as Tool[];
-export const news = newsRaw as NewsItem[];
+export const allTools = toolsRaw as Tool[];
+export const tools = allTools.filter((t) => (t.dataStatus ?? "verified") === "verified");
+export const allNews = newsRaw as NewsItem[];
+export const news = allNews;
 export const companies = companiesRaw as CompanyNode[];
 
-export const verifiedNews = news.filter((n) => n.status === "verified");
-export const activeNews = news.filter((n) => n.status !== "archived");
+export const verifiedNews = allNews.filter((n) => n.status === "verified");
+export const activeNews = allNews.filter((n) => n.status !== "archived");
 
 export function getGenre(id: string): Genre | undefined {
   return genres.find((g) => g.id === id);
@@ -27,7 +29,22 @@ export function getNewsByGenre(id: GenreId): NewsItem[] {
 }
 
 export function getCompaniesByGenre(id: GenreId): CompanyNode[] {
-  return companies.filter((c) => c.category === id);
+  const visibleToolIds = new Set(tools.map((tool) => tool.id));
+
+  return companies
+    .filter((c) => c.category === id)
+    .map((company) => ({
+      ...company,
+      children: company.children
+        ?.map((model) => ({
+          ...model,
+          children: model.children?.filter(
+            (product) => !product.toolId || visibleToolIds.has(product.toolId)
+          ),
+        }))
+        .filter((model) => (model.children?.length ?? 0) > 0),
+    }))
+    .filter((company) => (company.children?.length ?? 0) > 0);
 }
 
 export function getRecentNews(days: number = 7): NewsItem[] {
