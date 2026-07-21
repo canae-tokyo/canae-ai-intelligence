@@ -9,8 +9,10 @@
     "lint": "next lint",
     "validate:data": "node scripts/validate-data.mjs",
     "validate:collection": "node scripts/validate-collection.mjs",
+    "validate:candidates": "node scripts/validate-candidate-report.mjs",
     "collection:dry-run": "node scripts/collection-dry-run.mjs",
-    "external-fetch:dry-run": "node scripts/external-fetch-dry-run.mjs"
+    "external-fetch:dry-run": "node scripts/external-fetch-dry-run.mjs",
+    "candidate:generate": "node scripts/candidate-generation.mjs"
   },
   "dependencies": {
     "next": "14.2.35",
