@@ -19,6 +19,7 @@ const candidateTypes = new Set(["news", "tool", "benchmark", "evaluation"]);
 const suggestedStatuses = new Set(["draft"]);
 const duplicateStatuses = new Set(["clear", "possible", "duplicate"]);
 const reviewStatuses = new Set(["pending", "reviewing", "accepted", "rejected"]);
+const promotedRecordTypes = new Set(["news", "tool", "benchmark", "evaluation"]);
 
 function assert(condition, message) {
   if (!condition) errors.push(message);
@@ -46,6 +47,14 @@ function assertUrl(value, label) {
   }
 }
 
+function assertNullableIsoDate(value, label) {
+  assert(value === null || isoDate.test(value), `${label} must be null or YYYY-MM-DD`);
+}
+
+function assertNullableString(value, label) {
+  assert(value === null || typeof value === "string", `${label} must be null or string`);
+}
+
 assertUnique(sources, (source) => source.id, "collection source id");
 assertUnique(candidates, (candidate) => candidate.id, "update candidate id");
 
@@ -68,17 +77,43 @@ for (const candidate of candidates) {
   assertRequiredString(candidate.sourceId, `candidate sourceId ${candidate.id}`);
   assertRequiredString(candidate.title, `candidate title ${candidate.id}`);
   assertRequiredString(candidate.sourceUrl, `candidate sourceUrl ${candidate.id}`);
+  assertRequiredString(candidate.canonicalUrl, `candidate canonicalUrl ${candidate.id}`);
   assertRequiredString(candidate.detectedAt, `candidate detectedAt ${candidate.id}`);
   assertRequiredString(candidate.diffSummary, `candidate diffSummary ${candidate.id}`);
   assert(sourceIds.has(candidate.sourceId), `candidate sourceId not found: ${candidate.id}`);
   assertUrl(candidate.sourceUrl, `candidate sourceUrl ${candidate.id}`);
+  assertUrl(candidate.canonicalUrl, `candidate canonicalUrl ${candidate.id}`);
   assert(isoDate.test(candidate.detectedAt), `candidate detectedAt must be YYYY-MM-DD: ${candidate.id}`);
+  assertNullableIsoDate(candidate.sourcePublishedAt, `candidate sourcePublishedAt ${candidate.id}`);
   assert(candidateTypes.has(candidate.candidateType), `candidateType is invalid: ${candidate.id}`);
   assert(suggestedStatuses.has(candidate.suggestedStatus), `suggestedStatus must remain draft: ${candidate.id}`);
   assert(candidate.suggestedStatus !== "verified", `candidate must not auto-promote to verified: ${candidate.id}`);
   assert(candidate.duplicateCheck && duplicateStatuses.has(candidate.duplicateCheck.status), `duplicateCheck.status is invalid: ${candidate.id}`);
   assert(Array.isArray(candidate.duplicateCheck?.matchedIds), `duplicateCheck.matchedIds must be an array: ${candidate.id}`);
+  if (candidate.duplicateCheck?.status === "duplicate") {
+    assert(candidate.duplicateCheck.matchedIds.length > 0, `duplicate candidate must include matchedIds: ${candidate.id}`);
+  }
+  if (candidate.duplicateCheck?.status === "clear") {
+    assert(candidate.duplicateCheck.matchedIds.length === 0, `clear candidate must not include matchedIds: ${candidate.id}`);
+  }
   assert(reviewStatuses.has(candidate.reviewStatus), `reviewStatus is invalid: ${candidate.id}`);
+  assertNullableIsoDate(candidate.reviewedAt, `candidate reviewedAt ${candidate.id}`);
+  assertNullableString(candidate.reviewedBy, `candidate reviewedBy ${candidate.id}`);
+  if (candidate.reviewStatus === "accepted" || candidate.reviewStatus === "rejected") {
+    assert(candidate.reviewedAt !== null, `reviewedAt is required when review is complete: ${candidate.id}`);
+    assert(typeof candidate.reviewedBy === "string" && candidate.reviewedBy.trim().length > 0, `reviewedBy is required when review is complete: ${candidate.id}`);
+  }
+  if (candidate.reviewStatus === "pending") {
+    assert(candidate.reviewedAt === null, `pending candidate reviewedAt must be null: ${candidate.id}`);
+    assert(candidate.reviewedBy === null, `pending candidate reviewedBy must be null: ${candidate.id}`);
+  }
+  assert(candidate.promotedRecordType === null || promotedRecordTypes.has(candidate.promotedRecordType), `promotedRecordType is invalid: ${candidate.id}`);
+  assertNullableString(candidate.promotedRecordId, `candidate promotedRecordId ${candidate.id}`);
+  assertNullableIsoDate(candidate.promotedAt, `candidate promotedAt ${candidate.id}`);
+  if (candidate.promotedRecordType === null) {
+    assert(candidate.promotedRecordId === null, `promotedRecordId must be null without promotedRecordType: ${candidate.id}`);
+    assert(candidate.promotedAt === null, `promotedAt must be null without promotedRecordType: ${candidate.id}`);
+  }
 }
 
 if (errors.length > 0) {
