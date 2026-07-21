@@ -33,6 +33,10 @@
 - GitHub Actions CIとGitHub Pages deploymentの成功を確認。
 - 本番URL `/`、`/news`、`/genre/coding`、404応答を確認。
 - `noindex`と`X-Robots-Tag: noindex, nofollow`の維持を確認。
+- Candidate Generation Foundationとして、`npm run candidate:generate`と`npm run validate:candidates`を追加。
+- `source-github-changelog`の200取得結果のみを対象に、HTMLから候補ニュースを抽出し、`reports/candidate-generation-report.local.json`へ保存する構造を追加。
+- 候補生成はレポート出力までとし、`update-candidates.json`や正本データへの書き込みは行わない。
+- 要約未生成を`summary: null`、`summarySource: none`、`summaryGenerated: false`として記録し、fixtureとregex抽出の前提を文書化。
 
 ## v1.1.1 - 2026-07-21
 

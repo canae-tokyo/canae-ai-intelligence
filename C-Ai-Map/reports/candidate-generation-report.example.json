@@ -1,0 +1,128 @@
+{
+  "reportType": "candidate-generation-foundation",
+  "reportVersion": "1.0",
+  "generatedAt": "2026-07-22",
+  "executionStatus": "completed",
+  "generator": {
+    "script": "scripts/candidate-generation.mjs",
+    "version": "1.0"
+  },
+  "fixture": {
+    "type": "minimal-html-fixture",
+    "fullSourceHtml": false,
+    "domStabilityVerified": false
+  },
+  "extractionAssumptions": {
+    "parser": "regex",
+    "articleBoundaryRequired": false,
+    "canonicalIdentityField": "canonicalUrl",
+    "candidateIdRole": "internal-report-id",
+    "duplicateDetectionStatus": "not-run"
+  },
+  "input": {
+    "fetchReportFile": "reports/external-fetch-report.example.json",
+    "htmlInputFile": "reports/external-fetch-github-changelog.example.html",
+    "sourceId": "source-github-changelog",
+    "sourceStatus": 200,
+    "sourceFinalUrl": "https://github.blog/changelog/"
+  },
+  "mode": "report-only-candidate-generation",
+  "writes": {
+    "canonicalData": false,
+    "updateCandidates": false
+  },
+  "options": {
+    "maxCandidates": 10
+  },
+  "summary": {
+    "candidates": 3,
+    "duplicateCanonicalUrls": 0,
+    "candidatesWithMissingFields": 0,
+    "extractionIssues": 0,
+    "skippedDuplicateCanonicalUrls": 0
+  },
+  "excludedSources": [
+    {
+      "sourceId": "source-openai-news",
+      "status": 403,
+      "statusClass": "client-error",
+      "ok": false,
+      "reason": "not-eligible-fetch-result"
+    }
+  ],
+  "candidates": [
+    {
+      "id": "candidate-news-github-changelog-2026-07-21-gemini-3-6-flash-is-now-available-in-github-copilot",
+      "sourceId": "source-github-changelog",
+      "candidateType": "news",
+      "title": "Gemini 3.6 Flash is now available in GitHub Copilot",
+      "sourceUrl": "https://github.blog/changelog/2026-07-21-gemini-3-6-flash-is-now-available-in-github-copilot",
+      "canonicalUrl": "https://github.blog/changelog/2026-07-21-gemini-3-6-flash-is-now-available-in-github-copilot",
+      "sourcePublishedAt": "2026-07-21",
+      "detectedAt": "2026-07-22",
+      "summary": null,
+      "summarySource": "none",
+      "summaryGenerated": false,
+      "diffSummary": "Candidate generated from GitHub Changelog HTML. No canonical data was changed.",
+      "reviewStatus": "pending",
+      "suggestedStatus": "draft",
+      "duplicateCheck": {
+        "status": "not-run",
+        "matchedIds": []
+      },
+      "promotedRecordType": null,
+      "promotedRecordId": null,
+      "promotedAt": null,
+      "missingFields": []
+    },
+    {
+      "id": "candidate-news-github-changelog-2026-07-20-ai-credit-pools-for-cost-centers-in-the-billing-ui",
+      "sourceId": "source-github-changelog",
+      "candidateType": "news",
+      "title": "AI credit pools for cost centers in the billing UI",
+      "sourceUrl": "https://github.blog/changelog/2026-07-20-ai-credit-pools-for-cost-centers-in-the-billing-ui",
+      "canonicalUrl": "https://github.blog/changelog/2026-07-20-ai-credit-pools-for-cost-centers-in-the-billing-ui",
+      "sourcePublishedAt": "2026-07-20",
+      "detectedAt": "2026-07-22",
+      "summary": null,
+      "summarySource": "none",
+      "summaryGenerated": false,
+      "diffSummary": "Candidate generated from GitHub Changelog HTML. No canonical data was changed.",
+      "reviewStatus": "pending",
+      "suggestedStatus": "draft",
+      "duplicateCheck": {
+        "status": "not-run",
+        "matchedIds": []
+      },
+      "promotedRecordType": null,
+      "promotedRecordId": null,
+      "promotedAt": null,
+      "missingFields": []
+    },
+    {
+      "id": "candidate-news-github-changelog-2026-07-20-copilot-users-can-now-see-ai-credits-used-per-billing-cycle",
+      "sourceId": "source-github-changelog",
+      "candidateType": "news",
+      "title": "Copilot users can now see AI credits used per billing cycle",
+      "sourceUrl": "https://github.blog/changelog/2026-07-20-copilot-users-can-now-see-ai-credits-used-per-billing-cycle",
+      "canonicalUrl": "https://github.blog/changelog/2026-07-20-copilot-users-can-now-see-ai-credits-used-per-billing-cycle",
+      "sourcePublishedAt": "2026-07-20",
+      "detectedAt": "2026-07-22",
+      "summary": null,
+      "summarySource": "none",
+      "summaryGenerated": false,
+      "diffSummary": "Candidate generated from GitHub Changelog HTML. No canonical data was changed.",
+      "reviewStatus": "pending",
+      "suggestedStatus": "draft",
+      "duplicateCheck": {
+        "status": "not-run",
+        "matchedIds": []
+      },
+      "promotedRecordType": null,
+      "promotedRecordId": null,
+      "promotedAt": null,
+      "missingFields": []
+    }
+  ],
+  "extractionIssues": []
+}
