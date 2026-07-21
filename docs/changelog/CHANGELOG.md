@@ -2,6 +2,11 @@
 
 ## v1.1.1 - 2026-07-21
 
+- PR #5をSquash Mergeし、v1.1.1 Benchmark & Evaluation SeparationをProductionへ反映。
+- Merge Commit `8f1e94821fe7577d8f761256b74a9319c9d1fb41` を確認。
+- GitHub Actions CI、GitHub Pages deployment、Cloudflare Workers Buildsの成功を確認。
+- 本番URL `/`、`/genre/coding`、404応答を確認。
+- 本番HTMLで`SWE-bench Verified`の新データ参照、旧`tools.json`フォールバック表示、`noindex`維持を確認。
 - v1.1.1 Benchmark & Evaluation Separationを開始。
 - `benchmarks.json`を追加し、公開ベンチマークを結果単位で管理する構造を追加。
 - `canae-evaluations.json`を追加し、CANAE実務評価を独立管理する構造を追加。
