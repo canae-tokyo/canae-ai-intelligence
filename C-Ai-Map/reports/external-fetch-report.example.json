@@ -1,0 +1,76 @@
+{
+  "reportType": "external-fetch-foundation",
+  "reportVersion": "1.0",
+  "generatedAt": "2026-07-21",
+  "generator": {
+    "script": "scripts/external-fetch-dry-run.mjs",
+    "version": "1.0"
+  },
+  "input": {
+    "sourceFile": "data/collection-sources.json",
+    "requestedSourceIds": [
+      "source-openai-news",
+      "source-github-changelog"
+    ],
+    "selectedSourceCount": 2
+  },
+  "mode": "read-only-fetch",
+  "externalNetwork": true,
+  "writes": {
+    "canonicalData": false,
+    "updateCandidates": false
+  },
+  "options": {
+    "timeoutMs": 10000,
+    "maxBytes": 250000
+  },
+  "summary": {
+    "selectedSources": 2,
+    "ok": 1,
+    "failed": 1,
+    "redirected": 0,
+    "rateLimited": 0,
+    "notFound": 0,
+    "timedOut": 0
+  },
+  "results": [
+    {
+      "sourceId": "source-openai-news",
+      "name": "OpenAI News",
+      "company": "OpenAI",
+      "sourceType": "official-blog",
+      "requestedUrl": "https://openai.com/news/",
+      "finalUrl": "https://openai.com/news/",
+      "redirected": false,
+      "status": 403,
+      "statusText": "Forbidden",
+      "statusClass": "client-error",
+      "ok": false,
+      "contentType": "text/html; charset=UTF-8",
+      "contentLengthHeader": null,
+      "sizeBytes": 9865,
+      "truncatedByLimit": false,
+      "durationMs": 80,
+      "error": null
+    },
+    {
+      "sourceId": "source-github-changelog",
+      "name": "GitHub Changelog",
+      "company": "GitHub",
+      "sourceType": "official-changelog",
+      "requestedUrl": "https://github.blog/changelog/",
+      "finalUrl": "https://github.blog/changelog/",
+      "redirected": false,
+      "status": 200,
+      "statusText": "OK",
+      "statusClass": "ok",
+      "ok": true,
+      "contentType": "text/html; charset=UTF-8",
+      "contentLengthHeader": null,
+      "sizeBytes": 210008,
+      "truncatedByLimit": false,
+      "durationMs": 56,
+      "error": null
+    }
+  ]
+}

@@ -23,6 +23,9 @@
 - GitHub Actions CIとGitHub Pages deploymentの成功を確認。
 - 本番URL `/`、`/news`、`/genre/coding`、404応答を確認。
 - `noindex`と`X-Robots-Tag: noindex, nofollow`の維持を確認。
+- External Fetch Foundationとして、`npm run external-fetch:dry-run`を追加。
+- `source-openai-news`と`source-github-changelog`の2件に限定し、外部取得結果を`reports/external-fetch-report.local.json`へ保存する構造を追加。
+- `update-candidates.json`、`news.json`、`tools.json`、`benchmarks.json`、`canae-evaluations.json`への書き込みは行わない。
 
 ## v1.1.1 - 2026-07-21
 
