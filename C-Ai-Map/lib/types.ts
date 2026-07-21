@@ -28,6 +28,75 @@ export interface BenchmarkMetadata {
   notes?: string;
 }
 
+export type BenchmarkSourceType = "official" | "third-party" | "legacy";
+export type ScoreUnit = "percent" | "score" | "rank" | "points";
+
+export interface BenchmarkRecord {
+  id: string;
+  toolId: string;
+  benchmarkName: string;
+  benchmarkVersion: string;
+  score?: number | null;
+  scoreUnit?: ScoreUnit;
+  rank?: number | null;
+  scope: string;
+  sourceUrl: string;
+  sourceType: BenchmarkSourceType;
+  verifiedAt: string;
+  comparability: string;
+  dataStatus: DataStatus;
+  dataQuality?: DataQuality;
+  notes?: string;
+  changeLog: DataChange[];
+}
+
+export interface BenchmarkSummary {
+  source: "benchmarks" | "tools-fallback" | "unset";
+  benchmarkName: string;
+  score?: number | null;
+  scoreUnit?: ScoreUnit;
+  rank?: number | null;
+  sourceUrl?: string;
+  sourceType?: BenchmarkSourceType;
+  checkedAt?: string;
+  comparability?: string;
+  notes?: string;
+}
+
+export type CanaeReviewStatus = "draft" | "review" | "approved" | "archived";
+
+export interface CanaeEvaluationRecord {
+  id: string;
+  toolId: string;
+  evaluationVersion: string;
+  overallGrade: "S" | "A" | "B" | "C";
+  scores: {
+    quality: number;
+    speed: number;
+    usability: number;
+    costEfficiency: number;
+    businessFit: number;
+  };
+  useCase: string;
+  evidence: string;
+  evaluatedAt: string;
+  evaluatedBy: string;
+  reviewStatus: CanaeReviewStatus;
+  notes?: string;
+  changeLog: DataChange[];
+}
+
+export interface CanaeEvaluationSummary {
+  source: "canae-evaluations" | "tools-fallback" | "unset";
+  overallGrade: "S" | "A" | "B" | "C";
+  evaluatedAt?: string;
+  evaluatedBy?: string;
+  reviewStatus?: CanaeReviewStatus;
+  useCase?: string;
+  evidence?: string;
+  notes?: string;
+}
+
 export interface Genre {
   id: GenreId;
   label: string;

@@ -1,0 +1,83 @@
+[
+  {
+    "id": "canae-eval-model-claude-2026-001",
+    "toolId": "model-claude",
+    "evaluationVersion": "1.0",
+    "overallGrade": "S",
+    "scores": {
+      "quality": 5,
+      "speed": 4,
+      "usability": 5,
+      "costEfficiency": 3,
+      "businessFit": 5
+    },
+    "useCase": "Business writing, research, web production support, and structured reasoning",
+    "evidence": "CANAE v1.1.0 internalGrade baseline; detailed scenario evidence to be expanded in v1.1.1.",
+    "evaluatedAt": "2026-07-21",
+    "evaluatedBy": "CANAE",
+    "reviewStatus": "approved",
+    "notes": "Initial separated CANAE evaluation record. Existing tools.json grade remains as fallback.",
+    "changeLog": [
+      {
+        "date": "2026-07-21",
+        "type": "created",
+        "summary": "Created initial CANAE evaluation record for separated evaluation management.",
+        "actor": "Codex"
+      }
+    ]
+  },
+  {
+    "id": "canae-eval-coding-claudecode-2026-001",
+    "toolId": "coding-claudecode",
+    "evaluationVersion": "1.0",
+    "overallGrade": "S",
+    "scores": {
+      "quality": 5,
+      "speed": 4,
+      "usability": 4,
+      "costEfficiency": 3,
+      "businessFit": 5
+    },
+    "useCase": "Web development and repository maintenance",
+    "evidence": "CANAE v1.1.0 internalGrade baseline; detailed scenario evidence to be expanded in v1.1.1.",
+    "evaluatedAt": "2026-07-21",
+    "evaluatedBy": "CANAE",
+    "reviewStatus": "approved",
+    "notes": "Initial separated CANAE evaluation record. Existing tools.json grade remains as fallback.",
+    "changeLog": [
+      {
+        "date": "2026-07-21",
+        "type": "created",
+        "summary": "Created initial CANAE evaluation record for separated evaluation management.",
+        "actor": "Codex"
+      }
+    ]
+  },
+  {
+    "id": "canae-eval-image-gpt-image-2026-001",
+    "toolId": "image-dalle",
+    "evaluationVersion": "1.0",
+    "overallGrade": "A",
+    "scores": {
+      "quality": 4,
+      "speed": 4,
+      "usability": 4,
+      "costEfficiency": 3,
+      "businessFit": 4
+    },
+    "useCase": "Marketing image generation and web content support",
+    "evidence": "CANAE v1.1.0 internalGrade baseline; detailed scenario evidence to be expanded in v1.1.1.",
+    "evaluatedAt": "2026-07-21",
+    "evaluatedBy": "CANAE",
+    "reviewStatus": "approved",
+    "notes": "Initial separated CANAE evaluation record. Existing tools.json grade remains as fallback.",
+    "changeLog": [
+      {
+        "date": "2026-07-21",
+        "type": "created",
+        "summary": "Created initial CANAE evaluation record for separated evaluation management.",
+        "actor": "Codex"
+      }
+    ]
+  }
+]

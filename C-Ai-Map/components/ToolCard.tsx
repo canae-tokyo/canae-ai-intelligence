@@ -1,8 +1,11 @@
 import type { Tool } from "@/lib/types";
+import { getCanaeEvaluationForTool, getPrimaryBenchmarkForTool } from "@/lib/data";
 
 export default function ToolCard({ tool }: { tool: Tool }) {
-  const benchmarkSource = tool.benchmarkSource ?? "サンプル値（未検証）";
-  const benchmarkCheckedAt = tool.benchmarkCheckedAt ?? tool.lastUpdated;
+  const benchmark = getPrimaryBenchmarkForTool(tool);
+  const evaluation = getCanaeEvaluationForTool(tool);
+  const benchmarkSource = benchmark.benchmarkName;
+  const benchmarkCheckedAt = benchmark.checkedAt ?? tool.lastUpdated;
   const qualityLabel =
     tool.dataQuality === "partial" ? "一部実データ" : tool.dataQuality === "verified" ? "実データ" : "サンプル";
 
@@ -11,7 +14,7 @@ export default function ToolCard({ tool }: { tool: Tool }) {
       <div className="mb-1 flex items-start justify-between gap-2">
         <h3 className="break-words text-base font-semibold text-ink sm:text-sm">{tool.name}</h3>
         <span className="shrink-0 rounded border border-base-border px-1.5 py-0.5 text-[11px] text-ink-muted">
-          {tool.internalGrade}評価
+          {evaluation.overallGrade}評価
         </span>
         <span className="shrink-0 rounded border border-signal-update/30 px-1.5 py-0.5 text-[11px] text-signal-update">
           {qualityLabel}
@@ -35,6 +38,7 @@ export default function ToolCard({ tool }: { tool: Tool }) {
       </div>
       <p className="mt-2 text-[11px] text-ink-muted">
         公開Bmk：{benchmarkSource} / 確認日：{benchmarkCheckedAt}
+        {benchmark.source === "tools-fallback" ? " / fallback" : ""}
       </p>
       {tool.dataQuality === "partial" && (
         <p className="mt-1 text-[11px] text-signal-update">

@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## v1.1.1 - 2026-07-21
+
+- v1.1.1 Benchmark & Evaluation Separationを開始。
+- `benchmarks.json`を追加し、公開ベンチマークを結果単位で管理する構造を追加。
+- `canae-evaluations.json`を追加し、CANAE実務評価を独立管理する構造を追加。
+- `tools.json`既存フィールドは削除・名称変更・型変更せず、v1.1.x互換性を維持。
+- ランキング、ツールカード、詳細パネルで新データ優先・旧`tools.json`フォールバックの参照へ変更。
+- `npm run validate:data`を追加し、ID、toolId、日付、重複、CANAE評価混在禁止を検証。
+- `15_v1.1.1_ベンチマーク評価分離.md`を追加。
+
 ## v1.1.0 - 2026-07-21
 
 - PR #3をSquash Mergeし、v1.1 Data Quality & Operationsの初期成果をProductionへ反映。
