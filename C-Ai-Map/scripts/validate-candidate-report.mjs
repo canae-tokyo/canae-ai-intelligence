@@ -52,8 +52,24 @@ assert(isoDate.test(report.generatedAt), "generatedAt must be YYYY-MM-DD");
 assert(report.mode === "report-only-candidate-generation", "mode is invalid");
 assert(report.writes?.canonicalData === false, "canonicalData writes must remain false");
 assert(report.writes?.updateCandidates === false, "updateCandidates writes must remain false");
+assert(report.fixture?.fullSourceHtml === false, "example fixture must not be treated as full source HTML");
+assert(report.fixture?.domStabilityVerified === false, "DOM stability must remain unverified in this foundation");
+assert(report.extractionAssumptions?.parser === "regex", "parser assumption must be regex");
+assert(
+  report.extractionAssumptions?.canonicalIdentityField === "canonicalUrl",
+  "canonicalUrl must be the canonical identity field"
+);
+assert(
+  report.extractionAssumptions?.candidateIdRole === "internal-report-id",
+  "candidate ID must remain an internal report identifier"
+);
 assert(report.input?.sourceId === "source-github-changelog", "sourceId must remain source-github-changelog");
 assert(report.input?.sourceStatus === 200, "sourceStatus must be 200");
+assert(report.input?.sourceFinalUrl === "https://github.blog/changelog/", "sourceFinalUrl is invalid");
+assert(
+  Number.isInteger(report.summary?.skippedDuplicateCanonicalUrls),
+  "skippedDuplicateCanonicalUrls must be an integer"
+);
 assert(Array.isArray(report.excludedSources), "excludedSources must be an array");
 assert(
   report.excludedSources.some(
@@ -86,7 +102,9 @@ for (const candidate of report.candidates) {
     `sourcePublishedAt must match GitHub Changelog URL date: ${candidate.id}`
   );
   assert(isoDate.test(candidate.detectedAt), `detectedAt must be YYYY-MM-DD: ${candidate.id}`);
-  assert(candidate.summarySource === "extracted", `summarySource must be extracted: ${candidate.id}`);
+  assert(candidate.summary === null, `summary must remain null: ${candidate.id}`);
+  assert(candidate.summarySource === "none", `summarySource must be none: ${candidate.id}`);
+  assert(candidate.summaryGenerated === false, `summaryGenerated must remain false: ${candidate.id}`);
   assert(candidate.reviewStatus === "pending", `reviewStatus must remain pending: ${candidate.id}`);
   assert(candidate.suggestedStatus === "draft", `suggestedStatus must remain draft: ${candidate.id}`);
   assert(candidate.suggestedStatus !== "verified", `candidate must not auto-promote: ${candidate.id}`);

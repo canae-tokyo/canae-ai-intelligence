@@ -190,12 +190,16 @@ function extractGithubChangelogCandidates(html, source, detectedAt, maxCandidate
   const seen = new Set();
   const candidates = [];
   const extractionIssues = [];
+  let skippedDuplicateCanonicalUrls = 0;
 
   for (const match of html.matchAll(linkPattern)) {
     const canonicalUrl = normalizeUrl(match[1], source.finalUrl);
     if (!canonicalUrl) continue;
     if (!/^https:\/\/github\.blog\/changelog\/\d{4}-\d{2}-\d{2}-/.test(canonicalUrl)) continue;
-    if (seen.has(canonicalUrl)) continue;
+    if (seen.has(canonicalUrl)) {
+      skippedDuplicateCanonicalUrls += 1;
+      continue;
+    }
 
     seen.add(canonicalUrl);
     const start = Math.max(0, match.index - 1200);
@@ -217,8 +221,9 @@ function extractGithubChangelogCandidates(html, source, detectedAt, maxCandidate
       canonicalUrl,
       sourcePublishedAt,
       detectedAt,
-      summary: "",
-      summarySource: "extracted",
+      summary: null,
+      summarySource: "none",
+      summaryGenerated: false,
       diffSummary: "Candidate generated from GitHub Changelog HTML. No canonical data was changed.",
       reviewStatus: "pending",
       suggestedStatus: "draft",
@@ -243,7 +248,7 @@ function extractGithubChangelogCandidates(html, source, detectedAt, maxCandidate
     if (candidates.length >= maxCandidates) break;
   }
 
-  return { candidates, extractionIssues };
+  return { candidates, extractionIssues, skippedDuplicateCanonicalUrls };
 }
 
 function findSourceResult(report, sourceId) {
@@ -270,12 +275,25 @@ if (!sourceResult) fail(`source result not found in input report: ${options.sour
 if (!sourceResult.ok || sourceResult.status !== 200) {
   fail(`source result is not eligible for candidate generation: ${options.sourceId}`);
 }
+if (sourceResult.contentTypeAllowed !== true) {
+  fail(`source result content type is not eligible for candidate generation: ${options.sourceId}`);
+}
+if (sourceResult.finalHost !== "github.blog") {
+  fail(`source result finalHost must be github.blog: ${options.sourceId}`);
+}
+if (sourceResult.finalUrl !== "https://github.blog/changelog/") {
+  fail(`source result finalUrl is not the GitHub Changelog index: ${options.sourceId}`);
+}
 if (sourceResult.truncatedByLimit === true) {
   fail(`source result is truncated and cannot be used for candidate generation: ${options.sourceId}`);
 }
 
 const html = readText(options.htmlInput);
-const { candidates, extractionIssues } = extractGithubChangelogCandidates(
+if (html.trim().length === 0) fail("--html-input must not be empty");
+if (!html.includes("github.blog") || !html.includes("/changelog/")) {
+  fail("--html-input must contain GitHub Changelog links");
+}
+const { candidates, extractionIssues, skippedDuplicateCanonicalUrls } = extractGithubChangelogCandidates(
   html,
   sourceResult,
   options.date,
@@ -293,6 +311,18 @@ const report = {
   generator: {
     script: "scripts/candidate-generation.mjs",
     version: "1.0",
+  },
+  fixture: {
+    type: options.htmlInput.endsWith(".example.html") ? "minimal-html-fixture" : "html-input",
+    fullSourceHtml: false,
+    domStabilityVerified: false,
+  },
+  extractionAssumptions: {
+    parser: "regex",
+    articleBoundaryRequired: false,
+    canonicalIdentityField: "canonicalUrl",
+    candidateIdRole: "internal-report-id",
+    duplicateDetectionStatus: "not-run",
   },
   input: {
     fetchReportFile: options.input,
@@ -315,6 +345,7 @@ const report = {
     candidatesWithMissingFields: candidates.filter((candidate) => candidate.missingFields.length > 0)
       .length,
     extractionIssues: extractionIssues.length,
+    skippedDuplicateCanonicalUrls,
   },
   excludedSources: excludedSources(fetchReport, options.sourceId),
   candidates,

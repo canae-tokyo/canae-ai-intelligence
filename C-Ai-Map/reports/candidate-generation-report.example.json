@@ -7,6 +7,18 @@
     "script": "scripts/candidate-generation.mjs",
     "version": "1.0"
   },
+  "fixture": {
+    "type": "minimal-html-fixture",
+    "fullSourceHtml": false,
+    "domStabilityVerified": false
+  },
+  "extractionAssumptions": {
+    "parser": "regex",
+    "articleBoundaryRequired": false,
+    "canonicalIdentityField": "canonicalUrl",
+    "candidateIdRole": "internal-report-id",
+    "duplicateDetectionStatus": "not-run"
+  },
   "input": {
     "fetchReportFile": "reports/external-fetch-report.example.json",
     "htmlInputFile": "reports/external-fetch-github-changelog.example.html",
@@ -26,7 +38,8 @@
     "candidates": 3,
     "duplicateCanonicalUrls": 0,
     "candidatesWithMissingFields": 0,
-    "extractionIssues": 0
+    "extractionIssues": 0,
+    "skippedDuplicateCanonicalUrls": 0
   },
   "excludedSources": [
     {
@@ -47,8 +60,9 @@
       "canonicalUrl": "https://github.blog/changelog/2026-07-21-gemini-3-6-flash-is-now-available-in-github-copilot",
       "sourcePublishedAt": "2026-07-21",
       "detectedAt": "2026-07-22",
-      "summary": "",
-      "summarySource": "extracted",
+      "summary": null,
+      "summarySource": "none",
+      "summaryGenerated": false,
       "diffSummary": "Candidate generated from GitHub Changelog HTML. No canonical data was changed.",
       "reviewStatus": "pending",
       "suggestedStatus": "draft",
@@ -70,8 +84,9 @@
       "canonicalUrl": "https://github.blog/changelog/2026-07-20-ai-credit-pools-for-cost-centers-in-the-billing-ui",
       "sourcePublishedAt": "2026-07-20",
       "detectedAt": "2026-07-22",
-      "summary": "",
-      "summarySource": "extracted",
+      "summary": null,
+      "summarySource": "none",
+      "summaryGenerated": false,
       "diffSummary": "Candidate generated from GitHub Changelog HTML. No canonical data was changed.",
       "reviewStatus": "pending",
       "suggestedStatus": "draft",
@@ -93,8 +108,9 @@
       "canonicalUrl": "https://github.blog/changelog/2026-07-20-copilot-users-can-now-see-ai-credits-used-per-billing-cycle",
       "sourcePublishedAt": "2026-07-20",
       "detectedAt": "2026-07-22",
-      "summary": "",
-      "summarySource": "extracted",
+      "summary": null,
+      "summarySource": "none",
+      "summaryGenerated": false,
       "diffSummary": "Candidate generated from GitHub Changelog HTML. No canonical data was changed.",
       "reviewStatus": "pending",
       "suggestedStatus": "draft",
