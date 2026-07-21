@@ -12,6 +12,12 @@ const canaeEvaluations = readJson("canae-evaluations.json");
 const errors = [];
 const toolIds = new Set(tools.map((tool) => tool.id));
 const isoDate = /^\d{4}-\d{2}-\d{2}$/;
+const benchmarkStatuses = new Set(["draft", "verified", "archived"]);
+const dataQualities = new Set(["sample", "partial", "verified"]);
+const scoreUnits = new Set(["percent", "score", "rank", "points"]);
+const benchmarkSourceTypes = new Set(["official", "third-party", "legacy"]);
+const grades = new Set(["S", "A", "B", "C"]);
+const reviewStatuses = new Set(["draft", "review", "approved", "archived"]);
 
 function assert(condition, message) {
   if (!condition) errors.push(message);
@@ -35,6 +41,10 @@ function assertUrl(value, label) {
   }
 }
 
+function assertRequiredString(value, label) {
+  assert(typeof value === "string" && value.trim().length > 0, `${label} is required`);
+}
+
 assertUnique(benchmarks, (item) => item.id, "benchmark id");
 assertUnique(
   benchmarks,
@@ -49,9 +59,29 @@ assertUnique(
 );
 
 for (const benchmark of benchmarks) {
+  assertRequiredString(benchmark.id, `benchmark id`);
+  assertRequiredString(benchmark.toolId, `benchmark toolId ${benchmark.id}`);
+  assertRequiredString(benchmark.benchmarkName, `benchmark benchmarkName ${benchmark.id}`);
+  assertRequiredString(benchmark.benchmarkVersion, `benchmark benchmarkVersion ${benchmark.id}`);
+  assertRequiredString(benchmark.scope, `benchmark scope ${benchmark.id}`);
+  assertRequiredString(benchmark.sourceUrl, `benchmark sourceUrl ${benchmark.id}`);
+  assertRequiredString(benchmark.verifiedAt, `benchmark verifiedAt ${benchmark.id}`);
+  assertRequiredString(benchmark.comparability, `benchmark comparability ${benchmark.id}`);
   assert(toolIds.has(benchmark.toolId), `benchmark toolId not found: ${benchmark.id} -> ${benchmark.toolId}`);
   assert(isoDate.test(benchmark.verifiedAt), `benchmark verifiedAt must be YYYY-MM-DD: ${benchmark.id}`);
   assertUrl(benchmark.sourceUrl, `benchmark sourceUrl ${benchmark.id}`);
+  assert(benchmarkStatuses.has(benchmark.dataStatus), `benchmark dataStatus is invalid: ${benchmark.id}`);
+  if (benchmark.dataQuality) {
+    assert(dataQualities.has(benchmark.dataQuality), `benchmark dataQuality is invalid: ${benchmark.id}`);
+  }
+  if (benchmark.score != null) {
+    assert(typeof benchmark.score === "number", `benchmark score must be number or null: ${benchmark.id}`);
+    assert(scoreUnits.has(benchmark.scoreUnit), `benchmark scoreUnit is required when score exists: ${benchmark.id}`);
+  }
+  if (benchmark.rank != null) {
+    assert(Number.isInteger(benchmark.rank) && benchmark.rank > 0, `benchmark rank must be a positive integer or null: ${benchmark.id}`);
+  }
+  assert(benchmarkSourceTypes.has(benchmark.sourceType), `benchmark sourceType is invalid: ${benchmark.id}`);
   assert(
     benchmark.comparability && benchmark.comparability.length >= 20,
     `benchmark comparability note is required: ${benchmark.id}`
@@ -63,8 +93,17 @@ for (const benchmark of benchmarks) {
 }
 
 for (const evaluation of canaeEvaluations) {
+  assertRequiredString(evaluation.id, `canae evaluation id`);
+  assertRequiredString(evaluation.toolId, `canae evaluation toolId ${evaluation.id}`);
+  assertRequiredString(evaluation.evaluationVersion, `canae evaluation evaluationVersion ${evaluation.id}`);
+  assertRequiredString(evaluation.useCase, `canae evaluation useCase ${evaluation.id}`);
+  assertRequiredString(evaluation.evidence, `canae evaluation evidence ${evaluation.id}`);
+  assertRequiredString(evaluation.evaluatedAt, `canae evaluation evaluatedAt ${evaluation.id}`);
+  assertRequiredString(evaluation.evaluatedBy, `canae evaluation evaluatedBy ${evaluation.id}`);
   assert(toolIds.has(evaluation.toolId), `canae evaluation toolId not found: ${evaluation.id} -> ${evaluation.toolId}`);
   assert(isoDate.test(evaluation.evaluatedAt), `canae evaluation evaluatedAt must be YYYY-MM-DD: ${evaluation.id}`);
+  assert(grades.has(evaluation.overallGrade), `canae evaluation overallGrade is invalid: ${evaluation.id}`);
+  assert(reviewStatuses.has(evaluation.reviewStatus), `canae evaluation reviewStatus is invalid: ${evaluation.id}`);
   assert(
     evaluation.evaluatedBy === "CANAE",
     `canae evaluation evaluatedBy must remain CANAE: ${evaluation.id}`
