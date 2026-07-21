@@ -1,0 +1,28 @@
+[
+  {
+    "id": "candidate-news-openai-example-2026-001",
+    "sourceId": "source-openai-news",
+    "candidateType": "news",
+    "title": "Example candidate for v1.1.2 collection design",
+    "sourceUrl": "https://openai.com/news/",
+    "detectedAt": "2026-07-21",
+    "suggestedStatus": "draft",
+    "duplicateCheck": {
+      "status": "clear",
+      "matchedIds": []
+    },
+    "diffSummary": "Design placeholder. This is not a verified news item and must not be displayed as production news.",
+    "reviewStatus": "pending",
+    "reviewedAt": null,
+    "reviewedBy": null,
+    "notes": "Used to validate candidate schema and review workflow. Do not promote without manual source review.",
+    "changeLog": [
+      {
+        "date": "2026-07-21",
+        "type": "created",
+        "summary": "Created initial update candidate placeholder for v1.1.2 design validation.",
+        "actor": "Codex"
+      }
+    ]
+  }
+]

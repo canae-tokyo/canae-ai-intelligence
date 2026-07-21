@@ -1,0 +1,178 @@
+[
+  {
+    "id": "source-openai-news",
+    "name": "OpenAI News",
+    "company": "OpenAI",
+    "sourceType": "official-blog",
+    "url": "https://openai.com/news/",
+    "category": "model",
+    "priority": "P0",
+    "collectionMethod": "manual-check",
+    "cadence": "weekly",
+    "owner": "CANAE",
+    "enabled": true,
+    "notes": "Initial v1.1.2 official source. Automation is limited to candidate discovery; verified promotion remains manual.",
+    "changeLog": [
+      {
+        "date": "2026-07-21",
+        "type": "created",
+        "summary": "Created initial collection source record.",
+        "actor": "Codex"
+      }
+    ]
+  },
+  {
+    "id": "source-anthropic-news",
+    "name": "Anthropic News",
+    "company": "Anthropic",
+    "sourceType": "official-blog",
+    "url": "https://www.anthropic.com/news",
+    "category": "model",
+    "priority": "P0",
+    "collectionMethod": "manual-check",
+    "cadence": "weekly",
+    "owner": "CANAE",
+    "enabled": true,
+    "notes": "Initial v1.1.2 official source. Automation is limited to candidate discovery; verified promotion remains manual.",
+    "changeLog": [
+      {
+        "date": "2026-07-21",
+        "type": "created",
+        "summary": "Created initial collection source record.",
+        "actor": "Codex"
+      }
+    ]
+  },
+  {
+    "id": "source-google-ai-blog",
+    "name": "Google AI Blog",
+    "company": "Google",
+    "sourceType": "official-blog",
+    "url": "https://blog.google/technology/ai/",
+    "category": "model",
+    "priority": "P0",
+    "collectionMethod": "manual-check",
+    "cadence": "weekly",
+    "owner": "CANAE",
+    "enabled": true,
+    "notes": "Initial v1.1.2 official source. Automation is limited to candidate discovery; verified promotion remains manual.",
+    "changeLog": [
+      {
+        "date": "2026-07-21",
+        "type": "created",
+        "summary": "Created initial collection source record.",
+        "actor": "Codex"
+      }
+    ]
+  },
+  {
+    "id": "source-github-changelog",
+    "name": "GitHub Changelog",
+    "company": "GitHub",
+    "sourceType": "official-changelog",
+    "url": "https://github.blog/changelog/",
+    "category": "coding",
+    "priority": "P0",
+    "collectionMethod": "manual-check",
+    "cadence": "weekly",
+    "owner": "CANAE",
+    "enabled": true,
+    "notes": "Initial v1.1.2 official source. Automation is limited to candidate discovery; verified promotion remains manual.",
+    "changeLog": [
+      {
+        "date": "2026-07-21",
+        "type": "created",
+        "summary": "Created initial collection source record.",
+        "actor": "Codex"
+      }
+    ]
+  },
+  {
+    "id": "source-microsoft-blog",
+    "name": "Official Microsoft Blog",
+    "company": "Microsoft",
+    "sourceType": "official-blog",
+    "url": "https://blogs.microsoft.com/",
+    "category": "business",
+    "priority": "P0",
+    "collectionMethod": "manual-check",
+    "cadence": "weekly",
+    "owner": "CANAE",
+    "enabled": true,
+    "notes": "Initial v1.1.2 official source for Microsoft AI and company announcements. Automation is limited to candidate discovery; verified promotion remains manual.",
+    "changeLog": [
+      {
+        "date": "2026-07-21",
+        "type": "created",
+        "summary": "Created initial collection source record.",
+        "actor": "Codex"
+      }
+    ]
+  },
+  {
+    "id": "source-cloudflare-blog",
+    "name": "Cloudflare Blog",
+    "company": "Cloudflare",
+    "sourceType": "official-blog",
+    "url": "https://blog.cloudflare.com/",
+    "category": "business",
+    "priority": "P1",
+    "collectionMethod": "manual-check",
+    "cadence": "weekly",
+    "owner": "CANAE",
+    "enabled": true,
+    "notes": "Initial v1.1.2 official source for Cloudflare AI, infrastructure, and developer updates. Automation is limited to candidate discovery; verified promotion remains manual.",
+    "changeLog": [
+      {
+        "date": "2026-07-21",
+        "type": "created",
+        "summary": "Created initial collection source record.",
+        "actor": "Codex"
+      }
+    ]
+  },
+  {
+    "id": "source-adobe-blog",
+    "name": "Adobe Blog",
+    "company": "Adobe",
+    "sourceType": "official-blog",
+    "url": "https://blog.adobe.com/",
+    "category": "image",
+    "priority": "P1",
+    "collectionMethod": "manual-check",
+    "cadence": "weekly",
+    "owner": "CANAE",
+    "enabled": true,
+    "notes": "Initial v1.1.2 official source for Adobe Firefly and creative AI updates. Automation is limited to candidate discovery; verified promotion remains manual.",
+    "changeLog": [
+      {
+        "date": "2026-07-21",
+        "type": "created",
+        "summary": "Created initial collection source record.",
+        "actor": "Codex"
+      }
+    ]
+  },
+  {
+    "id": "source-xai-news",
+    "name": "xAI News",
+    "company": "xAI",
+    "sourceType": "official-blog",
+    "url": "https://x.ai/news",
+    "category": "model",
+    "priority": "P1",
+    "collectionMethod": "manual-check",
+    "cadence": "weekly",
+    "owner": "CANAE",
+    "enabled": true,
+    "notes": "Initial v1.1.2 official source for xAI and Grok updates. Automation is limited to candidate discovery; verified promotion remains manual.",
+    "changeLog": [
+      {
+        "date": "2026-07-21",
+        "type": "created",
+        "summary": "Created initial collection source record.",
+        "actor": "Codex"
+      }
+    ]
+  }
+]
