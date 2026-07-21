@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## v1.1.2 - 2026-07-21
+
+- v1.1.2 Automated Collection & Update Assistance Designを開始。
+- `16_v1.1.2_自動収集更新補助設計.md`を追加し、自動化対象と人手必須範囲を固定。
+- `collection-sources.json`を追加し、公式一次情報の収集対象を管理する構造を追加。
+- `update-candidates.json`を追加し、収集・差分検知候補を`draft`前段階で管理する構造を追加。
+- 自動収集は候補作成までとし、`verified`昇格とProduction反映は人手確認を必須とするルールを明記。
+- `npm run validate:collection`を追加し、source ID、candidate ID、URL、日付、候補ステータス、参照整合性を検証。
+
 ## v1.1.1 - 2026-07-21
 
 - PR #5をSquash Mergeし、v1.1.1 Benchmark & Evaluation SeparationをProductionへ反映。
