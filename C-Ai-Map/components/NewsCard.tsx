@@ -20,8 +20,21 @@ const STATUS_STYLE: Record<NewsItem["status"], string> = {
   archived: "border-base-border text-ink-muted",
 };
 
+const QUALITY_LABEL: Record<NonNullable<NewsItem["dataQuality"]>, string> = {
+  verified: "実データ",
+  partial: "一部実データ",
+  sample: "サンプル",
+};
+
+const QUALITY_STYLE: Record<NonNullable<NewsItem["dataQuality"]>, string> = {
+  verified: "border-signal-new/30 text-signal-new",
+  partial: "border-signal-update/30 text-signal-update",
+  sample: "border-signal-danger/30 text-signal-danger",
+};
+
 export default function NewsCard({ item, showCategory = false }: { item: NewsItem; showCategory?: boolean }) {
   const genreLabel = genres.find((g) => g.id === item.category)?.label;
+  const quality = item.dataQuality ?? "sample";
 
   return (
     <article className="rounded-lg border border-base-border bg-base-card p-4 transition-colors hover:border-accent/30">
@@ -35,22 +48,25 @@ export default function NewsCard({ item, showCategory = false }: { item: NewsIte
         <span className={`rounded-full border px-2.5 py-0.5 text-xs ${STATUS_STYLE[item.status]}`}>
           {STATUS_LABEL[item.status]}
         </span>
+        <span className={`rounded-full border px-2.5 py-0.5 text-xs ${QUALITY_STYLE[quality]}`}>
+          {QUALITY_LABEL[quality]}
+        </span>
         <span className="ml-auto text-xs text-ink-muted">{item.publishedAt}</span>
       </div>
       <h3 className="mb-1 break-words text-base font-semibold text-ink sm:text-sm">{item.title}</h3>
       <p className="mb-2 break-words text-sm text-accent sm:text-xs">{item.company}</p>
       <p className="mb-2 text-base leading-relaxed text-ink-muted sm:text-sm">{item.summary}</p>
-      <p className="mb-2 text-sm leading-relaxed text-ink sm:text-xs">
-        <span className="text-ink-muted">影響：</span>
-        {item.impact}
-      </p>
+      <div className="mb-2 rounded border border-base-border bg-base-hover/40 p-3 text-sm leading-relaxed sm:text-xs">
+        <p className="mb-1 font-semibold text-ink-muted">CANAE影響メモ</p>
+        <p className="text-ink">{item.impact}</p>
+      </div>
       <div className="grid gap-2 text-xs text-ink-muted sm:flex sm:items-center sm:justify-between">
-        <span>出典：{SOURCE_LABEL[item.sourceType]} / 確認日：{item.sourceCheckedAt}</span>
+        <span>出典：{SOURCE_LABEL[item.sourceType]} / 確認日：{item.verifiedAt ?? item.sourceCheckedAt}</span>
         <a
           href={item.sourceUrl}
           target="_blank"
           rel="noreferrer"
-          className="inline-flex min-h-11 items-center text-accent hover:underline sm:min-h-0"
+          className="inline-flex min-h-11 items-center break-words text-accent hover:underline sm:min-h-0"
         >
           原文を見る
         </a>

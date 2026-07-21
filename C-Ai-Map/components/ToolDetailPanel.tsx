@@ -67,8 +67,14 @@ export default function ToolDetailPanel({
           <span className="text-ink">{tool.lastUpdated}</span>
         </div>
         <div className={ROW}>
+          <span className="text-ink-muted">データ品質</span>
+          <span className="text-ink">
+            {tool.dataQuality === "partial" ? "一部実データ" : tool.dataQuality === "verified" ? "実データ" : "サンプル"}
+          </span>
+        </div>
+        <div className={ROW}>
           <span className="text-ink-muted">公開Bmk順位</span>
-          <span className="text-ink">{tool.benchmarkRank ? `${tool.benchmarkRank}位` : "—"}</span>
+          <span className="text-ink">{tool.benchmarkRank ? `${tool.benchmarkRank}位` : "—"}（未検証サンプル値を含む）</span>
         </div>
         <div className="flex justify-between gap-3 py-1.5 text-sm">
           <span className="text-ink-muted">CANAE実務評価</span>

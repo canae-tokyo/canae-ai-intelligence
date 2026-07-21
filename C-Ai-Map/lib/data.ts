@@ -5,12 +5,14 @@ import companiesRaw from "@/data/companies.json";
 import type { Genre, Tool, NewsItem, CompanyNode, GenreId } from "./types";
 
 export const genres = genresRaw as Genre[];
-export const tools = toolsRaw as Tool[];
-export const news = newsRaw as NewsItem[];
+export const allTools = toolsRaw as Tool[];
+export const tools = allTools.filter((t) => (t.dataStatus ?? "verified") === "verified");
+export const allNews = newsRaw as NewsItem[];
+export const news = allNews;
 export const companies = companiesRaw as CompanyNode[];
 
-export const verifiedNews = news.filter((n) => n.status === "verified");
-export const activeNews = news.filter((n) => n.status !== "archived");
+export const verifiedNews = allNews.filter((n) => n.status === "verified");
+export const activeNews = allNews.filter((n) => n.status !== "archived");
 
 export function getGenre(id: string): Genre | undefined {
   return genres.find((g) => g.id === id);

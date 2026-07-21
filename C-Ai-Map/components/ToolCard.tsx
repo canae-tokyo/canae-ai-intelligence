@@ -3,6 +3,8 @@ import type { Tool } from "@/lib/types";
 export default function ToolCard({ tool }: { tool: Tool }) {
   const benchmarkSource = tool.benchmarkSource ?? "サンプル値（未検証）";
   const benchmarkCheckedAt = tool.benchmarkCheckedAt ?? tool.lastUpdated;
+  const qualityLabel =
+    tool.dataQuality === "partial" ? "一部実データ" : tool.dataQuality === "verified" ? "実データ" : "サンプル";
 
   return (
     <div className="rounded-lg border border-base-border bg-base-card p-4 transition-colors hover:border-accent/30">
@@ -10,6 +12,9 @@ export default function ToolCard({ tool }: { tool: Tool }) {
         <h3 className="break-words text-base font-semibold text-ink sm:text-sm">{tool.name}</h3>
         <span className="shrink-0 rounded border border-base-border px-1.5 py-0.5 text-[11px] text-ink-muted">
           {tool.internalGrade}評価
+        </span>
+        <span className="shrink-0 rounded border border-signal-update/30 px-1.5 py-0.5 text-[11px] text-signal-update">
+          {qualityLabel}
         </span>
       </div>
       <p className="mb-2 break-words text-sm text-accent sm:text-xs">{tool.company}</p>
@@ -30,6 +35,14 @@ export default function ToolCard({ tool }: { tool: Tool }) {
       </div>
       <p className="mt-2 text-[11px] text-ink-muted">
         公開Bmk：{benchmarkSource} / 確認日：{benchmarkCheckedAt}
+      </p>
+      {tool.dataQuality === "partial" && (
+        <p className="mt-1 text-[11px] text-signal-update">
+          公式メタ情報確認済み。ランキングスコアは未検証サンプル値を含みます。
+        </p>
+      )}
+      <p className="mt-2 break-words text-[11px] text-ink-muted">
+        公式：{tool.sourceUrl ?? tool.officialUrl}
       </p>
     </div>
   );
