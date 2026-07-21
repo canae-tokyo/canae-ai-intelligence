@@ -2,12 +2,19 @@
 
 ## v1.1.2 - 2026-07-21
 
+- PR #7をSquash Mergeし、v1.1.2 Automated Collection & Update Assistance DesignをProductionへ反映。
+- Merge Commit `8331e291f15d62f92001408cef64d3fcbc846d3d` を確認。
+- GitHub Actions CIとGitHub Pages deploymentの成功を確認。
+- 本番URL `/`、`/news`、`/genre/coding`、404応答を確認。
+- `noindex`と`X-Robots-Tag: noindex, nofollow`の維持を確認。
 - v1.1.2 Automated Collection & Update Assistance Designを開始。
 - `16_v1.1.2_自動収集更新補助設計.md`を追加し、自動化対象と人手必須範囲を固定。
 - `collection-sources.json`を追加し、公式一次情報の収集対象を管理する構造を追加。
 - `update-candidates.json`を追加し、収集・差分検知候補を`draft`前段階で管理する構造を追加。
 - 自動収集は候補作成までとし、`verified`昇格とProduction反映は人手確認を必須とするルールを明記。
 - `npm run validate:collection`を追加し、source ID、candidate ID、URL、日付、候補ステータス、参照整合性を検証。
+- Google AI Blogの収集元URLを正規URLへ更新。
+- 設計リリース時点の`update-candidates.json`は空配列とし、本番表示経路へ候補データを混入させない。
 
 ## v1.1.1 - 2026-07-21
 
