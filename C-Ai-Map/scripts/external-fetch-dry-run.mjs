@@ -10,6 +10,13 @@ const defaultOptions = {
   maxBytes: 250000,
 };
 const isoDate = /^\d{4}-\d{2}-\d{2}$/;
+const allowedContentTypes = new Set([
+  "text/html",
+  "application/xml",
+  "text/xml",
+  "application/rss+xml",
+  "application/atom+xml",
+]);
 
 function todayIsoDate() {
   return new Intl.DateTimeFormat("en-CA", {
@@ -37,6 +44,19 @@ function parsePositiveInteger(value, label) {
   const parsed = Number(value);
   if (!Number.isSafeInteger(parsed) || parsed <= 0) fail(`${label} must be a positive integer`);
   return parsed;
+}
+
+function isRealIsoDate(value) {
+  if (!isoDate.test(value)) return false;
+
+  const [year, month, day] = value.split("-").map(Number);
+  const date = new Date(Date.UTC(year, month - 1, day));
+
+  return (
+    date.getUTCFullYear() === year &&
+    date.getUTCMonth() === month - 1 &&
+    date.getUTCDate() === day
+  );
 }
 
 function parseArgs(argv) {
@@ -75,8 +95,14 @@ function validateOutputPath(output) {
 }
 
 function validateOptions(options) {
-  if (!isoDate.test(options.date)) fail("--date must be YYYY-MM-DD");
+  if (!isRealIsoDate(options.date)) fail("--date must be a real YYYY-MM-DD date");
   if (options.sourceIds.length === 0) fail("--source-id list must not be empty");
+  const duplicateSourceIds = options.sourceIds.filter(
+    (sourceId, index) => options.sourceIds.indexOf(sourceId) !== index
+  );
+  if (duplicateSourceIds.length > 0) {
+    fail(`--source-id list must not contain duplicates: ${[...new Set(duplicateSourceIds)].join(", ")}`);
+  }
   validateOutputPath(options.output);
 }
 
@@ -112,6 +138,44 @@ function classifyStatus(status) {
   if (status >= 400 && status < 500) return "client-error";
   if (status >= 500) return "server-error";
   return "unknown";
+}
+
+function hostFromUrl(value) {
+  if (!value) return null;
+  try {
+    return new URL(value).hostname;
+  } catch {
+    return null;
+  }
+}
+
+function isHttpsUrl(value) {
+  if (!value) return false;
+  try {
+    return new URL(value).protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
+function normalizeContentType(value) {
+  return value?.split(";")[0]?.trim().toLowerCase() ?? null;
+}
+
+function isAllowedContentType(value) {
+  const normalized = normalizeContentType(value);
+  return normalized !== null && allowedContentTypes.has(normalized);
+}
+
+function redirectSafetyFor(requestedUrl, finalUrl) {
+  const requestedHost = hostFromUrl(requestedUrl);
+  const finalHost = hostFromUrl(finalUrl);
+  const finalHttps = isHttpsUrl(finalUrl);
+  const crossDomainRedirect = requestedHost !== null && finalHost !== null && requestedHost !== finalHost;
+
+  if (!finalHttps) return "non-https-final-url";
+  if (crossDomainRedirect) return "cross-domain-manual-review";
+  return "same-domain";
 }
 
 async function readBodyWithLimit(response, maxBytes) {
@@ -155,6 +219,16 @@ async function fetchSource(source, options) {
       },
     });
     const body = await readBodyWithLimit(response, options.maxBytes);
+    const requestedHost = hostFromUrl(source.url);
+    const finalHost = hostFromUrl(response.url);
+    const contentType = response.headers.get("content-type");
+    const contentTypeAllowed = isAllowedContentType(contentType);
+    const redirectSafety = redirectSafetyFor(source.url, response.url);
+    const crossDomainRedirect =
+      requestedHost !== null && finalHost !== null && requestedHost !== finalHost;
+    const finalHttps = isHttpsUrl(response.url);
+    const httpOk = response.ok;
+    const policyOk = finalHttps && !crossDomainRedirect && contentTypeAllowed;
 
     return {
       sourceId: source.id,
@@ -162,13 +236,20 @@ async function fetchSource(source, options) {
       company: source.company,
       sourceType: source.sourceType,
       requestedUrl: source.url,
+      requestedHost,
       finalUrl: response.url,
+      finalHost,
       redirected: response.url !== source.url,
+      crossDomainRedirect,
+      redirectSafety,
+      finalHttps,
       status: response.status,
       statusText: response.statusText,
       statusClass: classifyStatus(response.status),
-      ok: response.ok,
-      contentType: response.headers.get("content-type"),
+      httpOk,
+      ok: httpOk && policyOk,
+      contentType,
+      contentTypeAllowed,
       contentLengthHeader: response.headers.get("content-length"),
       sizeBytes: body.sizeBytes,
       truncatedByLimit: body.truncatedByLimit,
@@ -182,13 +263,20 @@ async function fetchSource(source, options) {
       company: source.company,
       sourceType: source.sourceType,
       requestedUrl: source.url,
+      requestedHost: hostFromUrl(source.url),
       finalUrl: null,
+      finalHost: null,
       redirected: false,
+      crossDomainRedirect: false,
+      redirectSafety: "not-evaluated",
+      finalHttps: false,
       status: null,
       statusText: null,
       statusClass: error.name === "AbortError" ? "timeout" : "fetch-error",
+      httpOk: false,
       ok: false,
       contentType: null,
+      contentTypeAllowed: false,
       contentLengthHeader: null,
       sizeBytes: 0,
       truncatedByLimit: false,
@@ -201,6 +289,26 @@ async function fetchSource(source, options) {
   } finally {
     clearTimeout(timeout);
   }
+}
+
+function determineExecutionStatus(results) {
+  if (results.some((result) => result.statusClass === "timeout" || result.statusClass === "fetch-error")) {
+    return "completed-with-fetch-errors";
+  }
+  if (results.some((result) => result.status !== null && !result.httpOk)) {
+    return "completed-with-http-errors";
+  }
+  if (
+    results.some(
+      (result) =>
+        result.redirectSafety !== "same-domain" ||
+        result.contentTypeAllowed !== true ||
+        result.truncatedByLimit
+    )
+  ) {
+    return "completed-with-policy-warnings";
+  }
+  return "completed";
 }
 
 const options = parseArgs(process.argv.slice(2));
@@ -216,6 +324,8 @@ const report = {
   reportType: "external-fetch-foundation",
   reportVersion: "1.0",
   generatedAt: options.date,
+  executionStatus: determineExecutionStatus(fetchResults),
+  exitPolicy: "report-generation-success",
   generator: {
     script: "scripts/external-fetch-dry-run.mjs",
     version: "1.0",
