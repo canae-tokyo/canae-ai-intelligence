@@ -1,0 +1,92 @@
+{
+  "reportType": "external-fetch-foundation",
+  "reportVersion": "1.0",
+  "generatedAt": "2026-07-21",
+  "executionStatus": "completed-with-http-errors",
+  "exitPolicy": "report-generation-success",
+  "generator": {
+    "script": "scripts/external-fetch-dry-run.mjs",
+    "version": "1.0"
+  },
+  "input": {
+    "sourceFile": "data/collection-sources.json",
+    "requestedSourceIds": [
+      "source-openai-news",
+      "source-github-changelog"
+    ],
+    "selectedSourceCount": 2
+  },
+  "mode": "read-only-fetch",
+  "externalNetwork": true,
+  "writes": {
+    "canonicalData": false,
+    "updateCandidates": false
+  },
+  "options": {
+    "timeoutMs": 10000,
+    "maxBytes": 250000
+  },
+  "summary": {
+    "selectedSources": 2,
+    "ok": 1,
+    "failed": 1,
+    "redirected": 0,
+    "rateLimited": 0,
+    "notFound": 0,
+    "timedOut": 0
+  },
+  "results": [
+    {
+      "sourceId": "source-openai-news",
+      "name": "OpenAI News",
+      "company": "OpenAI",
+      "sourceType": "official-blog",
+      "requestedUrl": "https://openai.com/news/",
+      "requestedHost": "openai.com",
+      "finalUrl": "https://openai.com/news/",
+      "finalHost": "openai.com",
+      "redirected": false,
+      "crossDomainRedirect": false,
+      "redirectSafety": "same-domain",
+      "finalHttps": true,
+      "status": 403,
+      "statusText": "Forbidden",
+      "statusClass": "client-error",
+      "httpOk": false,
+      "ok": false,
+      "contentType": "text/html; charset=UTF-8",
+      "contentTypeAllowed": true,
+      "contentLengthHeader": null,
+      "sizeBytes": 9865,
+      "truncatedByLimit": false,
+      "durationMs": 76,
+      "error": null
+    },
+    {
+      "sourceId": "source-github-changelog",
+      "name": "GitHub Changelog",
+      "company": "GitHub",
+      "sourceType": "official-changelog",
+      "requestedUrl": "https://github.blog/changelog/",
+      "requestedHost": "github.blog",
+      "finalUrl": "https://github.blog/changelog/",
+      "finalHost": "github.blog",
+      "redirected": false,
+      "crossDomainRedirect": false,
+      "redirectSafety": "same-domain",
+      "finalHttps": true,
+      "status": 200,
+      "statusText": "OK",
+      "statusClass": "ok",
+      "httpOk": true,
+      "ok": true,
+      "contentType": "text/html; charset=UTF-8",
+      "contentTypeAllowed": true,
+      "contentLengthHeader": null,
+      "sizeBytes": 210008,
+      "truncatedByLimit": false,
+      "durationMs": 56,
+      "error": null
+    }
+  ]
+}
