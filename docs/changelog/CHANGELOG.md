@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## v1.1.0 - 2026-07-21
+
+- PR #3をSquash Mergeし、v1.1 Data Quality & Operationsの初期成果をProductionへ反映。
+- Merge Commit `b9e1d2279fe4fc43e3d91106864f385381ec329b` を確認。
+- GitHub Actions CI、GitHub Pages deployment、Cloudflare Workers Buildsの成功を確認。
+- 本番URL `/`、`/news`、`/genre/coding`、404応答を確認。
+- `noindex`と`X-Robots-Tag: noindex, nofollow`の維持を確認。
+- `tools.json`主要24件に公式メタ情報、確認日、データ品質区分、更新履歴を追加。
+- 未確認22件を`draft` / `sample`として主要画面から隔離。
+- 相関図もverifiedツールのみ表示するよう整理。
+- `news.json`を公式一次情報18件へ置換し、会社、カテゴリ、公開日、確認日、データ品質、CANAE影響メモ、更新履歴を追加。
+- ニュース一覧で公式情報とCANAE側の影響評価を分離表示。
+- データ品質バッジとスコア未検証表示を追加。
+
 ## v1.0.1相当 - 2026-07-21
 
 - PR #2をSquash Mergeし、スマホUI改善をProductionへ反映。
@@ -13,10 +27,6 @@
 - Phase 1 / v1.0.1相当を凍結版として扱うFreezeルールを追加。
 - v1.1の初期作業として、実データ投入前のデータモデル確定文書を追加。
 - v1.1.xのスキーマ互換性ルールを追加。
-- v1.1.0実装開始。`tools.json`主要24件に公式メタ情報、確認日、データ品質区分、更新履歴を追加。
-- 主要画面でデータ品質バッジとスコア未検証表示を追加。
-- `news.json`を公式一次情報18件へ置換し、会社、カテゴリ、公開日、確認日、データ品質、CANAE影響メモ、更新履歴を追加。
-- ニュース一覧で公式情報とCANAE側の影響評価を分離表示。
 
 ## v1.0 - 2026-07-20
 
