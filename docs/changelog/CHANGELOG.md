@@ -51,6 +51,11 @@
 - GitHub Actions CI、GitHub Pages deployment、Cloudflare Workers Buildsの成功を確認。
 - 本番URL `/`、`/news`、`/genre/coding`、404応答を確認。
 - `X-Robots-Tag: noindex, nofollow`の維持と、ビルド成果物HTMLの`robots` / `googlebot` `noindex`を確認。
+- Candidate Registration Foundationとして、`npm run candidate:register`と`npm run validate:registration`を追加。
+- Duplicate & Diff Detectionレポートの`new`候補だけを`update-candidates.json`へ`pending` / `draft`として登録する構造を追加。
+- 登録時に`registeredAt`を付与し、同一候補ID、同一`canonicalUrl`、pending以外の候補、`verified`昇格を拒否する境界を追加。
+- `reports/candidate-registration-report.example.json`を追加し、登録件数、スキップ件数、重複・拒否理由を記録。
+- この段階では`news.json`、`tools.json`、`benchmarks.json`、`canae-evaluations.json`への書き込み、レビューUI、自動公開、`verified`昇格は行わない。
 
 ## v1.1.1 - 2026-07-21
 

@@ -1,0 +1,74 @@
+{
+  "reportType": "candidate-registration-foundation",
+  "reportVersion": "1.0",
+  "generatedAt": "2026-07-22",
+  "executionStatus": "completed",
+  "generator": {
+    "script": "scripts/candidate-registration.mjs",
+    "version": "1.0"
+  },
+  "input": {
+    "duplicateDiffReportFile": "reports/duplicate-diff-report.example.json",
+    "candidateReportFile": "reports/candidate-generation-report.example.json",
+    "candidateStoreFile": "data/update-candidates.json",
+    "existingCandidateCount": 0
+  },
+  "mode": "candidate-store-registration",
+  "writes": {
+    "updateCandidates": true,
+    "canonicalData": false
+  },
+  "registrationPolicy": {
+    "allowedMatchStatus": "new",
+    "requiredReviewStatus": "pending",
+    "forcedReviewStatus": "pending",
+    "forcedSuggestedStatus": "draft",
+    "rejectVerifiedPromotion": true,
+    "duplicateKeys": [
+      "id",
+      "canonicalUrl"
+    ]
+  },
+  "output": {
+    "candidateStoreFile": "data/update-candidates.json",
+    "reportFile": "reports/candidate-registration-report.example.json",
+    "updatedCandidateCount": 1
+  },
+  "summary": {
+    "inputCandidates": 3,
+    "registered": 1,
+    "skipped": 2,
+    "rejected": 0,
+    "duplicateCandidateIds": 0,
+    "duplicateCanonicalUrls": 0
+  },
+  "registeredCandidateIds": [
+    "candidate-news-github-changelog-2026-07-20-copilot-users-can-now-see-ai-credits-used-per-billing-cycle"
+  ],
+  "results": [
+    {
+      "candidateId": "candidate-news-github-changelog-2026-07-21-gemini-3-6-flash-is-now-available-in-github-copilot",
+      "canonicalUrl": "https://github.blog/changelog/2026-07-21-gemini-3-6-flash-is-now-available-in-github-copilot",
+      "matchStatus": "duplicate",
+      "duplicateStatus": "duplicate",
+      "action": "skipped",
+      "reason": "not-new-candidate"
+    },
+    {
+      "candidateId": "candidate-news-github-changelog-2026-07-20-ai-credit-pools-for-cost-centers-in-the-billing-ui",
+      "canonicalUrl": "https://github.blog/changelog/2026-07-20-ai-credit-pools-for-cost-centers-in-the-billing-ui",
+      "matchStatus": "duplicate",
+      "duplicateStatus": "duplicate",
+      "action": "skipped",
+      "reason": "not-new-candidate"
+    },
+    {
+      "candidateId": "candidate-news-github-changelog-2026-07-20-copilot-users-can-now-see-ai-credits-used-per-billing-cycle",
+      "canonicalUrl": "https://github.blog/changelog/2026-07-20-copilot-users-can-now-see-ai-credits-used-per-billing-cycle",
+      "matchStatus": "new",
+      "duplicateStatus": "new",
+      "action": "registered",
+      "reason": "new-pending-candidate"
+    }
+  ]
+}
