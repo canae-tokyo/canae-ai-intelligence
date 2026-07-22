@@ -169,6 +169,7 @@ function makeExistingRecord(record) {
     recordType: "news",
     title: record.title,
     publishedAt: record.publishedAt,
+    summary: record.summary ?? null,
     sourceUrl: record.sourceUrl,
     canonicalUrl,
     normalizedUrl: canonicalUrl ? normalizeUrl(canonicalUrl) : null,
@@ -179,8 +180,9 @@ function diffItems(candidate, existing) {
   const items = [];
   const comparisons = [
     ["title", candidate.title, existing.title],
-    ["canonicalUrl", candidate.canonicalUrl, existing.canonicalUrl],
     ["sourcePublishedAt", candidate.sourcePublishedAt, existing.publishedAt],
+    ["canonicalUrl", candidate.canonicalUrl, existing.canonicalUrl],
+    ["summary", candidate.summary ?? null, existing.summary ?? null],
   ];
 
   for (const [field, candidateValue, existingValue] of comparisons) {
@@ -196,14 +198,33 @@ function diffItems(candidate, existing) {
   return items;
 }
 
+function matchReasons(candidate, existing, similarity) {
+  if (!existing) return ["none"];
+
+  const reasons = [];
+  const normalizedCandidateUrl = normalizeUrl(candidate.canonicalUrl);
+
+  if (existing.canonicalUrl === candidate.canonicalUrl) reasons.push("canonical-url");
+  if (existing.normalizedUrl && existing.normalizedUrl === normalizedCandidateUrl) {
+    reasons.push("normalized-url");
+  }
+  if (similarity >= titleSimilarityThreshold && candidate.sourcePublishedAt === existing.publishedAt) {
+    reasons.push("title-similarity");
+  }
+
+  return reasons;
+}
+
 function findMatch(candidate, existingRecords) {
   const exact = existingRecords.find((record) => record.canonicalUrl === candidate.canonicalUrl);
   if (exact) {
+    const similarity = titleSimilarity(candidate.title, exact.title);
     return {
       status: "duplicate",
       reason: "canonical-url",
       record: exact,
-      titleSimilarity: titleSimilarity(candidate.title, exact.title),
+      titleSimilarity: similarity,
+      reasons: matchReasons(candidate, exact, similarity),
     };
   }
 
@@ -212,11 +233,13 @@ function findMatch(candidate, existingRecords) {
     (record) => record.normalizedUrl && record.normalizedUrl === normalizedCandidateUrl
   );
   if (normalized) {
+    const similarity = titleSimilarity(candidate.title, normalized.title);
     return {
       status: "duplicate",
       reason: "normalized-url",
       record: normalized,
-      titleSimilarity: titleSimilarity(candidate.title, normalized.title),
+      titleSimilarity: similarity,
+      reasons: matchReasons(candidate, normalized, similarity),
     };
   }
 
@@ -233,6 +256,7 @@ function findMatch(candidate, existingRecords) {
         reason: "title-similarity",
         record,
         titleSimilarity: similarity,
+        reasons: matchReasons(candidate, record, similarity),
       };
     }
   }
@@ -243,6 +267,7 @@ function findMatch(candidate, existingRecords) {
       reason: "none",
       record: null,
       titleSimilarity: 0,
+      reasons: ["none"],
     }
   );
 }
@@ -282,8 +307,10 @@ const results = candidateReport.candidates.map((candidate) => {
     normalizedCandidateUrl,
     sourcePublishedAt: candidate.sourcePublishedAt,
     contentFingerprint: contentFingerprint(candidate),
+    duplicateStatus: match.status,
     matchStatus: match.status,
     matchReason: match.reason,
+    matchReasons: match.reasons,
     matchedRecordType: matchedRecord?.recordType ?? null,
     matchedRecordId: matchedRecord?.id ?? null,
     matchedCanonicalUrl: matchedRecord?.canonicalUrl ?? null,
@@ -299,6 +326,7 @@ const summary = {
   exactCanonicalUrlMatches: results.filter((result) => result.matchReason === "canonical-url").length,
   normalizedUrlMatches: results.filter((result) => result.matchReason === "normalized-url").length,
   possibleDuplicates: results.filter((result) => result.matchStatus === "possible-duplicate").length,
+  similar: results.filter((result) => result.matchStatus === "possible-duplicate").length,
   newCandidates: results.filter((result) => result.matchStatus === "new").length,
   titleDifferenceMatches: results.filter((result) =>
     result.diffItems.some((item) => item.field === "title")
@@ -334,6 +362,16 @@ const report = {
     tertiarySignal: "title-similarity",
     titleSimilarityThreshold,
     contentFingerprintRole: "audit-signal",
+  },
+  fingerprintPolicy: {
+    algorithm: "SHA-256",
+    outputFormat: "sha256:<hex>",
+    inputFields: ["normalizedCanonicalUrl", "normalizedTitle", "sourcePublishedAt"],
+    urlNormalization: ["lowercase protocol", "lowercase host", "remove query", "remove fragment", "trim trailing slash"],
+    titleNormalization: ["lowercase", "remove punctuation", "collapse whitespace"],
+  },
+  diffPolicy: {
+    fieldOrder: ["title", "sourcePublishedAt", "canonicalUrl", "summary"],
   },
   summary,
   results,

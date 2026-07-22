@@ -27,12 +27,42 @@
     "titleSimilarityThreshold": 0.82,
     "contentFingerprintRole": "audit-signal"
   },
+  "fingerprintPolicy": {
+    "algorithm": "SHA-256",
+    "outputFormat": "sha256:<hex>",
+    "inputFields": [
+      "normalizedCanonicalUrl",
+      "normalizedTitle",
+      "sourcePublishedAt"
+    ],
+    "urlNormalization": [
+      "lowercase protocol",
+      "lowercase host",
+      "remove query",
+      "remove fragment",
+      "trim trailing slash"
+    ],
+    "titleNormalization": [
+      "lowercase",
+      "remove punctuation",
+      "collapse whitespace"
+    ]
+  },
+  "diffPolicy": {
+    "fieldOrder": [
+      "title",
+      "sourcePublishedAt",
+      "canonicalUrl",
+      "summary"
+    ]
+  },
   "summary": {
     "candidates": 3,
     "duplicates": 2,
     "exactCanonicalUrlMatches": 1,
     "normalizedUrlMatches": 1,
     "possibleDuplicates": 0,
+    "similar": 0,
     "newCandidates": 1,
     "titleDifferenceMatches": 1,
     "diffItems": 2,
@@ -48,8 +78,13 @@
       "normalizedCandidateUrl": "https://github.blog/changelog/2026-07-21-gemini-3-6-flash-is-now-available-in-github-copilot",
       "sourcePublishedAt": "2026-07-21",
       "contentFingerprint": "sha256:071561054aa9ca684fd1b8c1f8c36458ee99d2b9072a87bb1784e4233e35d590",
+      "duplicateStatus": "duplicate",
       "matchStatus": "duplicate",
       "matchReason": "canonical-url",
+      "matchReasons": [
+        "canonical-url",
+        "normalized-url"
+      ],
       "matchedRecordType": "news",
       "matchedRecordId": "news-fixture-github-gemini-copilot-existing",
       "matchedCanonicalUrl": "https://github.blog/changelog/2026-07-21-gemini-3-6-flash-is-now-available-in-github-copilot",
@@ -72,8 +107,13 @@
       "normalizedCandidateUrl": "https://github.blog/changelog/2026-07-20-ai-credit-pools-for-cost-centers-in-the-billing-ui",
       "sourcePublishedAt": "2026-07-20",
       "contentFingerprint": "sha256:7dcd2f2f16710cccfd49ada74019cc82c4c8a0c82cdf0e331f0ab3ac4076d715",
+      "duplicateStatus": "duplicate",
       "matchStatus": "duplicate",
       "matchReason": "normalized-url",
+      "matchReasons": [
+        "normalized-url",
+        "title-similarity"
+      ],
       "matchedRecordType": "news",
       "matchedRecordId": "news-fixture-github-ai-credit-pools-existing",
       "matchedCanonicalUrl": "https://github.blog/changelog/2026-07-20-ai-credit-pools-for-cost-centers-in-the-billing-ui/?utm_source=fixture",
@@ -96,8 +136,12 @@
       "normalizedCandidateUrl": "https://github.blog/changelog/2026-07-20-copilot-users-can-now-see-ai-credits-used-per-billing-cycle",
       "sourcePublishedAt": "2026-07-20",
       "contentFingerprint": "sha256:114f85b907eff07a0818daabe11b16428d05a11b796d18e0bf2ab801798c4256",
+      "duplicateStatus": "new",
       "matchStatus": "new",
       "matchReason": "none",
+      "matchReasons": [
+        "none"
+      ],
       "matchedRecordType": null,
       "matchedRecordId": null,
       "matchedCanonicalUrl": null,

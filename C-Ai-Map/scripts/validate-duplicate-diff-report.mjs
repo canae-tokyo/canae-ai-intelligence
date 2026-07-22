@@ -66,6 +66,19 @@ assert(
   typeof report.matchingPolicy?.titleSimilarityThreshold === "number",
   "title similarity threshold must be numeric"
 );
+assert(report.fingerprintPolicy?.algorithm === "SHA-256", "fingerprint algorithm must be SHA-256");
+assert(report.fingerprintPolicy?.outputFormat === "sha256:<hex>", "fingerprint output format is invalid");
+assert(
+  Array.isArray(report.fingerprintPolicy?.inputFields) &&
+    report.fingerprintPolicy.inputFields.join(",") ===
+      "normalizedCanonicalUrl,normalizedTitle,sourcePublishedAt",
+  "fingerprint input fields are invalid"
+);
+assert(
+  Array.isArray(report.diffPolicy?.fieldOrder) &&
+    report.diffPolicy.fieldOrder.join(",") === "title,sourcePublishedAt,canonicalUrl,summary",
+  "diff field order is invalid"
+);
 assert(Array.isArray(report.input?.canonicalDataFiles), "canonicalDataFiles must be an array");
 assert(report.input.canonicalDataFiles.length > 0, "canonicalDataFiles must not be empty");
 assert(Array.isArray(report.results), "results must be an array");
@@ -76,6 +89,7 @@ assert(report.summary?.exactCanonicalUrlMatches >= 1, "fixture must include an e
 assert(report.summary?.normalizedUrlMatches >= 1, "fixture must include a normalized URL match");
 assert(report.summary?.newCandidates >= 1, "fixture must include a new candidate");
 assert(report.summary?.titleDifferenceMatches >= 1, "fixture must include a title difference");
+assert(report.summary?.similar === report.summary?.possibleDuplicates, "similar summary must mirror possibleDuplicates");
 
 assertUnique(
   report.results.map((result) => result.candidateId),
@@ -95,8 +109,20 @@ for (const result of report.results) {
   assertHttpsUrl(result.normalizedCandidateUrl, `normalizedCandidateUrl ${result.candidateId}`);
   assert(isoDate.test(result.sourcePublishedAt), `sourcePublishedAt must be YYYY-MM-DD: ${result.candidateId}`);
   assert(fingerprint.test(result.contentFingerprint), `contentFingerprint is invalid: ${result.candidateId}`);
+  assert(matchStatuses.has(result.duplicateStatus), `duplicateStatus is invalid: ${result.candidateId}`);
+  assert(result.duplicateStatus === result.matchStatus, `duplicateStatus must mirror matchStatus: ${result.candidateId}`);
   assert(matchStatuses.has(result.matchStatus), `matchStatus is invalid: ${result.candidateId}`);
   assert(matchReasons.has(result.matchReason), `matchReason is invalid: ${result.candidateId}`);
+  assert(Array.isArray(result.matchReasons), `matchReasons must be an array: ${result.candidateId}`);
+  assert(result.matchReasons.length > 0, `matchReasons must not be empty: ${result.candidateId}`);
+  assert(
+    result.matchReasons.every((reason) => matchReasons.has(reason)),
+    `matchReasons contains invalid values: ${result.candidateId}`
+  );
+  assert(
+    result.matchReasons.includes(result.matchReason),
+    `matchReasons must include matchReason: ${result.candidateId}`
+  );
   assertNullableString(result.matchedRecordType, `matchedRecordType ${result.candidateId}`);
   assertNullableString(result.matchedRecordId, `matchedRecordId ${result.candidateId}`);
   assert(
@@ -117,12 +143,23 @@ for (const result of report.results) {
 
   if (result.matchStatus === "new") {
     assert(result.matchReason === "none", `new result must use none reason: ${result.candidateId}`);
+    assert(
+      result.matchReasons.length === 1 && result.matchReasons[0] === "none",
+      `new result must only use none reason: ${result.candidateId}`
+    );
     assert(result.matchedRecordId === null, `new result must not have matchedRecordId: ${result.candidateId}`);
     assert(result.diffItems.length === 0, `new result must not have diffItems: ${result.candidateId}`);
   } else {
     assert(result.matchedRecordType === "news", `matchedRecordType must be news: ${result.candidateId}`);
     assertRequiredString(result.matchedRecordId, `matchedRecordId ${result.candidateId}`);
   }
+
+  const actualDiffOrder = result.diffItems.map((item) => item.field);
+  const expectedDiffOrder = report.diffPolicy.fieldOrder.filter((field) => actualDiffOrder.includes(field));
+  assert(
+    actualDiffOrder.join(",") === expectedDiffOrder.join(","),
+    `diffItems must follow fixed order: ${result.candidateId}`
+  );
 
   for (const item of result.diffItems) {
     assertRequiredString(item.field, `diff field ${result.candidateId}`);
