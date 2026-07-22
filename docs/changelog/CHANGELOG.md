@@ -89,6 +89,19 @@
 - GitHub Actions CI、GitHub Pages deployment、Cloudflare Workers Buildsの成功を確認。
 - 本番URL `/`、`/news`、`/genre/coding`、`/internal/review-candidates`、404応答を確認。
 - `X-Robots-Tag: noindex, nofollow`とHTML `robots` / `googlebot` `noindex`の維持を確認。
+- Internal Review Access Control Foundationとして、Cloudflare Worker境界で`/internal/*`を保護する構造を追加。
+- Cloudflare Access JWT検証、許可メール照合、Fail-closed、ローカル限定バイパスを実装。
+- `wrangler.jsonc`を追加し、Worker entrypointとStatic Assets bindingを定義。
+- `npm run validate:access-control`を追加し、未認可404、ASSETS未到達、候補情報非混入、許可メール、ローカル限定バイパスを検証。
+- PR #25をSquash Mergeし、Internal Review Access Control FoundationをProductionへ反映。
+- Merge Commit `f526bade681894b47c620dcd348cf6e4ec4bc9f7` を確認。
+- PR #25反映直後の本番確認で、Cloudflare Workers Static Assetsの既定動作により`/internal/review-candidates`がWorkerより先に配信される問題を確認。
+- PR #26で`assets.run_worker_first`を`/internal`と`/internal/*`へ追加し、WorkerをStatic Assets配信前に実行する境界へ修正。
+- Merge Commit `63b3c4cc3ad857d8e39f6a34220a3ae2e6e6b672` を確認。
+- GitHub Actions CI、GitHub Pages deployment、Cloudflare Workers Buildsの成功を確認。
+- 本番URL `/`、`/news`、`/genre/coding`は200、未認可`/internal/review-candidates`は404、通常404応答は404であることを確認。
+- 未認可`/internal/review-candidates`レスポンスに候補タイトルや候補データが含まれないことを確認。
+- `X-Robots-Tag: noindex, nofollow`とHTML `robots` / `googlebot` `noindex`の維持を確認。
 
 ## v1.1.1 - 2026-07-21
 
