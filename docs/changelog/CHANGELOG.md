@@ -37,6 +37,11 @@
 - `source-github-changelog`の200取得結果のみを対象に、HTMLから候補ニュースを抽出し、`reports/candidate-generation-report.local.json`へ保存する構造を追加。
 - 候補生成はレポート出力までとし、`update-candidates.json`や正本データへの書き込みは行わない。
 - 要約未生成を`summary: null`、`summarySource: none`、`summaryGenerated: false`として記録し、fixtureとregex抽出の前提を文書化。
+- PR #13をSquash Mergeし、Candidate Generation FoundationをProductionへ反映。
+- Merge Commit `ff32f9929602d180f0d1714337146707210c2a96` を確認。
+- GitHub Actions CIとGitHub Pages deploymentの成功を確認。
+- 本番URL `/`、`/news`、`/genre/coding`、404応答を確認。
+- `noindex`と`X-Robots-Tag: noindex, nofollow`の維持を確認。
 
 ## v1.1.1 - 2026-07-21
 
