@@ -1,0 +1,14 @@
+[
+  {
+    "id": "news-fixture-github-gemini-copilot-existing",
+    "title": "Gemini 2.5 Flash is now available in GitHub Copilot",
+    "publishedAt": "2026-07-21",
+    "sourceUrl": "https://github.blog/changelog/2026-07-21-gemini-3-6-flash-is-now-available-in-github-copilot"
+  },
+  {
+    "id": "news-fixture-github-ai-credit-pools-existing",
+    "title": "AI credit pools for cost centers in the billing UI",
+    "publishedAt": "2026-07-20",
+    "sourceUrl": "https://github.blog/changelog/2026-07-20-ai-credit-pools-for-cost-centers-in-the-billing-ui/?utm_source=fixture"
+  }
+]

@@ -1,0 +1,109 @@
+{
+  "reportType": "duplicate-diff-foundation",
+  "reportVersion": "1.0",
+  "generatedAt": "2026-07-22",
+  "executionStatus": "completed",
+  "generator": {
+    "script": "scripts/duplicate-diff-detection.mjs",
+    "version": "1.0"
+  },
+  "input": {
+    "candidateReportFile": "reports/candidate-generation-report.example.json",
+    "candidateCount": 3,
+    "canonicalDataFiles": [
+      "reports/duplicate-diff-news-fixture.example.json"
+    ],
+    "canonicalNewsCount": 2
+  },
+  "mode": "report-only-duplicate-diff-detection",
+  "writes": {
+    "canonicalData": false,
+    "updateCandidates": false
+  },
+  "matchingPolicy": {
+    "primaryIdentityField": "canonicalUrl",
+    "secondaryIdentityField": "normalizedUrl",
+    "tertiarySignal": "title-similarity",
+    "titleSimilarityThreshold": 0.82,
+    "contentFingerprintRole": "audit-signal"
+  },
+  "summary": {
+    "candidates": 3,
+    "duplicates": 2,
+    "exactCanonicalUrlMatches": 1,
+    "normalizedUrlMatches": 1,
+    "possibleDuplicates": 0,
+    "newCandidates": 1,
+    "titleDifferenceMatches": 1,
+    "diffItems": 2,
+    "contentFingerprints": 3
+  },
+  "results": [
+    {
+      "candidateId": "candidate-news-github-changelog-2026-07-21-gemini-3-6-flash-is-now-available-in-github-copilot",
+      "sourceId": "source-github-changelog",
+      "candidateType": "news",
+      "candidateTitle": "Gemini 3.6 Flash is now available in GitHub Copilot",
+      "candidateCanonicalUrl": "https://github.blog/changelog/2026-07-21-gemini-3-6-flash-is-now-available-in-github-copilot",
+      "normalizedCandidateUrl": "https://github.blog/changelog/2026-07-21-gemini-3-6-flash-is-now-available-in-github-copilot",
+      "sourcePublishedAt": "2026-07-21",
+      "contentFingerprint": "sha256:071561054aa9ca684fd1b8c1f8c36458ee99d2b9072a87bb1784e4233e35d590",
+      "matchStatus": "duplicate",
+      "matchReason": "canonical-url",
+      "matchedRecordType": "news",
+      "matchedRecordId": "news-fixture-github-gemini-copilot-existing",
+      "matchedCanonicalUrl": "https://github.blog/changelog/2026-07-21-gemini-3-6-flash-is-now-available-in-github-copilot",
+      "normalizedMatchedUrl": "https://github.blog/changelog/2026-07-21-gemini-3-6-flash-is-now-available-in-github-copilot",
+      "titleSimilarity": 0.667,
+      "diffItems": [
+        {
+          "field": "title",
+          "candidateValue": "Gemini 3.6 Flash is now available in GitHub Copilot",
+          "existingValue": "Gemini 2.5 Flash is now available in GitHub Copilot"
+        }
+      ]
+    },
+    {
+      "candidateId": "candidate-news-github-changelog-2026-07-20-ai-credit-pools-for-cost-centers-in-the-billing-ui",
+      "sourceId": "source-github-changelog",
+      "candidateType": "news",
+      "candidateTitle": "AI credit pools for cost centers in the billing UI",
+      "candidateCanonicalUrl": "https://github.blog/changelog/2026-07-20-ai-credit-pools-for-cost-centers-in-the-billing-ui",
+      "normalizedCandidateUrl": "https://github.blog/changelog/2026-07-20-ai-credit-pools-for-cost-centers-in-the-billing-ui",
+      "sourcePublishedAt": "2026-07-20",
+      "contentFingerprint": "sha256:7dcd2f2f16710cccfd49ada74019cc82c4c8a0c82cdf0e331f0ab3ac4076d715",
+      "matchStatus": "duplicate",
+      "matchReason": "normalized-url",
+      "matchedRecordType": "news",
+      "matchedRecordId": "news-fixture-github-ai-credit-pools-existing",
+      "matchedCanonicalUrl": "https://github.blog/changelog/2026-07-20-ai-credit-pools-for-cost-centers-in-the-billing-ui/?utm_source=fixture",
+      "normalizedMatchedUrl": "https://github.blog/changelog/2026-07-20-ai-credit-pools-for-cost-centers-in-the-billing-ui",
+      "titleSimilarity": 1,
+      "diffItems": [
+        {
+          "field": "canonicalUrl",
+          "candidateValue": "https://github.blog/changelog/2026-07-20-ai-credit-pools-for-cost-centers-in-the-billing-ui",
+          "existingValue": "https://github.blog/changelog/2026-07-20-ai-credit-pools-for-cost-centers-in-the-billing-ui/?utm_source=fixture"
+        }
+      ]
+    },
+    {
+      "candidateId": "candidate-news-github-changelog-2026-07-20-copilot-users-can-now-see-ai-credits-used-per-billing-cycle",
+      "sourceId": "source-github-changelog",
+      "candidateType": "news",
+      "candidateTitle": "Copilot users can now see AI credits used per billing cycle",
+      "candidateCanonicalUrl": "https://github.blog/changelog/2026-07-20-copilot-users-can-now-see-ai-credits-used-per-billing-cycle",
+      "normalizedCandidateUrl": "https://github.blog/changelog/2026-07-20-copilot-users-can-now-see-ai-credits-used-per-billing-cycle",
+      "sourcePublishedAt": "2026-07-20",
+      "contentFingerprint": "sha256:114f85b907eff07a0818daabe11b16428d05a11b796d18e0bf2ab801798c4256",
+      "matchStatus": "new",
+      "matchReason": "none",
+      "matchedRecordType": null,
+      "matchedRecordId": null,
+      "matchedCanonicalUrl": null,
+      "normalizedMatchedUrl": null,
+      "titleSimilarity": 0,
+      "diffItems": []
+    }
+  ]
+}
