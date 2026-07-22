@@ -14,6 +14,7 @@
     "validate:registration": "node scripts/validate-registration-report.mjs",
     "validate:manual-review": "node scripts/validate-manual-review-report.mjs",
     "validate:promotion": "node scripts/validate-promotion-report.mjs",
+    "validate:access-control": "node scripts/validate-access-control.mjs",
     "collection:dry-run": "node scripts/collection-dry-run.mjs",
     "external-fetch:dry-run": "node scripts/external-fetch-dry-run.mjs",
     "candidate:generate": "node scripts/candidate-generation.mjs",
