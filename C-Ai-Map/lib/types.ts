@@ -181,3 +181,41 @@ export interface ProductNode {
   name: string;
   toolId?: string; // data/tools.json の id と対応（詳細パネル表示用）
 }
+
+export type UpdateCandidateReviewStatus = "pending" | "reviewing" | "accepted" | "rejected";
+export type UpdateCandidateReviewDecision = "approved" | "rejected" | "on-hold";
+
+export interface UpdateCandidateChange {
+  date: string;
+  type: string;
+  summary: string;
+  actor?: string;
+}
+
+export interface UpdateCandidate {
+  id: string;
+  sourceId: string;
+  candidateType: "news" | "tool" | "benchmark" | "canae-evaluation";
+  title: string;
+  sourceUrl: string;
+  canonicalUrl: string;
+  sourcePublishedAt: string | null;
+  detectedAt: string;
+  registeredAt?: string;
+  suggestedStatus: DataStatus;
+  duplicateCheck: {
+    status: "not-run" | "clear" | "duplicate" | "possible-duplicate";
+    matchedIds: string[];
+  };
+  diffSummary?: string | string[] | null;
+  reviewStatus: UpdateCandidateReviewStatus;
+  reviewDecision?: UpdateCandidateReviewDecision | null;
+  reviewedAt: string | null;
+  reviewedBy: string | null;
+  reviewNotes?: string | null;
+  promotedRecordType: "news" | "tool" | "benchmark" | "canae-evaluation" | null;
+  promotedRecordId: string | null;
+  promotedAt: string | null;
+  notes?: string | null;
+  changeLog: UpdateCandidateChange[];
+}
