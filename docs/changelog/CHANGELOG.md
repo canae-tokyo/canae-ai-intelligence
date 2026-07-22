@@ -62,6 +62,15 @@
 - GitHub Actions CI、GitHub Pages deployment、Cloudflare Workers Buildsの成功を確認。
 - 本番URL `/`、`/news`、`/genre/coding`、404応答を確認。
 - `X-Robots-Tag: noindex, nofollow`の維持と、ビルド成果物HTMLの`robots` / `googlebot` `noindex`を確認。
+- Manual Review Foundationとして、`npm run candidate:review`と`npm run validate:manual-review`を追加。
+- `reviewDecision`を追加し、既存`reviewStatus` enumを維持したまま`approved` / `rejected` / `on-hold`を記録する構造を追加。
+- `reviewing`からの保留解除は`--resolve-hold`必須とし、`accepted` / `rejected`は終端状態として再変更を拒否。
+- `--apply`時の原子的更新と書込み直前入力ハッシュ再確認を追加。
+- PR #19をSquash Mergeし、Manual Review FoundationをProductionへ反映。
+- Merge Commit `701a22e605eec3e1a0b80562cdf21dd3d664a369` を確認。
+- GitHub Actions CI、GitHub Pages deployment、Cloudflare Workers Buildsの成功を確認。
+- 本番URL `/`、`/news`、`/genre/coding`、404応答を確認。
+- `X-Robots-Tag: noindex, nofollow`の維持を確認。
 
 ## v1.1.1 - 2026-07-21
 
