@@ -15,6 +15,7 @@ npm run dev
 
 - **Vercel**：このフォルダをそのままインポートすればビルド・公開できます（URLは非公開運用を想定し、パスワード保護 or チーム限定公開を推奨）。
 - **GitHub Pages**：`next.config.mjs` の `output: 'export'` を有効化し、`npm run build` 後に生成される `out/` を公開してください。相関図（React Flow）はクライアント側描画のため静的書き出しでも動作します。
+- **Cloudflare Workers**：`npm run build` 後、`wrangler.jsonc` を使って `npx wrangler deploy` を実行してください。`src/worker.mjs` が `/internal/*` をStatic Assets配信前に保護します。
 
 ## ディレクトリ構成
 

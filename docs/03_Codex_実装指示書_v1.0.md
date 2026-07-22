@@ -49,7 +49,7 @@ URL構造、ジャンル体系、評価軸、相関図階層、管理画面、DB
 ```bash
 npm install
 npm run build
-npx wrangler deploy out --name canae-ai-intelligence --compatibility-date 2026-07-20
+npx wrangler deploy
 ```
 
 ## テスト項目
