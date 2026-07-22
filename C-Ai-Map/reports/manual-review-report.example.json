@@ -1,0 +1,78 @@
+{
+  "reportType": "manual-review-foundation",
+  "reportVersion": "1.0",
+  "generatedAt": "2026-07-22",
+  "executionStatus": "completed",
+  "generator": {
+    "script": "scripts/candidate-manual-review.mjs",
+    "version": "1.0"
+  },
+  "input": {
+    "candidateStoreFile": "reports/manual-review-store.example.json",
+    "candidateCount": 1,
+    "candidateId": "candidate-news-github-changelog-2026-07-20-copilot-users-can-now-see-ai-credits-used-per-billing-cycle"
+  },
+  "mode": "manual-candidate-review",
+  "writes": {
+    "updateCandidates": false,
+    "canonicalData": false
+  },
+  "reviewPolicy": {
+    "allowedSourceReviewStatus": "pending",
+    "allowedHoldResolutionSourceStatus": "reviewing",
+    "allowedDecisions": [
+      "approved",
+      "rejected",
+      "on-hold"
+    ],
+    "decisionStatusMap": {
+      "approved": "accepted",
+      "rejected": "rejected",
+      "on-hold": "reviewing"
+    },
+    "suggestedStatusRequired": "draft",
+    "resolveHoldRequired": true,
+    "rejectHoldToHold": true,
+    "rejectAlreadyReviewed": true,
+    "rejectVerifiedPromotion": true,
+    "writeConflictDetection": "input-hash-recheck-before-rename",
+    "atomicWrite": true
+  },
+  "reviewInput": {
+    "decision": "approved",
+    "mappedReviewStatus": "accepted",
+    "resolveHold": false,
+    "reviewedAt": "2026-07-22",
+    "reviewedBy": "CANAE/Sato",
+    "reviewNotes": "Official-source-reviewed-for-manual-review-foundation"
+  },
+  "storeAudit": {
+    "apply": false,
+    "storeChanged": false,
+    "previousCandidateCount": 1,
+    "updatedCandidateCount": 1,
+    "inputHash": "sha256:da0f74a28a8ed141da94fbfe16d119e2caf4d897fc964df748256a7fc0d2bf5c",
+    "outputHash": "sha256:da0f74a28a8ed141da94fbfe16d119e2caf4d897fc964df748256a7fc0d2bf5c"
+  },
+  "output": {
+    "candidateStoreFile": "reports/manual-review-store.example.json",
+    "reportFile": "reports/manual-review-report.example.json",
+    "updatedCandidateCount": 1
+  },
+  "summary": {
+    "reviewed": 1,
+    "rejected": 0,
+    "storeChanged": false
+  },
+  "result": {
+    "candidateId": "candidate-news-github-changelog-2026-07-20-copilot-users-can-now-see-ai-credits-used-per-billing-cycle",
+    "action": "reviewed",
+    "reason": "manual-review-recorded",
+    "previousReviewStatus": "pending",
+    "nextReviewStatus": "accepted",
+    "reviewDecision": "approved",
+    "promotedRecordType": null,
+    "promotedRecordId": null,
+    "promotedAt": null
+  }
+}

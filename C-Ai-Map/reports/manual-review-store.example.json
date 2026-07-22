@@ -1,0 +1,34 @@
+[
+  {
+    "id": "candidate-news-github-changelog-2026-07-20-copilot-users-can-now-see-ai-credits-used-per-billing-cycle",
+    "sourceId": "source-github-changelog",
+    "candidateType": "news",
+    "title": "Copilot users can now see AI credits used per billing cycle",
+    "sourceUrl": "https://github.blog/changelog/2026-07-20-copilot-users-can-now-see-ai-credits-used-per-billing-cycle",
+    "canonicalUrl": "https://github.blog/changelog/2026-07-20-copilot-users-can-now-see-ai-credits-used-per-billing-cycle",
+    "sourcePublishedAt": "2026-07-20",
+    "detectedAt": "2026-07-22",
+    "registeredAt": "2026-07-22",
+    "suggestedStatus": "draft",
+    "duplicateCheck": {
+      "status": "clear",
+      "matchedIds": []
+    },
+    "diffSummary": "Registered from duplicate/diff report as a pending draft candidate. No canonical data was changed.",
+    "reviewStatus": "pending",
+    "reviewedAt": null,
+    "reviewedBy": null,
+    "promotedRecordType": null,
+    "promotedRecordId": null,
+    "promotedAt": null,
+    "notes": "Candidate Registration Foundation. Manual review is required before any promotion.",
+    "changeLog": [
+      {
+        "date": "2026-07-22",
+        "type": "registered",
+        "summary": "Registered as pending update candidate from duplicate/diff report.",
+        "actor": "CANAE/Codex"
+      }
+    ]
+  }
+]

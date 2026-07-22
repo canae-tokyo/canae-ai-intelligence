@@ -19,6 +19,7 @@ const candidateTypes = new Set(["news", "tool", "benchmark", "evaluation"]);
 const suggestedStatuses = new Set(["draft"]);
 const duplicateStatuses = new Set(["clear", "possible", "duplicate"]);
 const reviewStatuses = new Set(["pending", "reviewing", "accepted", "rejected"]);
+const reviewDecisions = new Set(["approved", "rejected", "on-hold"]);
 const promotedRecordTypes = new Set(["news", "tool", "benchmark", "evaluation"]);
 
 function assert(condition, message) {
@@ -101,13 +102,20 @@ for (const candidate of candidates) {
   assert(reviewStatuses.has(candidate.reviewStatus), `reviewStatus is invalid: ${candidate.id}`);
   assertNullableIsoDate(candidate.reviewedAt, `candidate reviewedAt ${candidate.id}`);
   assertNullableString(candidate.reviewedBy, `candidate reviewedBy ${candidate.id}`);
-  if (candidate.reviewStatus === "accepted" || candidate.reviewStatus === "rejected") {
+  assertNullableString(candidate.reviewNotes ?? null, `candidate reviewNotes ${candidate.id}`);
+  if (candidate.reviewDecision !== undefined && candidate.reviewDecision !== null) {
+    assert(reviewDecisions.has(candidate.reviewDecision), `reviewDecision is invalid: ${candidate.id}`);
+  }
+  if (candidate.reviewStatus === "accepted" || candidate.reviewStatus === "rejected" || candidate.reviewStatus === "reviewing") {
     assert(candidate.reviewedAt !== null, `reviewedAt is required when review is complete: ${candidate.id}`);
     assert(typeof candidate.reviewedBy === "string" && candidate.reviewedBy.trim().length > 0, `reviewedBy is required when review is complete: ${candidate.id}`);
+    assert(reviewDecisions.has(candidate.reviewDecision), `reviewDecision is required when review is complete: ${candidate.id}`);
+    assert(typeof candidate.reviewNotes === "string" && candidate.reviewNotes.trim().length > 0, `reviewNotes is required when review is complete: ${candidate.id}`);
   }
   if (candidate.reviewStatus === "pending") {
     assert(candidate.reviewedAt === null, `pending candidate reviewedAt must be null: ${candidate.id}`);
     assert(candidate.reviewedBy === null, `pending candidate reviewedBy must be null: ${candidate.id}`);
+    assert(candidate.reviewDecision === undefined || candidate.reviewDecision === null, `pending candidate reviewDecision must be empty: ${candidate.id}`);
   }
   assert(candidate.promotedRecordType === null || promotedRecordTypes.has(candidate.promotedRecordType), `promotedRecordType is invalid: ${candidate.id}`);
   assertNullableString(candidate.promotedRecordId, `candidate promotedRecordId ${candidate.id}`);
