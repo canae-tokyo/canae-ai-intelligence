@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import worker, {
   authorizeInternalReviewRequest,
   isInternalPath,
@@ -24,6 +25,17 @@ assert.equal(
   "/internal/review-candidates must be protected"
 );
 assert.equal(isInternalPath("/news"), false, "public routes must remain unprotected");
+
+{
+  const wranglerConfig = JSON.parse(readFileSync(new URL("../wrangler.jsonc", import.meta.url)));
+  const runWorkerFirst = wranglerConfig.assets?.run_worker_first;
+
+  assert.deepEqual(
+    runWorkerFirst,
+    ["/internal", "/internal/*"],
+    "wrangler must run the Worker before Static Assets for /internal routes"
+  );
+}
 
 {
   let assetFetchCalled = false;
