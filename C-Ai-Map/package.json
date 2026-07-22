@@ -11,10 +11,12 @@
     "validate:collection": "node scripts/validate-collection.mjs",
     "validate:candidates": "node scripts/validate-candidate-report.mjs",
     "validate:duplicate-diff": "node scripts/validate-duplicate-diff-report.mjs",
+    "validate:registration": "node scripts/validate-registration-report.mjs",
     "collection:dry-run": "node scripts/collection-dry-run.mjs",
     "external-fetch:dry-run": "node scripts/external-fetch-dry-run.mjs",
     "candidate:generate": "node scripts/candidate-generation.mjs",
-    "duplicate-diff:detect": "node scripts/duplicate-diff-detection.mjs"
+    "duplicate-diff:detect": "node scripts/duplicate-diff-detection.mjs",
+    "candidate:register": "node scripts/candidate-registration.mjs"
   },
   "dependencies": {
     "next": "14.2.35",

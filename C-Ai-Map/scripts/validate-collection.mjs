@@ -79,11 +79,13 @@ for (const candidate of candidates) {
   assertRequiredString(candidate.sourceUrl, `candidate sourceUrl ${candidate.id}`);
   assertRequiredString(candidate.canonicalUrl, `candidate canonicalUrl ${candidate.id}`);
   assertRequiredString(candidate.detectedAt, `candidate detectedAt ${candidate.id}`);
+  assertRequiredString(candidate.registeredAt, `candidate registeredAt ${candidate.id}`);
   assertRequiredString(candidate.diffSummary, `candidate diffSummary ${candidate.id}`);
   assert(sourceIds.has(candidate.sourceId), `candidate sourceId not found: ${candidate.id}`);
   assertUrl(candidate.sourceUrl, `candidate sourceUrl ${candidate.id}`);
   assertUrl(candidate.canonicalUrl, `candidate canonicalUrl ${candidate.id}`);
   assert(isoDate.test(candidate.detectedAt), `candidate detectedAt must be YYYY-MM-DD: ${candidate.id}`);
+  assert(isoDate.test(candidate.registeredAt), `candidate registeredAt must be YYYY-MM-DD: ${candidate.id}`);
   assertNullableIsoDate(candidate.sourcePublishedAt, `candidate sourcePublishedAt ${candidate.id}`);
   assert(candidateTypes.has(candidate.candidateType), `candidateType is invalid: ${candidate.id}`);
   assert(suggestedStatuses.has(candidate.suggestedStatus), `suggestedStatus must remain draft: ${candidate.id}`);
