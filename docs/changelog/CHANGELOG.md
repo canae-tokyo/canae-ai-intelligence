@@ -53,7 +53,8 @@
 - `X-Robots-Tag: noindex, nofollow`の維持と、ビルド成果物HTMLの`robots` / `googlebot` `noindex`を確認。
 - Candidate Registration Foundationとして、`npm run candidate:register`と`npm run validate:registration`を追加。
 - Duplicate & Diff Detectionレポートの`new`候補だけを`update-candidates.json`へ`pending` / `draft`として登録する構造を追加。
-- 登録時に`registeredAt`を付与し、同一候補ID、同一`canonicalUrl`、pending以外の候補、`verified`昇格を拒否する境界を追加。
+- 通常実行はdry-runとし、`--apply`指定時だけ`data/update-candidates.json`へ原子的に反映する境界を追加。
+- 登録時に`registeredAt`を付与し、同一候補ID、同一`canonicalUrl`、正規化`canonicalUrl`、pending以外の候補、`verified`昇格を拒否する境界を追加。
 - `reports/candidate-registration-report.example.json`を追加し、登録件数、スキップ件数、重複・拒否理由を記録。
 - この段階では`news.json`、`tools.json`、`benchmarks.json`、`canae-evaluations.json`への書き込み、レビューUI、自動公開、`verified`昇格は行わない。
 

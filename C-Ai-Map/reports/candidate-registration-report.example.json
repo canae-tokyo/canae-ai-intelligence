@@ -10,12 +10,12 @@
   "input": {
     "duplicateDiffReportFile": "reports/duplicate-diff-report.example.json",
     "candidateReportFile": "reports/candidate-generation-report.example.json",
-    "candidateStoreFile": "data/update-candidates.json",
+    "candidateStoreFile": "reports/candidate-registration-store.example.json",
     "existingCandidateCount": 0
   },
   "mode": "candidate-store-registration",
   "writes": {
-    "updateCandidates": true,
+    "updateCandidates": false,
     "canonicalData": false
   },
   "registrationPolicy": {
@@ -26,13 +26,24 @@
     "rejectVerifiedPromotion": true,
     "duplicateKeys": [
       "id",
-      "canonicalUrl"
-    ]
+      "canonicalUrl",
+      "normalizedCanonicalUrl"
+    ],
+    "applyRequiredForDataStore": true,
+    "atomicWrite": true
+  },
+  "storeAudit": {
+    "apply": false,
+    "storeChanged": false,
+    "previousCandidateCount": 0,
+    "updatedCandidateCount": 0,
+    "inputHash": "sha256:37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+    "outputHash": "sha256:37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
   },
   "output": {
-    "candidateStoreFile": "data/update-candidates.json",
+    "candidateStoreFile": "reports/candidate-registration-store.example.json",
     "reportFile": "reports/candidate-registration-report.example.json",
-    "updatedCandidateCount": 1
+    "updatedCandidateCount": 0
   },
   "summary": {
     "inputCandidates": 3,
@@ -40,7 +51,8 @@
     "skipped": 2,
     "rejected": 0,
     "duplicateCandidateIds": 0,
-    "duplicateCanonicalUrls": 0
+    "duplicateCanonicalUrls": 0,
+    "duplicateNormalizedCanonicalUrls": 0
   },
   "registeredCandidateIds": [
     "candidate-news-github-changelog-2026-07-20-copilot-users-can-now-see-ai-credits-used-per-billing-cycle"
@@ -49,6 +61,7 @@
     {
       "candidateId": "candidate-news-github-changelog-2026-07-21-gemini-3-6-flash-is-now-available-in-github-copilot",
       "canonicalUrl": "https://github.blog/changelog/2026-07-21-gemini-3-6-flash-is-now-available-in-github-copilot",
+      "normalizedCanonicalUrl": "https://github.blog/changelog/2026-07-21-gemini-3-6-flash-is-now-available-in-github-copilot",
       "matchStatus": "duplicate",
       "duplicateStatus": "duplicate",
       "action": "skipped",
@@ -57,6 +70,7 @@
     {
       "candidateId": "candidate-news-github-changelog-2026-07-20-ai-credit-pools-for-cost-centers-in-the-billing-ui",
       "canonicalUrl": "https://github.blog/changelog/2026-07-20-ai-credit-pools-for-cost-centers-in-the-billing-ui",
+      "normalizedCanonicalUrl": "https://github.blog/changelog/2026-07-20-ai-credit-pools-for-cost-centers-in-the-billing-ui",
       "matchStatus": "duplicate",
       "duplicateStatus": "duplicate",
       "action": "skipped",
@@ -65,6 +79,7 @@
     {
       "candidateId": "candidate-news-github-changelog-2026-07-20-copilot-users-can-now-see-ai-credits-used-per-billing-cycle",
       "canonicalUrl": "https://github.blog/changelog/2026-07-20-copilot-users-can-now-see-ai-credits-used-per-billing-cycle",
+      "normalizedCanonicalUrl": "https://github.blog/changelog/2026-07-20-copilot-users-can-now-see-ai-credits-used-per-billing-cycle",
       "matchStatus": "new",
       "duplicateStatus": "new",
       "action": "registered",

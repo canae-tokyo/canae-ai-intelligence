@@ -1,4 +1,5 @@
 import fs from "node:fs";
+import crypto from "node:crypto";
 import path from "node:path";
 
 const root = process.cwd();
@@ -6,8 +7,9 @@ const defaultOptions = {
   date: null,
   duplicateDiffReport: "reports/duplicate-diff-report.example.json",
   candidateReport: "reports/candidate-generation-report.example.json",
-  candidateStore: "data/update-candidates.json",
+  candidateStore: "reports/candidate-registration-store.example.json",
   output: "reports/candidate-registration-report.local.json",
+  apply: false,
 };
 const isoDate = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -65,6 +67,8 @@ function parseArgs(argv) {
       options.candidateStore = arg.slice("--candidate-store=".length);
     } else if (arg.startsWith("--output=")) {
       options.output = arg.slice("--output=".length);
+    } else if (arg === "--apply") {
+      options.apply = true;
     } else {
       fail(`unknown argument: ${arg}`);
     }
@@ -82,6 +86,9 @@ function validateOptions(options) {
   validatePath(options.candidateReport, "--candidate-report", ["reports"]);
   validatePath(options.candidateStore, "--candidate-store", ["data", "reports"]);
   validatePath(options.output, "--output", ["reports"]);
+  if (!options.apply && options.candidateStore.startsWith("data/")) {
+    fail("--apply is required when --candidate-store points to data/");
+  }
 }
 
 function readJson(file) {
@@ -92,10 +99,48 @@ function readJson(file) {
   }
 }
 
+function readText(file) {
+  try {
+    return fs.readFileSync(path.join(root, file), "utf8");
+  } catch (error) {
+    fail(`failed to read ${file}: ${error.message}`);
+  }
+}
+
+function sha256(value) {
+  return `sha256:${crypto.createHash("sha256").update(value).digest("hex")}`;
+}
+
 function writeJson(file, data) {
   const fullPath = path.join(root, file);
   fs.mkdirSync(path.dirname(fullPath), { recursive: true });
   fs.writeFileSync(fullPath, `${JSON.stringify(data, null, 2)}\n`);
+}
+
+function writeJsonAtomic(file, data) {
+  const fullPath = path.join(root, file);
+  const directory = path.dirname(fullPath);
+  const tmpPath = path.join(directory, `.tmp-${path.basename(file)}-${process.pid}`);
+  const payload = `${JSON.stringify(data, null, 2)}\n`;
+
+  fs.mkdirSync(directory, { recursive: true });
+  fs.writeFileSync(tmpPath, payload);
+  JSON.parse(fs.readFileSync(tmpPath, "utf8"));
+  fs.renameSync(tmpPath, fullPath);
+}
+
+function normalizeUrl(value) {
+  try {
+    const url = new URL(value);
+    url.protocol = url.protocol.toLowerCase();
+    url.hostname = url.hostname.toLowerCase();
+    url.hash = "";
+    url.search = "";
+    const normalized = url.toString();
+    return normalized.endsWith("/") ? normalized.slice(0, -1) : normalized;
+  } catch {
+    return null;
+  }
 }
 
 function validateReports(duplicateDiffReport, candidateReport, candidateStore) {
@@ -106,6 +151,12 @@ function validateReports(duplicateDiffReport, candidateReport, candidateStore) {
     fail("--duplicate-diff-report must be report-only");
   }
   if (!Array.isArray(duplicateDiffReport.results)) fail("--duplicate-diff-report must include results");
+  if (
+    duplicateDiffReport.input?.candidateReportFile &&
+    duplicateDiffReport.input.candidateReportFile !== options.candidateReport
+  ) {
+    fail("--duplicate-diff-report input candidateReportFile must match --candidate-report");
+  }
 
   if (candidateReport.reportType !== "candidate-generation-foundation") {
     fail("--candidate-report must be a candidate-generation-foundation report");
@@ -152,7 +203,16 @@ function makeRegisteredCandidate(candidate, registeredAt) {
   };
 }
 
-function decision(candidateResult, sourceCandidate, existingIds, existingCanonicalUrls, batchIds, batchCanonicalUrls) {
+function decision(
+  candidateResult,
+  sourceCandidate,
+  existingIds,
+  existingCanonicalUrls,
+  existingNormalizedCanonicalUrls,
+  batchIds,
+  batchCanonicalUrls,
+  batchNormalizedCanonicalUrls
+) {
   if (candidateResult.matchStatus !== "new") {
     return {
       action: "skipped",
@@ -163,6 +223,30 @@ function decision(candidateResult, sourceCandidate, existingIds, existingCanonic
     return {
       action: "rejected",
       reason: "source-candidate-not-found",
+    };
+  }
+  if (candidateResult.duplicateStatus !== "new") {
+    return {
+      action: "rejected",
+      reason: "duplicate-status-not-new",
+    };
+  }
+  if (candidateResult.sourceId !== sourceCandidate.sourceId) {
+    return {
+      action: "rejected",
+      reason: "source-id-mismatch",
+    };
+  }
+  if (candidateResult.candidateType !== sourceCandidate.candidateType) {
+    return {
+      action: "rejected",
+      reason: "candidate-type-mismatch",
+    };
+  }
+  if (candidateResult.candidateCanonicalUrl !== sourceCandidate.canonicalUrl) {
+    return {
+      action: "rejected",
+      reason: "canonical-url-mismatch",
     };
   }
   if (sourceCandidate.reviewStatus !== "pending") {
@@ -189,6 +273,22 @@ function decision(candidateResult, sourceCandidate, existingIds, existingCanonic
       reason: "duplicate-canonical-url",
     };
   }
+  const normalizedCanonicalUrl = normalizeUrl(sourceCandidate.canonicalUrl);
+  if (!normalizedCanonicalUrl) {
+    return {
+      action: "rejected",
+      reason: "invalid-canonical-url",
+    };
+  }
+  if (
+    existingNormalizedCanonicalUrls.has(normalizedCanonicalUrl) ||
+    batchNormalizedCanonicalUrls.has(normalizedCanonicalUrl)
+  ) {
+    return {
+      action: "rejected",
+      reason: "duplicate-normalized-canonical-url",
+    };
+  }
 
   return {
     action: "registered",
@@ -197,9 +297,15 @@ function decision(candidateResult, sourceCandidate, existingIds, existingCanonic
 }
 
 const options = parseArgs(process.argv.slice(2));
+const candidateStoreText = readText(options.candidateStore);
 const duplicateDiffReport = readJson(options.duplicateDiffReport);
 const candidateReport = readJson(options.candidateReport);
-const candidateStore = readJson(options.candidateStore);
+let candidateStore;
+try {
+  candidateStore = JSON.parse(candidateStoreText);
+} catch (error) {
+  fail(`failed to read JSON ${options.candidateStore}: ${error.message}`);
+}
 
 validateReports(duplicateDiffReport, candidateReport, candidateStore);
 
@@ -208,8 +314,12 @@ const sourceCandidates = new Map(
 );
 const existingIds = new Set(candidateStore.map((candidate) => candidate.id));
 const existingCanonicalUrls = new Set(candidateStore.map((candidate) => candidate.canonicalUrl));
+const existingNormalizedCanonicalUrls = new Set(
+  candidateStore.map((candidate) => normalizeUrl(candidate.canonicalUrl)).filter(Boolean)
+);
 const batchIds = new Set();
 const batchCanonicalUrls = new Set();
+const batchNormalizedCanonicalUrls = new Set();
 const registeredCandidates = [];
 const results = [];
 
@@ -220,8 +330,10 @@ for (const candidateResult of duplicateDiffReport.results) {
     sourceCandidate,
     existingIds,
     existingCanonicalUrls,
+    existingNormalizedCanonicalUrls,
     batchIds,
-    batchCanonicalUrls
+    batchCanonicalUrls,
+    batchNormalizedCanonicalUrls
   );
 
   if (currentDecision.action === "registered") {
@@ -229,11 +341,13 @@ for (const candidateResult of duplicateDiffReport.results) {
     registeredCandidates.push(registeredCandidate);
     batchIds.add(registeredCandidate.id);
     batchCanonicalUrls.add(registeredCandidate.canonicalUrl);
+    batchNormalizedCanonicalUrls.add(normalizeUrl(registeredCandidate.canonicalUrl));
   }
 
   results.push({
     candidateId: candidateResult.candidateId,
     canonicalUrl: sourceCandidate?.canonicalUrl ?? candidateResult.candidateCanonicalUrl,
+    normalizedCanonicalUrl: normalizeUrl(sourceCandidate?.canonicalUrl ?? candidateResult.candidateCanonicalUrl),
     matchStatus: candidateResult.matchStatus,
     duplicateStatus: candidateResult.duplicateStatus,
     action: currentDecision.action,
@@ -242,7 +356,10 @@ for (const candidateResult of duplicateDiffReport.results) {
 }
 
 const updatedCandidates = [...candidateStore, ...registeredCandidates];
-writeJson(options.candidateStore, updatedCandidates);
+const storeChanged = options.apply && registeredCandidates.length > 0;
+if (storeChanged) {
+  writeJsonAtomic(options.candidateStore, updatedCandidates);
+}
 
 const summary = {
   inputCandidates: duplicateDiffReport.results.length,
@@ -251,6 +368,8 @@ const summary = {
   rejected: results.filter((result) => result.action === "rejected").length,
   duplicateCandidateIds: results.filter((result) => result.reason === "duplicate-candidate-id").length,
   duplicateCanonicalUrls: results.filter((result) => result.reason === "duplicate-canonical-url").length,
+  duplicateNormalizedCanonicalUrls: results.filter((result) => result.reason === "duplicate-normalized-canonical-url")
+    .length,
 };
 
 const report = {
@@ -270,7 +389,7 @@ const report = {
   },
   mode: "candidate-store-registration",
   writes: {
-    updateCandidates: true,
+    updateCandidates: storeChanged,
     canonicalData: false,
   },
   registrationPolicy: {
@@ -279,12 +398,22 @@ const report = {
     forcedReviewStatus: "pending",
     forcedSuggestedStatus: "draft",
     rejectVerifiedPromotion: true,
-    duplicateKeys: ["id", "canonicalUrl"],
+    duplicateKeys: ["id", "canonicalUrl", "normalizedCanonicalUrl"],
+    applyRequiredForDataStore: true,
+    atomicWrite: true,
+  },
+  storeAudit: {
+    apply: options.apply,
+    storeChanged,
+    previousCandidateCount: candidateStore.length,
+    updatedCandidateCount: storeChanged ? updatedCandidates.length : candidateStore.length,
+    inputHash: sha256(candidateStoreText),
+    outputHash: storeChanged ? sha256(`${JSON.stringify(updatedCandidates, null, 2)}\n`) : sha256(candidateStoreText),
   },
   output: {
     candidateStoreFile: options.candidateStore,
     reportFile: options.output,
-    updatedCandidateCount: updatedCandidates.length,
+    updatedCandidateCount: storeChanged ? updatedCandidates.length : candidateStore.length,
   },
   summary,
   registeredCandidateIds: registeredCandidates.map((candidate) => candidate.id),
@@ -294,5 +423,5 @@ const report = {
 writeJson(options.output, report);
 
 console.log(
-  `Candidate registration wrote ${options.candidateStore} and ${options.output}: ${summary.registered} registered / ${summary.skipped} skipped / ${summary.rejected} rejected.`
+  `Candidate registration ${storeChanged ? "applied" : "dry-run"} ${options.output}: ${summary.registered} registered / ${summary.skipped} skipped / ${summary.rejected} rejected.`
 );
