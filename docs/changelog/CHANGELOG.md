@@ -71,6 +71,15 @@
 - GitHub Actions CI、GitHub Pages deployment、Cloudflare Workers Buildsの成功を確認。
 - 本番URL `/`、`/news`、`/genre/coding`、404応答を確認。
 - `X-Robots-Tag: noindex, nofollow`の維持を確認。
+- Verified Promotion Foundationとして、`npm run candidate:promote`と`npm run validate:promotion`を追加。
+- 承認済みnews候補を`news.json`へ昇格するCLI基盤を追加し、dry-run既定、`--apply`必須、2ファイル原子的更新、入力ハッシュ再確認、バックアップ、ロールバック境界を実装。
+- `news.json`側のID、完全`sourceUrl`、正規化`sourceUrl`重複拒否と必須メタ情報検証を追加。
+- 昇格後のnewsは`status: verified`、`dataQuality: verified`に固定し、候補側へ`promotedRecordType`、`promotedRecordId`、`promotedAt`を記録。
+- PR #21をSquash Mergeし、Verified Promotion FoundationをProductionへ反映。
+- Merge Commit `e5bdce2e81f99ec5812333678438362bee9da854` を確認。
+- GitHub Actions CI、GitHub Pages deployment、Cloudflare Workers Buildsの成功を確認。
+- 本番URL `/`、`/news`、`/genre/coding`、404応答を確認。
+- `X-Robots-Tag: noindex, nofollow`の維持を確認。
 
 ## v1.1.1 - 2026-07-21
 
