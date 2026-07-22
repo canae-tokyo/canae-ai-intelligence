@@ -4,6 +4,7 @@ import newsRaw from "@/data/news.json";
 import companiesRaw from "@/data/companies.json";
 import benchmarksRaw from "@/data/benchmarks.json";
 import canaeEvaluationsRaw from "@/data/canae-evaluations.json";
+import updateCandidatesRaw from "@/data/update-candidates.json";
 import type {
   BenchmarkRecord,
   BenchmarkSummary,
@@ -14,6 +15,8 @@ import type {
   NewsItem,
   CompanyNode,
   GenreId,
+  UpdateCandidate,
+  UpdateCandidateReviewStatus,
 } from "./types";
 
 export const genres = genresRaw as Genre[];
@@ -24,6 +27,7 @@ export const news = allNews;
 export const companies = companiesRaw as CompanyNode[];
 export const allBenchmarks = benchmarksRaw as BenchmarkRecord[];
 export const allCanaeEvaluations = canaeEvaluationsRaw as CanaeEvaluationRecord[];
+export const updateCandidates = updateCandidatesRaw as UpdateCandidate[];
 
 export const verifiedNews = allNews.filter((n) => n.status === "verified");
 export const activeNews = allNews.filter((n) => n.status !== "archived");
@@ -159,4 +163,39 @@ export function getCanaeEvaluationForTool(tool: Tool): CanaeEvaluationSummary {
     evaluatedAt: tool.lastUpdated,
     notes: "tools.json internalGrade is used as fallback until canae-evaluations.json has an approved record.",
   };
+}
+
+export function getUpdateCandidatesByStatus(
+  status?: UpdateCandidateReviewStatus
+): UpdateCandidate[] {
+  const candidates = status
+    ? updateCandidates.filter((candidate) => candidate.reviewStatus === status)
+    : updateCandidates;
+
+  return [...candidates].sort((a, b) => {
+    const dateCompare = (b.registeredAt ?? b.detectedAt).localeCompare(
+      a.registeredAt ?? a.detectedAt
+    );
+
+    return dateCompare || a.title.localeCompare(b.title);
+  });
+}
+
+export function getUpdateCandidateById(id: string): UpdateCandidate | undefined {
+  return updateCandidates.find((candidate) => candidate.id === id);
+}
+
+export function getUpdateCandidateStatusCounts(): Record<UpdateCandidateReviewStatus, number> {
+  return updateCandidates.reduce(
+    (counts, candidate) => ({
+      ...counts,
+      [candidate.reviewStatus]: counts[candidate.reviewStatus] + 1,
+    }),
+    {
+      pending: 0,
+      reviewing: 0,
+      accepted: 0,
+      rejected: 0,
+    } satisfies Record<UpdateCandidateReviewStatus, number>
+  );
 }
