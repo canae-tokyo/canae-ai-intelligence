@@ -46,6 +46,11 @@
 - Candidate Generationレポートを入力に、`canonicalUrl`完全一致、正規化URL一致、タイトル類似、Content Fingerprint、差分項目一覧をレポート化する構造を追加。
 - 固定fixtureで完全一致、正規化URLのみ一致、タイトル差分、新規候補のケースを検証するサンプルレポートを追加。
 - この段階では`update-candidates.json`、`news.json`、`tools.json`、`benchmarks.json`、`canae-evaluations.json`への書き込みは行わない。
+- PR #15をSquash Mergeし、Duplicate & Diff Detection FoundationをProductionへ反映。
+- Merge Commit `04e3647442f80bbf7e80b92a3a847727b8635b80` を確認。
+- GitHub Actions CI、GitHub Pages deployment、Cloudflare Workers Buildsの成功を確認。
+- 本番URL `/`、`/news`、`/genre/coding`、404応答を確認。
+- `X-Robots-Tag: noindex, nofollow`の維持と、ビルド成果物HTMLの`robots` / `googlebot` `noindex`を確認。
 
 ## v1.1.1 - 2026-07-21
 
