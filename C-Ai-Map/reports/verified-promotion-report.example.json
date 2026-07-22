@@ -1,0 +1,79 @@
+{
+  "reportType": "verified-promotion-foundation",
+  "reportVersion": "1.0",
+  "generatedAt": "2026-07-22",
+  "executionStatus": "completed",
+  "generator": {
+    "script": "scripts/verified-promotion.mjs",
+    "version": "1.0"
+  },
+  "input": {
+    "candidateStoreFile": "reports/verified-promotion-candidates.example.json",
+    "newsFile": "reports/verified-promotion-news.example.json",
+    "candidateCount": 1,
+    "newsCount": 0,
+    "candidateId": "candidate-news-github-changelog-2026-07-20-copilot-users-can-now-see-ai-credits-used-per-billing-cycle",
+    "newsId": "news-2026-07-20-001"
+  },
+  "mode": "verified-news-promotion",
+  "writes": {
+    "updateCandidates": false,
+    "news": false,
+    "otherCanonicalData": false
+  },
+  "promotionPolicy": {
+    "requiredCandidateType": "news",
+    "requiredReviewDecision": "approved",
+    "requiredReviewStatus": "accepted",
+    "target": "news.json",
+    "forcedStatus": "verified",
+    "forcedDataQuality": "verified",
+    "duplicateKeys": [
+      "newsId",
+      "sourceUrl",
+      "normalizedSourceUrl"
+    ],
+    "applyRequired": true,
+    "twoFileAtomicWrite": true,
+    "rollbackOnFailure": true,
+    "preWriteHashRecheck": true,
+    "rejectAlreadyPromoted": true,
+    "rejectNonApprovedCandidates": true,
+    "rejectAutoImpactGeneration": true
+  },
+  "storeAudit": {
+    "apply": false,
+    "storeChanged": false,
+    "previousCandidateCount": 1,
+    "updatedCandidateCount": 1,
+    "previousNewsCount": 0,
+    "updatedNewsCount": 0,
+    "candidateInputHash": "sha256:21f22ea7e1d62c440b8dc5c99a675027c7dfd48497e1f5c6ff1b4ac17ccad203",
+    "candidateOutputHash": "sha256:21f22ea7e1d62c440b8dc5c99a675027c7dfd48497e1f5c6ff1b4ac17ccad203",
+    "newsInputHash": "sha256:37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+    "newsOutputHash": "sha256:37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+  },
+  "output": {
+    "candidateStoreFile": "reports/verified-promotion-candidates.example.json",
+    "newsFile": "reports/verified-promotion-news.example.json",
+    "reportFile": "reports/verified-promotion-report.example.json"
+  },
+  "summary": {
+    "promoted": 1,
+    "rejected": 0,
+    "storeChanged": false
+  },
+  "result": {
+    "candidateId": "candidate-news-github-changelog-2026-07-20-copilot-users-can-now-see-ai-credits-used-per-billing-cycle",
+    "newsId": "news-2026-07-20-001",
+    "sourceUrl": "https://github.blog/changelog/2026-07-20-copilot-users-can-now-see-ai-credits-used-per-billing-cycle",
+    "normalizedSourceUrl": "https://github.blog/changelog/2026-07-20-copilot-users-can-now-see-ai-credits-used-per-billing-cycle",
+    "action": "promoted",
+    "reason": "approved-candidate-promoted",
+    "status": "verified",
+    "dataQuality": "verified",
+    "promotedRecordType": "news",
+    "promotedRecordId": "news-2026-07-20-001",
+    "promotedAt": "2026-07-22"
+  }
+}

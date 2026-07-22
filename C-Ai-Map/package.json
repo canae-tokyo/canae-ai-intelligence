@@ -13,12 +13,14 @@
     "validate:duplicate-diff": "node scripts/validate-duplicate-diff-report.mjs",
     "validate:registration": "node scripts/validate-registration-report.mjs",
     "validate:manual-review": "node scripts/validate-manual-review-report.mjs",
+    "validate:promotion": "node scripts/validate-promotion-report.mjs",
     "collection:dry-run": "node scripts/collection-dry-run.mjs",
     "external-fetch:dry-run": "node scripts/external-fetch-dry-run.mjs",
     "candidate:generate": "node scripts/candidate-generation.mjs",
     "duplicate-diff:detect": "node scripts/duplicate-diff-detection.mjs",
     "candidate:register": "node scripts/candidate-registration.mjs",
-    "candidate:review": "node scripts/candidate-manual-review.mjs"
+    "candidate:review": "node scripts/candidate-manual-review.mjs",
+    "candidate:promote": "node scripts/verified-promotion.mjs"
   },
   "dependencies": {
     "next": "14.2.35",
