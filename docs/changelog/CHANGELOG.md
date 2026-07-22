@@ -80,6 +80,15 @@
 - GitHub Actions CI、GitHub Pages deployment、Cloudflare Workers Buildsの成功を確認。
 - 本番URL `/`、`/news`、`/genre/coding`、404応答を確認。
 - `X-Robots-Tag: noindex, nofollow`の維持を確認。
+- Review UI Foundationとして、`/internal/review-candidates`に読み取り専用の候補確認画面を追加。
+- `update-candidates.json`の候補一覧、`pending` / `reviewing` / `accepted` / `rejected`絞り込み、候補詳細、外部リンク、`duplicateCheck`、`diffSummary`、レビュー履歴を表示。
+- 公開ナビ導線、書き込み処理、API route、UI操作による承認・却下・昇格は追加しない。
+- PR #23をSquash Mergeし、Review UI FoundationをProductionへ反映。
+- Merge Commit `261bdf8eb253e3d0964330aa03a8376a1106b9e9` を確認。
+- Cloudflare Workers Build Version `106a4297-e231-476e-b4be-8ac5a56478bc` を確認。
+- GitHub Actions CI、GitHub Pages deployment、Cloudflare Workers Buildsの成功を確認。
+- 本番URL `/`、`/news`、`/genre/coding`、`/internal/review-candidates`、404応答を確認。
+- `X-Robots-Tag: noindex, nofollow`とHTML `robots` / `googlebot` `noindex`の維持を確認。
 
 ## v1.1.1 - 2026-07-21
 
