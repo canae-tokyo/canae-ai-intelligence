@@ -12,6 +12,33 @@ const DECISION_TO_REVIEW_STATUS = {
 };
 const MAX_REVIEW_BODY_BYTES = 16 * 1024;
 
+const REVIEW_ACTION_UPSERT_SQL = `
+INSERT INTO review_candidate_actions (
+  candidate_id, candidate_type, review_decision, review_status,
+  previous_review_decision, previous_review_status, reason,
+  actor_email, source_store_hash, action_id, created_at, updated_at
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+ON CONFLICT(candidate_id) DO UPDATE SET
+  candidate_type = excluded.candidate_type,
+  review_decision = excluded.review_decision,
+  review_status = excluded.review_status,
+  previous_review_decision = excluded.previous_review_decision,
+  previous_review_status = excluded.previous_review_status,
+  reason = excluded.reason,
+  actor_email = excluded.actor_email,
+  source_store_hash = excluded.source_store_hash,
+  action_id = excluded.action_id,
+  updated_at = excluded.updated_at
+`;
+
+const REVIEW_ACTION_LOG_INSERT_SQL = `
+INSERT INTO review_candidate_action_logs (
+  id, candidate_id, candidate_type, action, review_decision, review_status,
+  previous_review_decision, previous_review_status, reason, actor_email,
+  source_store_hash, request_hash, created_at
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+`;
+
 const textEncoder = new TextEncoder();
 let cachedJwks;
 
@@ -27,7 +54,7 @@ const worker = {
       }
 
       if (url.pathname === REVIEW_ACTION_API_PATH) {
-        return withSecurityHeaders(await handleReviewActionApi(request, authorization));
+        return withSecurityHeaders(await handleReviewActionApi(request, authorization, env));
       }
     }
 
@@ -82,7 +109,7 @@ export async function authorizeInternalReviewRequest(
   return { allowed: true, reason: "access-authorized", email };
 }
 
-export async function handleReviewActionApi(request, authorization) {
+export async function handleReviewActionApi(request, authorization, env = {}) {
   if (request.method !== "POST") {
     return jsonResponse(
       {
@@ -113,6 +140,7 @@ export async function handleReviewActionApi(request, authorization) {
   const result = await processReviewActionRequestBody(body, updateCandidates, {
     now: new Date(),
     reviewerEmail: authorization.email,
+    db: env.REVIEW_ACTION_DB,
   });
 
   return jsonResponse(result.body, result.status);
@@ -155,7 +183,7 @@ export async function processReviewActionRequestBody(body, candidateStore, optio
 
   if (decision.action !== "reviewed") {
     return {
-      status: 409,
+      status: decision.reason === "candidate-not-found" ? 404 : 409,
       body: {
         ok: false,
         error: decision.reason,
@@ -170,18 +198,73 @@ export async function processReviewActionRequestBody(body, candidateStore, optio
   const outputStoreHash = await sha256(outputStoreText);
 
   if (body.apply === true) {
+    if (!options.db) {
+      return {
+        status: 501,
+        body: {
+          ok: false,
+          error: "storage-not-configured",
+          message:
+            "Review action storage is not configured. Bind REVIEW_ACTION_DB (Cloudflare D1) before enabling apply.",
+          candidateId: body.candidateId,
+          previousReviewStatus: decision.previousReviewStatus,
+          nextReviewStatus: DECISION_TO_REVIEW_STATUS[body.decision],
+          reviewDecision: body.decision,
+          storeChanged: false,
+        },
+      };
+    }
+
+    if (!options.reviewerEmail) {
+      return reviewActionError("actor-email-missing", 500);
+    }
+
+    const actionId = crypto.randomUUID();
+    const nowIso = toIsoDateTime(options.now ?? new Date());
+    const requestHash = await sha256(JSON.stringify(body));
+
+    try {
+      await recordReviewActionInStorage(options.db, {
+        actionId,
+        candidateId: body.candidateId,
+        candidateType: decision.candidate.candidateType ?? "unknown",
+        reviewDecision: body.decision,
+        reviewStatus: DECISION_TO_REVIEW_STATUS[body.decision],
+        previousReviewDecision: decision.previousReviewDecision,
+        previousReviewStatus: decision.previousReviewStatus,
+        reason: decision.reason,
+        actorEmail: options.reviewerEmail,
+        sourceStoreHash: currentStoreHash,
+        requestHash,
+        createdAt: nowIso,
+      });
+    } catch {
+      return reviewActionError("storage-write-failed", 500, { candidateId: body.candidateId });
+    }
+
     return {
-      status: 501,
+      status: 200,
       body: {
-        ok: false,
-        error: "storage-not-configured",
-        message:
-          "Cloudflare Workers Static Assets cannot persist data/update-candidates.json at runtime. Configure a storage backend before enabling apply.",
+        ok: true,
+        mode: "applied",
+        actionId,
         candidateId: body.candidateId,
         previousReviewStatus: decision.previousReviewStatus,
-        nextReviewStatus: DECISION_TO_REVIEW_STATUS[body.decision],
+        reviewStatus: DECISION_TO_REVIEW_STATUS[body.decision],
         reviewDecision: body.decision,
+        reviewedAt: decision.candidate.reviewedAt,
+        reviewedBy: body.reviewedBy,
         storeChanged: false,
+        storeAudit: {
+          inputHash: currentStoreHash,
+          outputHash: outputStoreHash,
+          previousCandidateCount: candidateStore.length,
+          updatedCandidateCount: decision.updatedStore.length,
+        },
+        persistence: {
+          available: true,
+          backend: "d1",
+        },
       },
     };
   }
@@ -391,44 +474,47 @@ function reviewCandidateDecision(candidateStore, options) {
   const index = candidateStore.findIndex((candidate) => candidate.id === options.candidateId);
 
   if (index === -1) {
-    return rejectedReview("candidate-not-found", null, null, candidateStore);
+    return rejectedReview("candidate-not-found", null, null, null, candidateStore);
   }
 
   const candidate = candidateStore[index];
 
   if (candidate.reviewStatus === "reviewing") {
     if (!options.resolveHold) {
-      return rejectedReview("resolve-hold-required", candidate, candidate.reviewStatus, candidateStore);
+      return rejectedReview("resolve-hold-required", candidate, candidate.reviewStatus, candidate.reviewDecision, candidateStore);
     }
     if (options.decision === "on-hold") {
-      return rejectedReview("hold-cannot-resolve-to-hold", candidate, candidate.reviewStatus, candidateStore);
+      return rejectedReview("hold-cannot-resolve-to-hold", candidate, candidate.reviewStatus, candidate.reviewDecision, candidateStore);
     }
   } else if (candidate.reviewStatus !== "pending") {
-    return rejectedReview("candidate-already-reviewed", candidate, candidate.reviewStatus, candidateStore);
+    return rejectedReview("candidate-already-reviewed", candidate, candidate.reviewStatus, candidate.reviewDecision, candidateStore);
   }
 
   if (candidate.suggestedStatus !== "draft") {
-    return rejectedReview("suggested-status-not-draft", candidate, candidate.reviewStatus, candidateStore);
+    return rejectedReview("suggested-status-not-draft", candidate, candidate.reviewStatus, candidate.reviewDecision, candidateStore);
   }
 
   const reviewedCandidate = applyReviewDecision(candidate, options);
   const updatedStore = candidateStore.map((item, itemIndex) => (itemIndex === index ? reviewedCandidate : item));
+  const actionReason = candidate.reviewStatus === "reviewing" ? "manual-review-resolved" : "manual-review-recorded";
 
   return {
     action: "reviewed",
-    reason: "manual-review-recorded",
+    reason: actionReason,
     candidate: reviewedCandidate,
     previousReviewStatus: candidate.reviewStatus,
+    previousReviewDecision: candidate.reviewDecision ?? null,
     updatedStore,
   };
 }
 
-function rejectedReview(reason, candidate, previousReviewStatus, updatedStore) {
+function rejectedReview(reason, candidate, previousReviewStatus, previousReviewDecision, updatedStore) {
   return {
     action: "rejected",
     reason,
     candidate,
     previousReviewStatus,
+    previousReviewDecision,
     updatedStore,
   };
 }
@@ -459,15 +545,54 @@ function applyReviewDecision(candidate, options) {
   };
 }
 
-function reviewActionError(error, status) {
+function reviewActionError(error, status, extra = {}) {
   return {
     status,
     body: {
       ok: false,
       error,
       storeChanged: false,
+      ...extra,
     },
   };
+}
+
+async function recordReviewActionInStorage(db, params) {
+  const upsertStatement = db
+    .prepare(REVIEW_ACTION_UPSERT_SQL)
+    .bind(
+      params.candidateId,
+      params.candidateType,
+      params.reviewDecision,
+      params.reviewStatus,
+      params.previousReviewDecision,
+      params.previousReviewStatus,
+      params.reason,
+      params.actorEmail,
+      params.sourceStoreHash,
+      params.actionId,
+      params.createdAt,
+      params.createdAt
+    );
+  const logStatement = db
+    .prepare(REVIEW_ACTION_LOG_INSERT_SQL)
+    .bind(
+      params.actionId,
+      params.candidateId,
+      params.candidateType,
+      "review-decision",
+      params.reviewDecision,
+      params.reviewStatus,
+      params.previousReviewDecision,
+      params.previousReviewStatus,
+      params.reason,
+      params.actorEmail,
+      params.sourceStoreHash,
+      params.requestHash,
+      params.createdAt
+    );
+
+  await db.batch([upsertStatement, logStatement]);
 }
 
 function jsonResponse(body, status = 200, headers = {}) {

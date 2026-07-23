@@ -16,5 +16,13 @@
     "CF_ACCESS_AUD": "9d53a0e4773553030826e4ff6c4e33bedd53e0b592ca0071b0c624f1cd7a3dbf",
     "CF_ACCESS_CERTS_URL": "https://ancient-dream-d0c9.cloudflareaccess.com/cdn-cgi/access/certs",
     "INTERNAL_REVIEW_ALLOWED_EMAILS": "canae.tokyo@gmail.com"
-  }
+  },
+  "d1_databases": [
+    {
+      "binding": "REVIEW_ACTION_DB",
+      "database_name": "canae-ai-intelligence-review-actions",
+      "database_id": "REPLACE_WITH_PRODUCTION_D1_DATABASE_ID",
+      "migrations_dir": "migrations"
+    }
+  ]
 }
