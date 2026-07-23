@@ -206,6 +206,18 @@ git diff --check
 npm run validate:review-action-api
 ```
 
+## 実装制約メモ
+
+現行のProductionはNext.js Static Export + Cloudflare Workers Static Assetsであり、Worker実行時に同梱済みの`data/update-candidates.json`を永続更新するファイルシステムは存在しない。
+
+そのため、初回API Foundationでは以下を正式な安全境界とする。
+
+- 認可、入力検証、状態遷移判定、ハッシュ再確認、レスポンス監査を実装する。
+- `apply`なしはdry-runとして成功レスポンスを返す。
+- `apply: true`は保存先未設定として`501 storage-not-configured`でFail-closedする。
+- `update-candidates.json`、`news.json`等の正本データは更新しない。
+- 永続更新は、保存先（例: GitHub PR作成、KV/R2/D1等）を別途正式決定してから別PRで扱う。
+
 ## PR方針
 
 ### PR名

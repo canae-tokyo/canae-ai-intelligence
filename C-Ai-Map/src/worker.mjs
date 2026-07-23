@@ -1,6 +1,16 @@
+import updateCandidates from "../data/update-candidates.json" with { type: "json" };
+
 const INTERNAL_PATH_PREFIX = "/internal/";
+const REVIEW_ACTION_API_PATH = "/internal/api/review-candidates";
 const ACCESS_JWT_HEADER = "cf-access-jwt-assertion";
 const ACCESS_USER_EMAIL_HEADER = "cf-access-authenticated-user-email";
+const REVIEW_DECISIONS = new Set(["approved", "rejected", "on-hold"]);
+const DECISION_TO_REVIEW_STATUS = {
+  approved: "accepted",
+  rejected: "rejected",
+  "on-hold": "reviewing",
+};
+const MAX_REVIEW_BODY_BYTES = 16 * 1024;
 
 const textEncoder = new TextEncoder();
 let cachedJwks;
@@ -14,6 +24,10 @@ const worker = {
 
       if (!authorization.allowed) {
         return notFoundResponse();
+      }
+
+      if (url.pathname === REVIEW_ACTION_API_PATH) {
+        return withSecurityHeaders(await handleReviewActionApi(request, authorization));
       }
     }
 
@@ -35,7 +49,7 @@ export async function authorizeInternalReviewRequest(
   const url = new URL(request.url);
 
   if (isLocalBypassAllowed(url, env)) {
-    return { allowed: true, reason: "local-bypass" };
+    return { allowed: true, reason: "local-bypass", email: "local-dev" };
   }
 
   const allowedEmails = parseAllowedEmails(env.INTERNAL_REVIEW_ALLOWED_EMAILS);
@@ -66,6 +80,140 @@ export async function authorizeInternalReviewRequest(
   }
 
   return { allowed: true, reason: "access-authorized", email };
+}
+
+export async function handleReviewActionApi(request, authorization) {
+  if (request.method !== "POST") {
+    return jsonResponse(
+      {
+        ok: false,
+        error: "method-not-allowed",
+        storeChanged: false,
+      },
+      405,
+      { allow: "POST" }
+    );
+  }
+
+  let body;
+
+  try {
+    body = await readJsonBody(request);
+  } catch (error) {
+    return jsonResponse(
+      {
+        ok: false,
+        error: error.message,
+        storeChanged: false,
+      },
+      error.status ?? 400
+    );
+  }
+
+  const result = await processReviewActionRequestBody(body, updateCandidates, {
+    now: new Date(),
+    reviewerEmail: authorization.email,
+  });
+
+  return jsonResponse(result.body, result.status);
+}
+
+export async function processReviewActionRequestBody(body, candidateStore, options = {}) {
+  const validationError = validateReviewActionBody(body);
+
+  if (validationError) {
+    return reviewActionError(validationError, 400);
+  }
+
+  if (!Array.isArray(candidateStore)) {
+    return reviewActionError("candidate-store-invalid", 500);
+  }
+
+  const currentStoreText = serializeCandidateStore(candidateStore);
+  const currentStoreHash = await sha256(currentStoreText);
+
+  if (body.expectedStoreHash !== currentStoreHash) {
+    return {
+      status: 409,
+      body: {
+        ok: false,
+        error: "store-hash-mismatch",
+        storeChanged: false,
+      },
+    };
+  }
+
+  const decision = reviewCandidateDecision(candidateStore, {
+    candidateId: body.candidateId,
+    decision: body.decision,
+    reviewedBy: body.reviewedBy,
+    notes: body.notes,
+    resolveHold: body.resolveHold === true,
+    reviewedAt: toIsoDateTime(options.now ?? new Date()),
+    changeLogDate: toIsoDate(options.now ?? new Date()),
+  });
+
+  if (decision.action !== "reviewed") {
+    return {
+      status: 409,
+      body: {
+        ok: false,
+        error: decision.reason,
+        candidateId: body.candidateId,
+        previousReviewStatus: decision.previousReviewStatus,
+        storeChanged: false,
+      },
+    };
+  }
+
+  const outputStoreText = serializeCandidateStore(decision.updatedStore);
+  const outputStoreHash = await sha256(outputStoreText);
+
+  if (body.apply === true) {
+    return {
+      status: 501,
+      body: {
+        ok: false,
+        error: "storage-not-configured",
+        message:
+          "Cloudflare Workers Static Assets cannot persist data/update-candidates.json at runtime. Configure a storage backend before enabling apply.",
+        candidateId: body.candidateId,
+        previousReviewStatus: decision.previousReviewStatus,
+        nextReviewStatus: DECISION_TO_REVIEW_STATUS[body.decision],
+        reviewDecision: body.decision,
+        storeChanged: false,
+      },
+    };
+  }
+
+  return {
+    status: 200,
+    body: {
+      ok: true,
+      mode: "dry-run",
+      candidateId: body.candidateId,
+      previousReviewStatus: decision.previousReviewStatus,
+      reviewStatus: DECISION_TO_REVIEW_STATUS[body.decision],
+      reviewDecision: body.decision,
+      reviewedAt: decision.candidate.reviewedAt,
+      reviewedBy: body.reviewedBy,
+      storeChanged: false,
+      storeAudit: {
+        inputHash: currentStoreHash,
+        outputHash: outputStoreHash,
+        previousCandidateCount: candidateStore.length,
+        updatedCandidateCount: decision.updatedStore.length,
+      },
+      persistence: {
+        available: false,
+        reason: "static-assets-immutable",
+      },
+    },
+  };
+}
+
+export async function getReviewActionStoreHash(candidateStore = updateCandidates) {
+  return sha256(serializeCandidateStore(candidateStore));
 }
 
 export function parseAllowedEmails(value) {
@@ -183,6 +331,160 @@ export async function verifyCloudflareAccessJwt(jwt, env) {
     : { valid: false, reason: "access-jwt-signature-invalid" };
 }
 
+async function readJsonBody(request) {
+  const contentLength = Number(request.headers.get("content-length") ?? "0");
+
+  if (contentLength > MAX_REVIEW_BODY_BYTES) {
+    const error = new Error("request-too-large");
+    error.status = 413;
+    throw error;
+  }
+
+  const text = await request.text();
+
+  if (text.length > MAX_REVIEW_BODY_BYTES) {
+    const error = new Error("request-too-large");
+    error.status = 413;
+    throw error;
+  }
+
+  try {
+    return JSON.parse(text);
+  } catch {
+    const error = new Error("invalid-json");
+    error.status = 400;
+    throw error;
+  }
+}
+
+function validateReviewActionBody(body) {
+  if (!body || typeof body !== "object" || Array.isArray(body)) {
+    return "request-body-invalid";
+  }
+  if (!isCleanSingleLine(body.candidateId, 180)) return "candidate-id-invalid";
+  if (!REVIEW_DECISIONS.has(body.decision)) return "decision-invalid";
+  if (!isCleanSingleLine(body.reviewedBy, 80)) return "reviewed-by-invalid";
+  if (!isCleanSingleLine(body.notes, 500)) return "notes-invalid";
+  if (!/^sha256:[0-9a-f]{64}$/.test(String(body.expectedStoreHash ?? ""))) {
+    return "expected-store-hash-invalid";
+  }
+  if (body.resolveHold !== undefined && typeof body.resolveHold !== "boolean") {
+    return "resolve-hold-invalid";
+  }
+  if (body.apply !== undefined && typeof body.apply !== "boolean") {
+    return "apply-invalid";
+  }
+  return null;
+}
+
+function isCleanSingleLine(value, maxLength) {
+  return (
+    typeof value === "string" &&
+    value.trim() === value &&
+    value.length > 0 &&
+    value.length <= maxLength &&
+    !/[\r\n\t]/.test(value)
+  );
+}
+
+function reviewCandidateDecision(candidateStore, options) {
+  const index = candidateStore.findIndex((candidate) => candidate.id === options.candidateId);
+
+  if (index === -1) {
+    return rejectedReview("candidate-not-found", null, null, candidateStore);
+  }
+
+  const candidate = candidateStore[index];
+
+  if (candidate.reviewStatus === "reviewing") {
+    if (!options.resolveHold) {
+      return rejectedReview("resolve-hold-required", candidate, candidate.reviewStatus, candidateStore);
+    }
+    if (options.decision === "on-hold") {
+      return rejectedReview("hold-cannot-resolve-to-hold", candidate, candidate.reviewStatus, candidateStore);
+    }
+  } else if (candidate.reviewStatus !== "pending") {
+    return rejectedReview("candidate-already-reviewed", candidate, candidate.reviewStatus, candidateStore);
+  }
+
+  if (candidate.suggestedStatus !== "draft") {
+    return rejectedReview("suggested-status-not-draft", candidate, candidate.reviewStatus, candidateStore);
+  }
+
+  const reviewedCandidate = applyReviewDecision(candidate, options);
+  const updatedStore = candidateStore.map((item, itemIndex) => (itemIndex === index ? reviewedCandidate : item));
+
+  return {
+    action: "reviewed",
+    reason: "manual-review-recorded",
+    candidate: reviewedCandidate,
+    previousReviewStatus: candidate.reviewStatus,
+    updatedStore,
+  };
+}
+
+function rejectedReview(reason, candidate, previousReviewStatus, updatedStore) {
+  return {
+    action: "rejected",
+    reason,
+    candidate,
+    previousReviewStatus,
+    updatedStore,
+  };
+}
+
+function applyReviewDecision(candidate, options) {
+  const existingChangeLog = Array.isArray(candidate.changeLog) ? candidate.changeLog : [];
+  const actionType = candidate.reviewStatus === "reviewing" ? "manual-review-resolved" : "manual-review";
+
+  return {
+    ...candidate,
+    reviewStatus: DECISION_TO_REVIEW_STATUS[options.decision],
+    reviewDecision: options.decision,
+    reviewedAt: options.reviewedAt,
+    reviewedBy: options.reviewedBy,
+    reviewNotes: options.notes,
+    promotedRecordType: null,
+    promotedRecordId: null,
+    promotedAt: null,
+    changeLog: [
+      ...existingChangeLog,
+      {
+        date: options.changeLogDate,
+        type: actionType,
+        summary: `Review Action API dry-run decision: ${options.decision}. No canonical data was changed.`,
+        actor: options.reviewedBy,
+      },
+    ],
+  };
+}
+
+function reviewActionError(error, status) {
+  return {
+    status,
+    body: {
+      ok: false,
+      error,
+      storeChanged: false,
+    },
+  };
+}
+
+function jsonResponse(body, status = 200, headers = {}) {
+  return new Response(JSON.stringify(body, null, 2), {
+    status,
+    headers: {
+      "content-type": "application/json; charset=utf-8",
+      "cache-control": "no-store",
+      ...headers,
+    },
+  });
+}
+
+function serializeCandidateStore(candidateStore) {
+  return `${JSON.stringify(candidateStore, null, 2)}\n`;
+}
+
 async function getCloudflareAccessJwks(certsUrl) {
   if (cachedJwks?.url === certsUrl) {
     return cachedJwks.value;
@@ -235,4 +537,19 @@ function isExpectedAudience(audience, expectedAudience) {
 
 function normalizeEmail(email) {
   return String(email ?? "").trim().toLowerCase();
+}
+
+async function sha256(value) {
+  const digest = await crypto.subtle.digest("SHA-256", textEncoder.encode(value));
+  return `sha256:${[...new Uint8Array(digest)]
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("")}`;
+}
+
+function toIsoDateTime(date) {
+  return date.toISOString();
+}
+
+function toIsoDate(date) {
+  return date.toISOString().slice(0, 10);
 }
