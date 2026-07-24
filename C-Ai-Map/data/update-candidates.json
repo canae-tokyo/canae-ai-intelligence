@@ -30,5 +30,51 @@
         "actor": "CANAE/Codex"
       }
     ]
+  },
+  {
+    "id": "candidate-news-github-changelog-2026-07-07-github-copilot-app-available-to-all",
+    "sourceId": "source-github-changelog",
+    "candidateType": "news",
+    "title": "GitHub Copilot app available to all",
+    "sourceUrl": "https://github.blog/changelog/2026-07-07-github-copilot-app-available-to-all/",
+    "canonicalUrl": "https://github.blog/changelog/2026-07-07-github-copilot-app-available-to-all/",
+    "sourcePublishedAt": "2026-07-07",
+    "detectedAt": "2026-07-24",
+    "registeredAt": "2026-07-24",
+    "suggestedStatus": "draft",
+    "duplicateCheck": {
+      "status": "clear",
+      "matchedIds": []
+    },
+    "diffSummary": "Registered as a promotion-ready verification candidate for the Verified Promotion Automation Foundation. GitHub's own changelog post confirms the Copilot desktop app is now available on every Copilot plan (Free, Education, Business, Enterprise) on macOS, Windows, and Linux.",
+    "reviewStatus": "pending",
+    "reviewedAt": null,
+    "reviewedBy": null,
+    "promotedRecordType": null,
+    "promotedRecordId": null,
+    "promotedAt": null,
+    "notes": "GitHub Promotion Token Foundation: promotion-ready candidate used to verify the end-to-end approve -> promotion plan -> GitHub PR flow. This is real, publicly verifiable content suitable for actual publication, not synthetic test data.",
+    "changeLog": [
+      {
+        "date": "2026-07-24",
+        "type": "registered",
+        "summary": "Registered as a promotion-ready verification candidate with a complete proposedRecord.",
+        "actor": "CANAE/Codex"
+      }
+    ],
+    "proposedRecord": {
+      "id": "news-2026-07-07-001",
+      "title": "GitHub Copilotのデスクトップアプリが全プランで利用可能に",
+      "company": "GitHub",
+      "category": "coding",
+      "importance": "medium",
+      "publishedAt": "2026-07-07",
+      "summary": "GitHub Copilotのデスクトップアプリがすべてのプラン（Free、GitHub Education、Business、Enterprise、および独自モデルプロバイダーキー利用者）で利用可能になった。macOS・Windows・Linuxに対応し、GitHubアカウントでサインインしてエージェント駆動開発をデスクトップから開始できる。",
+      "impact": "デスクトップからのエージェント駆動開発が全プランへ拡大したことで、CANAEの開発支援ツール比較検証（コーディング領域）でCopilotアプリの評価対象範囲が広がる。",
+      "sourceType": "official",
+      "sourceUrl": "https://github.blog/changelog/2026-07-07-github-copilot-app-available-to-all/",
+      "sourceCheckedAt": "2026-07-24",
+      "status": "draft"
+    }
   }
 ]

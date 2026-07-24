@@ -195,3 +195,12 @@ git diff --check
 - 正本JSON変更はpromotion branch上のみ（`data/*.json`は本PR自体では無変更）
 - Access認可必須、GitHub token非露出、JWT/Cookie非露出
 - CI PASS、Cloudflare Workers Build PASS、working tree clean
+
+## 追記：promotion-ready検証候補（GitHub Promotion Token Foundation）
+
+`GITHUB_PROMOTION_TOKEN`設定後にPromotion PR自動作成をエンドツーエンドで確認するため、`data/update-candidates.json`へ`proposedRecord`を完全に満たす候補を1件追加した（`candidate-news-github-changelog-2026-07-07-github-copilot-app-available-to-all`）。
+
+- 内容はテスト用の架空データではなく、GitHub公式changelog（`https://github.blog/changelog/2026-07-07-github-copilot-app-available-to-all/`）で確認した実際の発表内容（Copilotデスクトップアプリが全プラン・全OSで利用可能になったこと）に基づく。
+- `proposedRecord`は`news`タイプの必須フィールド（`id`/`title`/`company`/`category`/`importance`/`publishedAt`/`summary`/`impact`/`sourceType`/`sourceUrl`/`sourceCheckedAt`/`status`）をすべて満たしており、推測・捏造したフィールドはない。
+- この候補はReview UIでの承認・Promotion UIでのplan生成・PR作成の一連の流れを検証するためのものであり、実際に`data/news.json`へ掲載しても問題ない内容として作成している。
+- `news.json`等の正本JSONは本PRでは直接変更していない（`data/update-candidates.json`のみ）。
