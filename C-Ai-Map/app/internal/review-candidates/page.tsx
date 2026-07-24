@@ -2,9 +2,11 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import Header from "@/components/Header";
 import ReviewCandidatesClient from "@/components/ReviewCandidatesClient";
+import { computeReviewActionStoreHash } from "@/lib/reviewActionStoreHash";
 import {
   getUpdateCandidateStatusCounts,
   getUpdateCandidatesByStatus,
+  updateCandidates,
 } from "@/lib/data";
 
 export const metadata: Metadata = {
@@ -19,7 +21,9 @@ export const metadata: Metadata = {
   },
 };
 
-export default function ReviewCandidatesPage() {
+export default async function ReviewCandidatesPage() {
+  const expectedStoreHash = await computeReviewActionStoreHash(updateCandidates);
+
   return (
     <div>
       <Header title="候補レビュー" />
@@ -34,6 +38,7 @@ export default function ReviewCandidatesPage() {
           <ReviewCandidatesClient
             candidates={getUpdateCandidatesByStatus()}
             statusCounts={getUpdateCandidateStatusCounts()}
+            expectedStoreHash={expectedStoreHash}
           />
         </Suspense>
       </main>
