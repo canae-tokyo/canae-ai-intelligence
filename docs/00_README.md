@@ -32,6 +32,7 @@
 | `16_v1.1.2_自動収集更新補助設計.md` | 自動収集・更新補助の対象、制約、候補管理 |
 | `17_Cloudflare_Access本番導入報告書.md` | Cloudflare Access本番導入結果と暫定環境との差異 |
 | `18_Review_Action_API_Foundation_実装指示書.md` | Review Action API Foundationの安全境界と実装指示 |
+| `19_Review_Action_Storage_Foundation_実装指示書.md` | Review Action Storage Foundation（D1保存基盤）の実装指示 |
 
 ## 補助ディレクトリ
 
