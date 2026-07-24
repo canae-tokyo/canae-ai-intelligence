@@ -15,7 +15,10 @@
   "vars": {
     "CF_ACCESS_AUD": "9d53a0e4773553030826e4ff6c4e33bedd53e0b592ca0071b0c624f1cd7a3dbf",
     "CF_ACCESS_CERTS_URL": "https://ancient-dream-d0c9.cloudflareaccess.com/cdn-cgi/access/certs",
-    "INTERNAL_REVIEW_ALLOWED_EMAILS": "canae.tokyo@gmail.com"
+    "INTERNAL_REVIEW_ALLOWED_EMAILS": "canae.tokyo@gmail.com",
+    "GITHUB_PROMOTION_REPO_OWNER": "canae-tokyo",
+    "GITHUB_PROMOTION_REPO_NAME": "canae-ai-intelligence",
+    "GITHUB_PROMOTION_BASE_BRANCH": "main"
   },
   "d1_databases": [
     {

@@ -18,6 +18,8 @@
     "validate:review-action-api": "node scripts/validate-review-action-api.mjs",
     "validate:review-action-ui": "node scripts/validate-review-action-ui.mjs",
     "test:review-action-storage": "node scripts/validate-review-action-storage.mjs",
+    "validate:verified-promotion": "node scripts/validate-verified-promotion.mjs",
+    "test:verified-promotion": "node scripts/test-verified-promotion.mjs",
     "collection:dry-run": "node scripts/collection-dry-run.mjs",
     "external-fetch:dry-run": "node scripts/external-fetch-dry-run.mjs",
     "candidate:generate": "node scripts/candidate-generation.mjs",

@@ -34,6 +34,7 @@
 | `18_Review_Action_API_Foundation_実装指示書.md` | Review Action API Foundationの安全境界と実装指示 |
 | `19_Review_Action_Storage_Foundation_実装指示書.md` | Review Action Storage Foundation（D1保存基盤）の実装指示 |
 | `20_Review_Action_UI_Foundation_実装指示書.md` | Review Action UI Foundation（内部レビュー画面の操作UI）の実装指示 |
+| `21_Verified_Promotion_Automation_Foundation_実装指示書.md` | Verified Promotion Automation Foundation（承認済み候補の昇格PR自動作成）の実装指示 |
 
 ## 補助ディレクトリ
 
