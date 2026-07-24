@@ -21,7 +21,7 @@
     {
       "binding": "REVIEW_ACTION_DB",
       "database_name": "canae-ai-intelligence-review-actions",
-      "database_id": "REPLACE_WITH_PRODUCTION_D1_DATABASE_ID",
+      "database_id": "48bc9be4-5219-49cc-a2ea-9428db53bc0a",
       "migrations_dir": "migrations"
     }
   ]
