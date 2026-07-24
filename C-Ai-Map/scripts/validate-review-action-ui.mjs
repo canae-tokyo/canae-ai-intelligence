@@ -102,4 +102,24 @@ for (const interimValue of INTERIM_VALUES) {
   assert.ok(!allOutputSource.includes(interimValue), `interim Cloudflare value "${interimValue}" must not appear in build output`);
 }
 
+for (const label of ["Promotion planを生成", "GitHub PRを作成", "承認済み候補を昇格PRにする"]) {
+  assert.ok(internalChunkSource.includes(label), `promotion UI label "${label}" must be present in the internal chunk`);
+}
+
+for (const apiPath of ["/internal/api/promotion-candidates", "/internal/api/promotion-plan", "/internal/api/promotion-pr"]) {
+  assert.ok(internalChunkSource.includes(apiPath), `internal chunk must call the promotion API path ${apiPath}`);
+}
+
+for (const label of ["Promotion planを生成", "GitHub PRを作成", "承認済み候補を昇格PRにする"]) {
+  assert.ok(
+    !nonInternalChunkSource.includes(label),
+    `promotion UI label "${label}" must not leak into public page bundles`
+  );
+}
+
+assert.ok(
+  !allOutputSource.includes("GITHUB_PROMOTION_TOKEN") && !/gh[pousr]_[A-Za-z0-9_]{20,}/.test(allOutputSource),
+  "GitHub token / secret name must never appear in client-facing build output"
+);
+
 console.log("Review Action UI validation passed.");

@@ -218,4 +218,10 @@ export interface UpdateCandidate {
   promotedAt: string | null;
   notes?: string | null;
   changeLog: UpdateCandidateChange[];
+  // Fully structured record ready to append to the target canonical file
+  // (data/news.json, data/tools.json, etc.) once approved. Verified Promotion
+  // Automation only promotes candidates that already carry a complete
+  // proposedRecord for their candidateType — it never fabricates required
+  // fields (company, category, summary, scores, ...) on its own.
+  proposedRecord?: Record<string, unknown> | null;
 }

@@ -1,7 +1,14 @@
 import updateCandidates from "../data/update-candidates.json" with { type: "json" };
+import newsData from "../data/news.json" with { type: "json" };
+import toolsData from "../data/tools.json" with { type: "json" };
+import benchmarksData from "../data/benchmarks.json" with { type: "json" };
+import canaeEvaluationsData from "../data/canae-evaluations.json" with { type: "json" };
 
 const INTERNAL_PATH_PREFIX = "/internal/";
 const REVIEW_ACTION_API_PATH = "/internal/api/review-candidates";
+const PROMOTION_CANDIDATES_API_PATH = "/internal/api/promotion-candidates";
+const PROMOTION_PLAN_API_PATH = "/internal/api/promotion-plan";
+const PROMOTION_PR_API_PATH = "/internal/api/promotion-pr";
 const ACCESS_JWT_HEADER = "cf-access-jwt-assertion";
 const ACCESS_USER_EMAIL_HEADER = "cf-access-authenticated-user-email";
 const REVIEW_DECISIONS = new Set(["approved", "rejected", "on-hold"]);
@@ -11,6 +18,87 @@ const DECISION_TO_REVIEW_STATUS = {
   "on-hold": "reviewing",
 };
 const MAX_REVIEW_BODY_BYTES = 16 * 1024;
+const UPDATE_CANDIDATES_FILE = "data/update-candidates.json";
+
+const CANDIDATE_TYPE_TARGET_FILE = {
+  news: "data/news.json",
+  tool: "data/tools.json",
+  benchmark: "data/benchmarks.json",
+  "canae-evaluation": "data/canae-evaluations.json",
+};
+
+const TARGET_FILE_DATA = {
+  "data/news.json": newsData,
+  "data/tools.json": toolsData,
+  "data/benchmarks.json": benchmarksData,
+  "data/canae-evaluations.json": canaeEvaluationsData,
+};
+
+// Fields a proposedRecord must already contain before Verified Promotion will
+// treat a candidate as promotable. Mirrors the required fields on the
+// corresponding lib/types.ts interface. Promotion never invents values for
+// these — a candidate missing any of them is reported as
+// "incomplete-proposed-record" instead of being silently skipped or filled in.
+const REQUIRED_PROPOSED_RECORD_FIELDS = {
+  news: [
+    "id",
+    "title",
+    "company",
+    "category",
+    "importance",
+    "publishedAt",
+    "summary",
+    "impact",
+    "sourceType",
+    "sourceUrl",
+    "sourceCheckedAt",
+    "status",
+  ],
+  tool: [
+    "id",
+    "name",
+    "company",
+    "category",
+    "description",
+    "scores",
+    "benchmarkRank",
+    "internalGrade",
+    "price",
+    "apiAvailable",
+    "commercialUse",
+    "lastUpdated",
+    "officialUrl",
+    "tags",
+  ],
+  benchmark: [
+    "id",
+    "toolId",
+    "benchmarkName",
+    "benchmarkVersion",
+    "scope",
+    "sourceUrl",
+    "sourceType",
+    "verifiedAt",
+    "comparability",
+    "dataStatus",
+  ],
+  "canae-evaluation": [
+    "id",
+    "toolId",
+    "evaluationVersion",
+    "overallGrade",
+    "scores",
+    "useCase",
+    "evidence",
+    "evaluatedAt",
+    "evaluatedBy",
+    "reviewStatus",
+  ],
+};
+
+const PROMOTION_COMMIT_MESSAGE = "Promote verified AI intelligence candidates";
+const PROMOTION_PR_TITLE = "Promote verified AI intelligence candidates";
+const MAX_BRANCH_NAME_ATTEMPTS = 5;
 
 const REVIEW_ACTION_UPSERT_SQL = `
 INSERT INTO review_candidate_actions (
@@ -55,6 +143,18 @@ const worker = {
 
       if (url.pathname === REVIEW_ACTION_API_PATH) {
         return withSecurityHeaders(await handleReviewActionApi(request, authorization, env));
+      }
+
+      if (url.pathname === PROMOTION_CANDIDATES_API_PATH) {
+        return withSecurityHeaders(await handlePromotionCandidatesApi(request, authorization, env));
+      }
+
+      if (url.pathname === PROMOTION_PLAN_API_PATH) {
+        return withSecurityHeaders(await handlePromotionPlanApi(request, authorization, env));
+      }
+
+      if (url.pathname === PROMOTION_PR_API_PATH) {
+        return withSecurityHeaders(await handlePromotionPrApi(request, authorization, env));
       }
     }
 
@@ -297,6 +397,405 @@ export async function processReviewActionRequestBody(body, candidateStore, optio
 
 export async function getReviewActionStoreHash(candidateStore = updateCandidates) {
   return sha256(serializeCandidateStore(candidateStore));
+}
+
+export async function handlePromotionCandidatesApi(request, authorization, env = {}) {
+  if (request.method !== "GET") {
+    return jsonResponse({ ok: false, error: "method-not-allowed" }, 405, { allow: "GET" });
+  }
+
+  const result = await processPromotionCandidatesRequest(updateCandidates, {
+    db: env.REVIEW_ACTION_DB,
+  });
+
+  return jsonResponse(result.body, result.status);
+}
+
+export async function processPromotionCandidatesRequest(candidateStore, options = {}) {
+  if (!options.db) {
+    return { status: 501, body: { ok: false, error: "storage-not-configured" } };
+  }
+
+  const currentStoreHash = await sha256(serializeCandidateStore(candidateStore));
+  let approvedRows;
+  let promotedIds;
+
+  try {
+    approvedRows = await fetchApprovedReviewRows(options.db);
+    promotedIds = await fetchCompletedPromotionCandidateIds(options.db);
+  } catch {
+    return { status: 500, body: { ok: false, error: "storage-read-failed" } };
+  }
+
+  const candidates = evaluatePromotionCandidates(candidateStore, approvedRows, promotedIds, currentStoreHash);
+
+  return {
+    status: 200,
+    body: { ok: true, storeHash: currentStoreHash, candidates },
+  };
+}
+
+export async function handlePromotionPlanApi(request, authorization, env = {}) {
+  if (request.method !== "POST") {
+    return jsonResponse({ ok: false, error: "method-not-allowed" }, 405, { allow: "POST" });
+  }
+
+  let body;
+
+  try {
+    body = await readJsonBody(request);
+  } catch (error) {
+    return jsonResponse({ ok: false, error: error.message }, error.status ?? 400);
+  }
+
+  const result = await processPromotionPlanRequest(body, updateCandidates, {
+    db: env.REVIEW_ACTION_DB,
+    reviewerEmail: authorization.email,
+    now: new Date(),
+  });
+
+  return jsonResponse(result.body, result.status);
+}
+
+export async function processPromotionPlanRequest(body, candidateStore, options = {}) {
+  if (!validatePromotionPlanBody(body)) {
+    return { status: 400, body: { ok: false, error: "invalid-request" } };
+  }
+
+  if (!options.db) {
+    return { status: 501, body: { ok: false, error: "storage-not-configured" } };
+  }
+
+  const currentStoreHash = await sha256(serializeCandidateStore(candidateStore));
+
+  if (body.expectedStoreHash !== currentStoreHash) {
+    return {
+      status: 409,
+      body: { ok: false, error: "promotion-conflict", reason: "store-hash-mismatch" },
+    };
+  }
+
+  let approvedRows;
+  let promotedIds;
+
+  try {
+    approvedRows = await fetchApprovedReviewRows(options.db);
+    promotedIds = await fetchCompletedPromotionCandidateIds(options.db);
+  } catch {
+    return { status: 500, body: { ok: false, error: "storage-read-failed" } };
+  }
+
+  const approvedById = new Map(approvedRows.map((row) => [row.candidate_id, row]));
+  const candidatesById = new Map(candidateStore.map((candidate) => [candidate.id, candidate]));
+  const changes = [];
+  const requestedIds = [...new Set(body.candidateIds)];
+
+  for (const candidateId of requestedIds) {
+    const row = approvedById.get(candidateId);
+    const candidate = candidatesById.get(candidateId);
+
+    if (!row || !candidate) {
+      return {
+        status: 409,
+        body: { ok: false, error: "promotion-conflict", reason: "not-approved-or-not-found", candidateId },
+      };
+    }
+
+    if (row.source_store_hash !== currentStoreHash) {
+      return {
+        status: 409,
+        body: { ok: false, error: "promotion-conflict", reason: "source-store-hash-mismatch", candidateId },
+      };
+    }
+
+    if (promotedIds.has(candidateId) || candidate.promotedRecordId) {
+      return {
+        status: 409,
+        body: { ok: false, error: "promotion-conflict", reason: "already-promoted", candidateId },
+      };
+    }
+
+    if (candidate.duplicateCheck?.status === "duplicate") {
+      return {
+        status: 409,
+        body: { ok: false, error: "promotion-conflict", reason: "duplicate-candidate", candidateId },
+      };
+    }
+
+    const targetFile = CANDIDATE_TYPE_TARGET_FILE[row.candidate_type];
+
+    if (!targetFile) {
+      return {
+        status: 400,
+        body: { ok: false, error: "unsupported-candidate-type", candidateId },
+      };
+    }
+
+    const proposedRecord = isPlainObject(candidate.proposedRecord) ? candidate.proposedRecord : null;
+    const missingFields = findMissingProposedRecordFields(row.candidate_type, proposedRecord);
+
+    if (!proposedRecord || missingFields.length > 0) {
+      return {
+        status: 400,
+        body: { ok: false, error: "incomplete-proposed-record", candidateId, missingFields },
+      };
+    }
+
+    const duplicateReason = findDuplicateInTarget(targetFile, proposedRecord);
+
+    if (duplicateReason) {
+      return {
+        status: 409,
+        body: { ok: false, error: "promotion-conflict", reason: duplicateReason, candidateId },
+      };
+    }
+
+    changes.push({
+      candidateId,
+      candidateType: row.candidate_type,
+      targetFile,
+      operation: "append",
+      summary: `Add ${row.candidate_type} item: ${candidate.title}`,
+      record: proposedRecord,
+      reviewActor: row.actor_email,
+    });
+  }
+
+  const promotionPlanId = `promotion-plan-${crypto.randomUUID()}`;
+  const nowIso = toIsoDateTime(options.now ?? new Date());
+
+  try {
+    await options.db
+      .prepare(
+        "INSERT INTO promotion_plans (id, candidate_ids, source_store_hash, plan, actor_email, created_at) VALUES (?, ?, ?, ?, ?, ?)"
+      )
+      .bind(
+        promotionPlanId,
+        JSON.stringify(requestedIds),
+        currentStoreHash,
+        JSON.stringify(changes),
+        options.reviewerEmail ?? "unknown",
+        nowIso
+      )
+      .run();
+  } catch {
+    return { status: 500, body: { ok: false, error: "storage-write-failed" } };
+  }
+
+  return {
+    status: 200,
+    body: { ok: true, promotionPlanId, changes: changes.map(stripInternalPlanFields) },
+  };
+}
+
+export async function handlePromotionPrApi(request, authorization, env = {}) {
+  if (request.method !== "POST") {
+    return jsonResponse({ ok: false, error: "method-not-allowed" }, 405, { allow: "POST" });
+  }
+
+  let body;
+
+  try {
+    body = await readJsonBody(request);
+  } catch (error) {
+    return jsonResponse({ ok: false, error: error.message }, error.status ?? 400);
+  }
+
+  const result = await processPromotionPrRequest(body, updateCandidates, {
+    db: env.REVIEW_ACTION_DB,
+    reviewerEmail: authorization.email,
+    now: new Date(),
+    githubToken: env.GITHUB_PROMOTION_TOKEN,
+    repoOwner: env.GITHUB_PROMOTION_REPO_OWNER,
+    repoName: env.GITHUB_PROMOTION_REPO_NAME,
+    baseBranch: env.GITHUB_PROMOTION_BASE_BRANCH || "main",
+  });
+
+  return jsonResponse(result.body, result.status);
+}
+
+export async function processPromotionPrRequest(body, candidateStore, options = {}) {
+  if (!validatePromotionPrBody(body)) {
+    return { status: 400, body: { ok: false, error: "invalid-request" } };
+  }
+
+  if (!options.githubToken) {
+    return { status: 501, body: { ok: false, error: "github-promotion-not-configured" } };
+  }
+
+  if (!options.repoOwner || !options.repoName) {
+    return { status: 501, body: { ok: false, error: "github-promotion-not-configured" } };
+  }
+
+  if (!options.db) {
+    return { status: 501, body: { ok: false, error: "storage-not-configured" } };
+  }
+
+  const now = options.now ?? new Date();
+  const nowIso = toIsoDateTime(now);
+  const currentStoreHash = await sha256(serializeCandidateStore(candidateStore));
+
+  if (body.expectedStoreHash !== currentStoreHash) {
+    return {
+      status: 409,
+      body: { ok: false, error: "promotion-conflict", reason: "store-hash-mismatch" },
+    };
+  }
+
+  let planRow;
+
+  try {
+    planRow = await options.db
+      .prepare("SELECT * FROM promotion_plans WHERE id = ?")
+      .bind(body.promotionPlanId)
+      .first();
+  } catch {
+    return { status: 500, body: { ok: false, error: "storage-read-failed" } };
+  }
+
+  if (!planRow) {
+    return { status: 404, body: { ok: false, error: "promotion-plan-not-found" } };
+  }
+
+  if (planRow.consumed_at) {
+    return {
+      status: 409,
+      body: { ok: false, error: "promotion-conflict", reason: "plan-already-used" },
+    };
+  }
+
+  if (planRow.source_store_hash !== currentStoreHash) {
+    return {
+      status: 409,
+      body: { ok: false, error: "promotion-conflict", reason: "store-hash-mismatch" },
+    };
+  }
+
+  const candidateIds = JSON.parse(planRow.candidate_ids);
+  const changes = JSON.parse(planRow.plan);
+
+  let approvedRows;
+  let promotedIds;
+
+  try {
+    approvedRows = await fetchApprovedReviewRows(options.db);
+    promotedIds = await fetchCompletedPromotionCandidateIds(options.db);
+  } catch {
+    return { status: 500, body: { ok: false, error: "storage-read-failed" } };
+  }
+
+  const approvedById = new Map(approvedRows.map((row) => [row.candidate_id, row]));
+
+  for (const candidateId of candidateIds) {
+    const row = approvedById.get(candidateId);
+
+    if (!row || row.source_store_hash !== currentStoreHash) {
+      return {
+        status: 409,
+        body: { ok: false, error: "promotion-conflict", reason: "source-store-hash-mismatch", candidateId },
+      };
+    }
+
+    if (promotedIds.has(candidateId)) {
+      return {
+        status: 409,
+        body: { ok: false, error: "promotion-pr-already-exists", candidateId },
+      };
+    }
+  }
+
+  const runId = `promotion-run-${crypto.randomUUID()}`;
+  const github = createGithubPromotionClient({
+    token: options.githubToken,
+    owner: options.repoOwner,
+    repo: options.repoName,
+    fetchImpl: options.githubFetchImpl ?? fetch,
+  });
+
+  try {
+    const baseRef = await github.getBranchRef(options.baseBranch);
+    const branchName = await github.createUniqueBranch(baseRef.sha, buildPromotionBranchName(now));
+
+    await executePromotionChangesOnGithub(github, options.baseBranch, branchName, changes, candidateStore, {
+      runId,
+      nowIso,
+      changeLogDate: toIsoDate(now),
+      actorEmail: options.reviewerEmail,
+    });
+
+    const prBody = buildPromotionPrBody({
+      runId,
+      changes,
+      candidateIds,
+      actorEmail: options.reviewerEmail,
+      sourceStoreHash: currentStoreHash,
+    });
+
+    const pr = await github.createPullRequest({
+      title: PROMOTION_PR_TITLE,
+      head: branchName,
+      base: options.baseBranch,
+      body: prBody,
+    });
+
+    await recordPromotionRun(options.db, {
+      runId,
+      status: "completed",
+      actorEmail: options.reviewerEmail,
+      sourceStoreHash: currentStoreHash,
+      targetBranch: branchName,
+      pullRequestUrl: pr.htmlUrl,
+      pullRequestNumber: pr.number,
+      items: changes.map((change) => ({ ...change, status: "completed" })),
+      createdAt: nowIso,
+    });
+
+    try {
+      await options.db
+        .prepare("UPDATE promotion_plans SET consumed_at = ? WHERE id = ?")
+        .bind(nowIso, body.promotionPlanId)
+        .run();
+    } catch {
+      // Plan consumption bookkeeping failure does not invalidate an already-created PR.
+    }
+
+    return {
+      status: 200,
+      body: {
+        ok: true,
+        promotionRunId: runId,
+        pullRequestUrl: pr.htmlUrl,
+        pullRequestNumber: pr.number,
+        targetBranch: branchName,
+        candidateIds,
+      },
+    };
+  } catch (error) {
+    const errorCode = error.code === "promotion-conflict" ? "promotion-conflict" : "github-promotion-failed";
+
+    try {
+      await recordPromotionRun(options.db, {
+        runId,
+        status: "failed",
+        actorEmail: options.reviewerEmail,
+        sourceStoreHash: currentStoreHash,
+        targetBranch: error.branchName ?? null,
+        pullRequestUrl: null,
+        pullRequestNumber: null,
+        errorCode,
+        errorMessage: "Verified Promotion GitHub request failed.",
+        items: changes.map((change) => ({ ...change, status: "failed", errorCode })),
+        createdAt: nowIso,
+      });
+    } catch {
+      // Best-effort audit trail; do not mask the original failure.
+    }
+
+    return {
+      status: errorCode === "promotion-conflict" ? 409 : 500,
+      body: { ok: false, error: errorCode, promotionRunId: runId },
+    };
+  }
 }
 
 export function parseAllowedEmails(value) {
@@ -593,6 +1092,407 @@ async function recordReviewActionInStorage(db, params) {
     );
 
   await db.batch([upsertStatement, logStatement]);
+}
+
+async function fetchApprovedReviewRows(db) {
+  const result = await db
+    .prepare(
+      "SELECT candidate_id, candidate_type, source_store_hash, actor_email FROM review_candidate_actions WHERE review_decision = 'approved' AND review_status = 'accepted'"
+    )
+    .all();
+
+  return result.results ?? [];
+}
+
+async function fetchCompletedPromotionCandidateIds(db) {
+  const result = await db
+    .prepare("SELECT DISTINCT candidate_id FROM promotion_run_items WHERE status = 'completed'")
+    .all();
+
+  return new Set((result.results ?? []).map((row) => row.candidate_id));
+}
+
+function evaluatePromotionCandidates(candidateStore, approvedRows, promotedIds, currentStoreHash) {
+  const candidatesById = new Map(candidateStore.map((candidate) => [candidate.id, candidate]));
+  const results = [];
+
+  for (const row of approvedRows) {
+    const candidate = candidatesById.get(row.candidate_id);
+
+    if (!candidate) continue;
+    if (row.source_store_hash !== currentStoreHash) continue;
+    if (promotedIds.has(row.candidate_id) || candidate.promotedRecordId) continue;
+    if (candidate.duplicateCheck?.status === "duplicate") continue;
+
+    const targetFile = CANDIDATE_TYPE_TARGET_FILE[row.candidate_type];
+
+    if (!targetFile) {
+      results.push({
+        candidateId: row.candidate_id,
+        candidateType: row.candidate_type,
+        title: candidate.title,
+        targetFile: null,
+        reviewDecision: "approved",
+        reviewStatus: "accepted",
+        canPromote: false,
+        reason: "unsupported-candidate-type",
+      });
+      continue;
+    }
+
+    const proposedRecord = isPlainObject(candidate.proposedRecord) ? candidate.proposedRecord : null;
+    const missingFields = findMissingProposedRecordFields(row.candidate_type, proposedRecord);
+
+    if (!proposedRecord || missingFields.length > 0) {
+      results.push({
+        candidateId: row.candidate_id,
+        candidateType: row.candidate_type,
+        title: candidate.title,
+        targetFile,
+        reviewDecision: "approved",
+        reviewStatus: "accepted",
+        canPromote: false,
+        reason: "incomplete-proposed-record",
+        missingFields,
+      });
+      continue;
+    }
+
+    results.push({
+      candidateId: row.candidate_id,
+      candidateType: row.candidate_type,
+      title: candidate.title,
+      targetFile,
+      reviewDecision: "approved",
+      reviewStatus: "accepted",
+      canPromote: true,
+    });
+  }
+
+  return results;
+}
+
+function isPlainObject(value) {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function findMissingProposedRecordFields(candidateType, proposedRecord) {
+  const requiredFields = REQUIRED_PROPOSED_RECORD_FIELDS[candidateType] ?? [];
+
+  return requiredFields.filter((field) => {
+    if (!proposedRecord) return true;
+    const value = proposedRecord[field];
+    return value === undefined || value === null || value === "";
+  });
+}
+
+function findDuplicateInTarget(targetFile, proposedRecord) {
+  const existing = Array.isArray(TARGET_FILE_DATA[targetFile]) ? TARGET_FILE_DATA[targetFile] : [];
+
+  if (existing.some((item) => item?.id === proposedRecord.id)) {
+    return "duplicate-id";
+  }
+
+  const urlFields = ["sourceUrl", "officialUrl", "canonicalUrl"];
+
+  for (const field of urlFields) {
+    const value = proposedRecord[field];
+
+    if (value && existing.some((item) => item?.[field] === value)) {
+      return "duplicate-url";
+    }
+  }
+
+  return null;
+}
+
+function stripInternalPlanFields(change) {
+  const { reviewActor, ...publicChange } = change;
+  return publicChange;
+}
+
+function validatePromotionPlanBody(body) {
+  if (!body || typeof body !== "object" || Array.isArray(body)) return false;
+  if (!Array.isArray(body.candidateIds) || body.candidateIds.length === 0) return false;
+  if (!body.candidateIds.every((id) => isCleanSingleLine(id, 180))) return false;
+  if (!/^sha256:[0-9a-f]{64}$/.test(String(body.expectedStoreHash ?? ""))) return false;
+  return true;
+}
+
+function validatePromotionPrBody(body) {
+  if (!body || typeof body !== "object" || Array.isArray(body)) return false;
+  if (!isCleanSingleLine(body.promotionPlanId, 120)) return false;
+  if (!/^sha256:[0-9a-f]{64}$/.test(String(body.expectedStoreHash ?? ""))) return false;
+  if (body.confirm !== true) return false;
+  return true;
+}
+
+function promotionError(code, message) {
+  return Object.assign(new Error(message), { code });
+}
+
+function buildPromotionBranchName(date) {
+  const iso = date.toISOString();
+  const stamp = `${iso.slice(0, 4)}${iso.slice(5, 7)}${iso.slice(8, 10)}-${iso.slice(11, 13)}${iso.slice(14, 16)}${iso.slice(17, 19)}`;
+  return `promotion/verified-${stamp}`;
+}
+
+function buildPromotionPrBody({ runId, changes, candidateIds, actorEmail, sourceStoreHash }) {
+  const targetFiles = [...new Set(changes.map((change) => change.targetFile))];
+  const candidateList = candidateIds.map((id) => `- ${id}`).join("\n");
+  const summaryList = changes.map((change) => `- ${change.summary} (\`${change.targetFile}\`)`).join("\n");
+  const reviewActors = [...new Set(changes.map((change) => change.reviewActor).filter(Boolean))];
+
+  return [
+    `Promotion run: \`${runId}\``,
+    "",
+    "## Candidates",
+    candidateList,
+    "",
+    "## Target files",
+    targetFiles.map((file) => `- \`${file}\``).join("\n"),
+    "- `data/update-candidates.json` (marks promoted candidates; see below)",
+    "",
+    "## Change summary",
+    summaryList,
+    "",
+    "## Provenance",
+    `- review actor(s): ${reviewActors.join(", ") || "unknown"}`,
+    `- promotion actor: ${actorEmail}`,
+    `- source store hash: \`${sourceStoreHash}\``,
+    "",
+    "## Verification",
+    "- npm run validate:access-control",
+    "- npm run validate:data",
+    "- npm run validate:collection",
+    "",
+    "## Safety",
+    "- Created automatically by the Verified Promotion Automation Foundation.",
+    "- This PR does not merge automatically.",
+    "- `data/update-candidates.json` is updated on this branch only, to record promotedRecordType/promotedRecordId/promotedAt for the candidates above.",
+    "- Human review and CI must pass before merging to main.",
+  ].join("\n");
+}
+
+async function recordPromotionRun(db, params) {
+  const statements = [
+    db
+      .prepare(
+        "INSERT INTO promotion_runs (id, status, actor_email, source_store_hash, target_branch, pull_request_url, pull_request_number, error_code, error_message, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+      )
+      .bind(
+        params.runId,
+        params.status,
+        params.actorEmail,
+        params.sourceStoreHash,
+        params.targetBranch,
+        params.pullRequestUrl,
+        params.pullRequestNumber ?? null,
+        params.errorCode ?? null,
+        params.errorMessage ?? null,
+        params.createdAt,
+        params.createdAt
+      ),
+  ];
+
+  for (const item of params.items) {
+    statements.push(
+      db
+        .prepare(
+          "INSERT INTO promotion_run_items (id, promotion_run_id, candidate_id, candidate_type, target_file, operation, status, error_code, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+        )
+        .bind(
+          crypto.randomUUID(),
+          params.runId,
+          item.candidateId,
+          item.candidateType,
+          item.targetFile,
+          item.operation,
+          item.status,
+          item.errorCode ?? null,
+          params.createdAt
+        )
+    );
+  }
+
+  await db.batch(statements);
+}
+
+async function executePromotionChangesOnGithub(github, baseBranch, branchName, changes, candidateStore, context) {
+  const appendsByFile = new Map();
+
+  for (const change of changes) {
+    if (!appendsByFile.has(change.targetFile)) {
+      appendsByFile.set(change.targetFile, []);
+    }
+    appendsByFile.get(change.targetFile).push(change.record);
+  }
+
+  for (const [targetFile, records] of appendsByFile) {
+    const file = await github.getFileContent(targetFile, baseBranch);
+    const currentArray = JSON.parse(file.contentText);
+
+    if (!Array.isArray(currentArray)) {
+      throw promotionError("github-promotion-failed", `${targetFile} is not an array`);
+    }
+
+    for (const record of records) {
+      if (currentArray.some((item) => item?.id === record.id)) {
+        throw promotionError("promotion-conflict", `duplicate id in ${targetFile}`);
+      }
+    }
+
+    const updatedText = `${JSON.stringify([...currentArray, ...records], null, 2)}\n`;
+
+    await github.updateFileContent({
+      path: targetFile,
+      message: PROMOTION_COMMIT_MESSAGE,
+      content: updatedText,
+      sha: file.sha,
+      branch: branchName,
+    });
+  }
+
+  const candidateFile = await github.getFileContent(UPDATE_CANDIDATES_FILE, baseBranch);
+  const currentCandidates = JSON.parse(candidateFile.contentText);
+
+  if (!Array.isArray(currentCandidates)) {
+    throw promotionError("github-promotion-failed", `${UPDATE_CANDIDATES_FILE} is not an array`);
+  }
+
+  const changeByCandidateId = new Map(changes.map((change) => [change.candidateId, change]));
+  const updatedCandidates = currentCandidates.map((candidate) => {
+    const change = changeByCandidateId.get(candidate.id);
+
+    if (!change) return candidate;
+
+    const existingChangeLog = Array.isArray(candidate.changeLog) ? candidate.changeLog : [];
+
+    return {
+      ...candidate,
+      promotedRecordType: change.candidateType,
+      promotedRecordId: change.record.id,
+      promotedAt: context.nowIso,
+      changeLog: [
+        ...existingChangeLog,
+        {
+          date: context.changeLogDate,
+          type: "promoted",
+          summary: `Promoted to ${change.targetFile} via automated promotion PR (${context.runId}).`,
+          actor: context.actorEmail,
+        },
+      ],
+    };
+  });
+
+  const updatedCandidatesText = `${JSON.stringify(updatedCandidates, null, 2)}\n`;
+
+  await github.updateFileContent({
+    path: UPDATE_CANDIDATES_FILE,
+    message: PROMOTION_COMMIT_MESSAGE,
+    content: updatedCandidatesText,
+    sha: candidateFile.sha,
+    branch: branchName,
+  });
+}
+
+function createGithubPromotionClient({ token, owner, repo, fetchImpl }) {
+  async function request(method, path, body) {
+    const response = await fetchImpl(`https://api.github.com${path}`, {
+      method,
+      headers: {
+        authorization: `Bearer ${token}`,
+        accept: "application/vnd.github+json",
+        "content-type": "application/json",
+        "user-agent": "canae-ai-intelligence-promotion-bot",
+        "x-github-api-version": "2022-11-28",
+      },
+      body: body !== undefined ? JSON.stringify(body) : undefined,
+    });
+
+    const responseText = await response.text();
+    let parsed = null;
+
+    try {
+      parsed = responseText ? JSON.parse(responseText) : null;
+    } catch {
+      parsed = null;
+    }
+
+    if (!response.ok) {
+      const error = promotionError("github-promotion-failed", `GitHub API ${method} ${path} failed with ${response.status}`);
+      error.status = response.status;
+      throw error;
+    }
+
+    return parsed;
+  }
+
+  return {
+    async getBranchRef(branch) {
+      const data = await request("GET", `/repos/${owner}/${repo}/git/ref/heads/${encodeURIComponent(branch)}`);
+      return { sha: data.object.sha };
+    },
+    async createUniqueBranch(baseSha, preferredName) {
+      let candidateName = preferredName;
+
+      for (let attempt = 0; attempt < MAX_BRANCH_NAME_ATTEMPTS; attempt += 1) {
+        try {
+          await request("POST", `/repos/${owner}/${repo}/git/refs`, {
+            ref: `refs/heads/${candidateName}`,
+            sha: baseSha,
+          });
+          return candidateName;
+        } catch (error) {
+          if (error.status === 422 && attempt < MAX_BRANCH_NAME_ATTEMPTS - 1) {
+            candidateName = `${preferredName}-${attempt + 2}`;
+            continue;
+          }
+          throw error;
+        }
+      }
+
+      throw promotionError("github-promotion-failed", "Unable to create a unique promotion branch");
+    },
+    async getFileContent(path, ref) {
+      const data = await request("GET", `/repos/${owner}/${repo}/contents/${path}?ref=${encodeURIComponent(ref)}`);
+      return { sha: data.sha, contentText: base64DecodeUtf8(data.content) };
+    },
+    async updateFileContent({ path, message, content, sha, branch }) {
+      await request("PUT", `/repos/${owner}/${repo}/contents/${path}`, {
+        message,
+        content: base64EncodeUtf8(content),
+        sha,
+        branch,
+      });
+    },
+    async createPullRequest({ title, head, base, body }) {
+      const data = await request("POST", `/repos/${owner}/${repo}/pulls`, { title, head, base, body });
+      return { htmlUrl: data.html_url, number: data.number };
+    },
+  };
+}
+
+function base64EncodeUtf8(text) {
+  const bytes = textEncoder.encode(text);
+  let binary = "";
+
+  for (const byte of bytes) {
+    binary += String.fromCharCode(byte);
+  }
+
+  return btoa(binary);
+}
+
+function base64DecodeUtf8(base64) {
+  const binary = atob(base64.replace(/\s/g, ""));
+  const bytes = new Uint8Array(binary.length);
+
+  for (let index = 0; index < binary.length; index += 1) {
+    bytes[index] = binary.charCodeAt(index);
+  }
+
+  return new TextDecoder().decode(bytes);
 }
 
 function jsonResponse(body, status = 200, headers = {}) {
