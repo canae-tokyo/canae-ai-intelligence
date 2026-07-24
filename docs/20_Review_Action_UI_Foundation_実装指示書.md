@@ -63,6 +63,14 @@ Review Action Storage Foundationが正式完了したため、次段階として
 
 さらに、Storage Foundationの実装を確認したところ、D1の`review_candidate_actions.reason` / `review_candidate_action_logs.reason`列には、UIが送る自由記述の`notes`ではなく、サーバー内部の状態遷移コード（`manual-review-recorded` / `manual-review-resolved`）が保存される仕様になっている。ユーザーが入力した理由文はAPIレスポンスのエコー以外には永続化されない。これは本UI Foundationのスコープでは変更していない（Storage Foundation側の既存実装であり、変更する場合は別途合意のうえで対応する）。
 
+### `reviewedBy`は認可主体ではない
+
+`reviewedBy`はAPI契約上の必須入力項目だが、**認可・監査上の主体（actor_email）としては一切扱わない**。
+
+- `request body`の`reviewedBy`はサーバー側では信頼せず、認可判定にも監査ログのactor_emailにも使用しない（`src/worker.mjs`の既存実装：D1へ記録される`actor_email`は`authorization.email`＝Cloudflare Access認証情報由来の値のみで、`options.reviewerEmail`として渡され、`body.reviewedBy`とは完全に独立している）。
+- UIはCloudflare AccessのJWT／Cookie／Access Tokenを一切読み取らない。ブラウザが同一オリジンリクエストに自動付与するAccessセッションCookieに依存するのみで、クライアントJS・console・D1のいずれにもJWT/Cookie/Access Tokenを出力・保存しない。
+- 最終的な保存者情報（`actor_email`）は常にCloudflare Access認証情報由来であり、`reviewedBy`はAPI契約が要求する表示用の入力欄に過ぎない（本UIでは「レビュー担当者名」ラベルで表示し、認可トークンではないことを利用者に誤認させないようにしている）。
+
 ## UI実装
 
 - `app/internal/review-candidates/page.tsx`をServer Componentのまま`async`化し、`lib/reviewActionStoreHash.ts`の`computeReviewActionStoreHash()`でビルド時に`expectedStoreHash`を計算して`ReviewCandidatesClient`へpropsで渡す。
