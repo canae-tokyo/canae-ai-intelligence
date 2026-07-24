@@ -1,8 +1,46 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { useSearchParams } from "next/navigation";
-import type { UpdateCandidate, UpdateCandidateReviewStatus } from "@/lib/types";
+import type {
+  UpdateCandidate,
+  UpdateCandidateReviewDecision,
+  UpdateCandidateReviewStatus,
+} from "@/lib/types";
+
+const REVIEW_ACTION_API_PATH = "/internal/api/review-candidates";
+
+const DECISIONS: UpdateCandidateReviewDecision[] = ["approved", "rejected", "on-hold"];
+
+const DECISION_LABELS: Record<UpdateCandidateReviewDecision, string> = {
+  approved: "承認",
+  rejected: "却下",
+  "on-hold": "保留",
+};
+
+const REVIEW_ACTION_ERROR_MESSAGES: Record<number, string> = {
+  400: "入力内容に問題があります。",
+  404: "候補が見つからない、またはアクセス権限がありません。",
+  409: "候補データが更新されています。画面を再読み込みしてください。",
+  500: "保存に失敗しました。時間をおいて再度確認してください。",
+  501: "保存先が未設定です。管理者に確認してください。",
+};
+
+const DEFAULT_REVIEW_ACTION_ERROR_MESSAGE = "保存に失敗しました。時間をおいて再度確認してください。";
+
+const REVIEWED_BY_MAX_LENGTH = 80;
+const NOTES_MAX_LENGTH = 500;
+
+function sanitizeSingleLine(value: string): string {
+  return value.replace(/[\r\n\t]/g, " ");
+}
+
+type ReviewActionState =
+  | { phase: "idle" }
+  | { phase: "submitting"; decision: UpdateCandidateReviewDecision }
+  | { phase: "success"; decision: UpdateCandidateReviewDecision }
+  | { phase: "error"; decision: UpdateCandidateReviewDecision; message: string };
 
 const REVIEW_STATUSES: Array<{ value: "all" | UpdateCandidateReviewStatus; label: string }> = [
   { value: "all", label: "All" },
@@ -129,7 +167,162 @@ function CandidateList({
   );
 }
 
-function CandidateDetail({ candidate }: { candidate?: UpdateCandidate }) {
+function ReviewActionPanel({
+  candidate,
+  expectedStoreHash,
+}: {
+  candidate: UpdateCandidate;
+  expectedStoreHash: string;
+}) {
+  const [reviewStatus, setReviewStatus] = useState<UpdateCandidateReviewStatus>(
+    candidate.reviewStatus
+  );
+  const [reviewedBy, setReviewedBy] = useState("");
+  const [notes, setNotes] = useState("");
+  const [state, setState] = useState<ReviewActionState>({ phase: "idle" });
+
+  const isSubmitting = state.phase === "submitting";
+  const isReviewing = reviewStatus === "reviewing";
+  const isTerminal = reviewStatus === "accepted" || reviewStatus === "rejected";
+  const reviewedByValid =
+    reviewedBy.trim().length > 0 && reviewedBy.trim().length <= REVIEWED_BY_MAX_LENGTH;
+  const notesValid = notes.trim().length > 0 && notes.trim().length <= NOTES_MAX_LENGTH;
+  const inputsValid = reviewedByValid && notesValid;
+
+  async function submitDecision(decision: UpdateCandidateReviewDecision) {
+    if (isSubmitting || isTerminal || !inputsValid) {
+      return;
+    }
+
+    if (decision === "on-hold" && isReviewing) {
+      return;
+    }
+
+    setState({ phase: "submitting", decision });
+
+    try {
+      const response = await fetch(REVIEW_ACTION_API_PATH, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          candidateId: candidate.id,
+          decision,
+          reviewedBy: reviewedBy.trim(),
+          notes: notes.trim(),
+          expectedStoreHash,
+          resolveHold: isReviewing,
+          apply: true,
+        }),
+      });
+
+      const result: { ok?: boolean; reviewStatus?: UpdateCandidateReviewStatus } | null =
+        await response.json().catch(() => null);
+
+      if (response.ok && result?.ok && result.reviewStatus) {
+        setReviewStatus(result.reviewStatus);
+        setState({ phase: "success", decision });
+        return;
+      }
+
+      setState({
+        phase: "error",
+        decision,
+        message: REVIEW_ACTION_ERROR_MESSAGES[response.status] ?? DEFAULT_REVIEW_ACTION_ERROR_MESSAGE,
+      });
+    } catch {
+      setState({ phase: "error", decision, message: DEFAULT_REVIEW_ACTION_ERROR_MESSAGE });
+    }
+  }
+
+  return (
+    <section className="mt-4 rounded-lg border border-base-border/80 p-4">
+      <h3 className="text-sm font-semibold text-ink">Review Action</h3>
+
+      {isTerminal ? (
+        <p className="mt-3 text-sm text-ink-muted">
+          このレビューは確定済みです（{STATUS_LABELS[reviewStatus]}）。
+        </p>
+      ) : (
+        <>
+          <div className="mt-3 grid gap-3 sm:grid-cols-2">
+            <label className="grid gap-1 text-xs text-ink-muted">
+              レビュー担当者名
+              <input
+                type="text"
+                value={reviewedBy}
+                maxLength={REVIEWED_BY_MAX_LENGTH}
+                disabled={isSubmitting}
+                onChange={(event) => setReviewedBy(sanitizeSingleLine(event.target.value))}
+                placeholder="例: CANAE/Sato"
+                className="min-h-9 rounded-md border border-base-border bg-base-bg px-2 text-sm text-ink"
+              />
+            </label>
+            <label className="grid gap-1 text-xs text-ink-muted">
+              理由・確認メモ
+              <input
+                type="text"
+                value={notes}
+                maxLength={NOTES_MAX_LENGTH}
+                disabled={isSubmitting}
+                onChange={(event) => setNotes(sanitizeSingleLine(event.target.value))}
+                placeholder="例: 公式情報と内容を確認"
+                className="min-h-9 rounded-md border border-base-border bg-base-bg px-2 text-sm text-ink"
+              />
+            </label>
+          </div>
+
+          <div className="mt-3 flex flex-wrap gap-2">
+            {DECISIONS.map((decision) => (
+              <button
+                key={decision}
+                type="button"
+                disabled={
+                  isSubmitting || !inputsValid || (decision === "on-hold" && isReviewing)
+                }
+                onClick={() => submitDecision(decision)}
+                className="min-h-10 rounded-md border border-base-border px-4 text-sm font-medium text-ink transition-colors hover:border-accent/50 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                {isSubmitting && state.decision === decision
+                  ? "送信中..."
+                  : DECISION_LABELS[decision]}
+              </button>
+            ))}
+          </div>
+
+          {!inputsValid && (
+            <p className="mt-2 text-xs text-ink-muted">
+              担当者名と理由・確認メモを入力すると操作できます（担当者名は{REVIEWED_BY_MAX_LENGTH}
+              文字、理由は{NOTES_MAX_LENGTH}文字まで、1行で入力してください）。
+            </p>
+          )}
+
+          {isReviewing && (
+            <p className="mt-2 text-xs text-ink-muted">
+              保留中の候補です。承認または却下で保留を解除できます。
+            </p>
+          )}
+        </>
+      )}
+
+      {state.phase === "success" && (
+        <p className="mt-3 text-sm text-new-green">
+          保存成功：{DECISION_LABELS[state.decision]}として記録しました。
+        </p>
+      )}
+      {state.phase === "error" && (
+        <p className="mt-3 text-sm text-important-red">{state.message}</p>
+      )}
+    </section>
+  );
+}
+
+function CandidateDetail({
+  candidate,
+  expectedStoreHash,
+}: {
+  candidate?: UpdateCandidate;
+  expectedStoreHash: string;
+}) {
   if (!candidate) {
     return (
       <section className="rounded-lg border border-base-border bg-base-card p-5 text-sm text-ink-muted">
@@ -229,6 +422,12 @@ function CandidateDetail({ candidate }: { candidate?: UpdateCandidate }) {
           <p className="mt-3 text-sm leading-relaxed text-ink-muted">{candidate.notes}</p>
         </section>
       )}
+
+      <ReviewActionPanel
+        key={candidate.id}
+        candidate={candidate}
+        expectedStoreHash={expectedStoreHash}
+      />
     </section>
   );
 }
@@ -236,9 +435,11 @@ function CandidateDetail({ candidate }: { candidate?: UpdateCandidate }) {
 export default function ReviewCandidatesClient({
   candidates,
   statusCounts,
+  expectedStoreHash,
 }: {
   candidates: UpdateCandidate[];
   statusCounts: Record<UpdateCandidateReviewStatus, number>;
+  expectedStoreHash: string;
 }) {
   const searchParams = useSearchParams();
   const status = normalizeStatus(searchParams.get("status"));
@@ -303,7 +504,7 @@ export default function ReviewCandidatesClient({
           />
         </aside>
         <div className="min-w-0">
-          <CandidateDetail candidate={selectedCandidate} />
+          <CandidateDetail candidate={selectedCandidate} expectedStoreHash={expectedStoreHash} />
         </div>
       </div>
     </>
