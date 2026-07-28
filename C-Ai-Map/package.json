@@ -17,6 +17,7 @@
     "validate:access-control": "node scripts/validate-access-control.mjs",
     "validate:review-action-api": "node scripts/validate-review-action-api.mjs",
     "validate:review-action-ui": "node scripts/validate-review-action-ui.mjs",
+    "validate:public-release": "node scripts/validate-public-release.mjs",
     "test:review-action-storage": "node scripts/validate-review-action-storage.mjs",
     "validate:verified-promotion": "node scripts/validate-verified-promotion.mjs",
     "test:verified-promotion": "node scripts/test-verified-promotion.mjs",

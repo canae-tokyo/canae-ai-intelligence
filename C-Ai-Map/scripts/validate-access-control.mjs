@@ -81,8 +81,8 @@ assert.equal(isInternalPath("/news"), false, "public routes must remain unprotec
   assert.equal(result.status, 200, "public routes must remain reachable");
   assert.equal(
     response.headers.get("x-robots-tag"),
-    "noindex, nofollow",
-    "public responses must keep noindex"
+    null,
+    "public responses must not carry noindex (public search release)"
   );
   assert.equal(assetFetchCalled, true, "public routes must reach ASSETS");
   assert.equal(result.body, "public page", "public route response must be preserved");
@@ -167,6 +167,11 @@ assert.equal(isInternalPath("/news"), false, "public routes must remain unprotec
 
   assert.equal(result.status, 200, "local bypass must work only on localhost");
   assert.equal(assetFetchCalled, true, "local bypass must reach ASSETS");
+  assert.equal(
+    response.headers.get("x-robots-tag"),
+    "noindex, nofollow",
+    "authorized /internal/* responses must keep noindex even after public search release"
+  );
 }
 
 {

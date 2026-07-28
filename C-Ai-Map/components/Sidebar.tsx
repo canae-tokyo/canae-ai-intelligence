@@ -44,7 +44,7 @@ export default function Sidebar() {
         })}
       </nav>
       <p className="px-3 pt-4 text-[11px] text-ink-muted">
-        社内限定・非公開運用
+        AI業界の構造化・可視化
         <br />
         A service by CANAE Inc.
       </p>

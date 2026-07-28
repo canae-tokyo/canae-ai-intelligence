@@ -12,24 +12,15 @@ const IMPORTANCE_OPTIONS: { value: NewsItem["importance"] | "all"; label: string
   { value: "low", label: "影響度：低" },
 ];
 
-const STATUS_OPTIONS: { value: NewsItem["status"] | "all"; label: string }[] = [
-  { value: "all", label: "すべての状態" },
-  { value: "verified", label: "Verified" },
-  { value: "draft", label: "Draft" },
-  { value: "archived", label: "Archived" },
-];
-
 export default function NewsListClient({ news }: { news: NewsItem[] }) {
   const [category, setCategory] = useState<string>("all");
   const [importance, setImportance] = useState<NewsItem["importance"] | "all">("all");
-  const [status, setStatus] = useState<NewsItem["status"] | "all">("all");
   const [keyword, setKeyword] = useState("");
 
   const filtered = useMemo(() => {
     return news
       .filter((n) => category === "all" || n.category === category)
       .filter((n) => importance === "all" || n.importance === importance)
-      .filter((n) => status === "all" || n.status === status)
       .filter(
         (n) =>
           keyword.trim() === "" ||
@@ -37,7 +28,7 @@ export default function NewsListClient({ news }: { news: NewsItem[] }) {
           n.company.toLowerCase().includes(keyword.toLowerCase())
       )
       .sort((a, b) => (a.publishedAt < b.publishedAt ? 1 : -1));
-  }, [news, category, importance, status, keyword]);
+  }, [news, category, importance, keyword]);
 
   return (
     <div className="space-y-4">
@@ -69,17 +60,6 @@ export default function NewsListClient({ news }: { news: NewsItem[] }) {
             </button>
           ))}
         </div>
-        <select
-          value={status}
-          onChange={(e) => setStatus(e.target.value as NewsItem["status"] | "all")}
-          className="min-h-11 w-full rounded-md border border-base-border bg-base-card px-3 text-base text-ink focus:border-accent/50 focus:outline-none sm:w-auto sm:text-sm"
-        >
-          {STATUS_OPTIONS.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
         <input
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}

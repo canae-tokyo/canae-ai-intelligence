@@ -173,23 +173,25 @@ const worker = {
       }
 
       if (url.pathname === REVIEW_ACTION_API_PATH) {
-        return withSecurityHeaders(await handleReviewActionApi(request, authorization, env));
+        return withSecurityHeaders(await handleReviewActionApi(request, authorization, env), { noindex: true });
       }
 
       if (url.pathname === PROMOTION_CANDIDATES_API_PATH) {
-        return withSecurityHeaders(await handlePromotionCandidatesApi(request, authorization, env));
+        return withSecurityHeaders(await handlePromotionCandidatesApi(request, authorization, env), {
+          noindex: true,
+        });
       }
 
       if (url.pathname === PROMOTION_PLAN_API_PATH) {
-        return withSecurityHeaders(await handlePromotionPlanApi(request, authorization, env));
+        return withSecurityHeaders(await handlePromotionPlanApi(request, authorization, env), { noindex: true });
       }
 
       if (url.pathname === PROMOTION_PR_API_PATH) {
-        return withSecurityHeaders(await handlePromotionPrApi(request, authorization, env));
+        return withSecurityHeaders(await handlePromotionPrApi(request, authorization, env), { noindex: true });
       }
     }
 
-    return withSecurityHeaders(await env.ASSETS.fetch(request));
+    return withSecurityHeaders(await env.ASSETS.fetch(request), { noindex: isInternalPath(url.pathname) });
   },
 };
 
@@ -847,19 +849,24 @@ export function isLocalBypassAllowed(url, env) {
 }
 
 export function notFoundResponse() {
-  return withSecurityHeaders(new Response("Not Found", {
-    status: 404,
-    headers: {
-      "content-type": "text/plain; charset=utf-8",
-      "cache-control": "no-store",
-    },
-  }));
+  return withSecurityHeaders(
+    new Response("Not Found", {
+      status: 404,
+      headers: {
+        "content-type": "text/plain; charset=utf-8",
+        "cache-control": "no-store",
+      },
+    }),
+    { noindex: true }
+  );
 }
 
-export function withSecurityHeaders(response) {
+export function withSecurityHeaders(response, options = {}) {
   const guarded = new Response(response.body, response);
 
-  guarded.headers.set("x-robots-tag", "noindex, nofollow");
+  if (options.noindex) {
+    guarded.headers.set("x-robots-tag", "noindex, nofollow");
+  }
 
   if (!guarded.headers.has("x-content-type-options")) {
     guarded.headers.set("x-content-type-options", "nosniff");

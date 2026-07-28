@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import Header from "@/components/Header";
 import GenreView from "@/components/GenreView";
 import {
@@ -12,6 +13,20 @@ import type { GenreId } from "@/lib/types";
 
 export function generateStaticParams() {
   return genres.map((g) => ({ slug: g.id }));
+}
+
+export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
+  const genre = getGenre(params.slug);
+
+  if (!genre) return {};
+
+  return {
+    title: genre.label,
+    description: genre.description,
+    alternates: {
+      canonical: `/genre/${genre.id}`,
+    },
+  };
 }
 
 export default function GenrePage({ params }: { params: { slug: string } }) {
