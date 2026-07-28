@@ -102,6 +102,27 @@
 - 本番URL `/`、`/news`、`/genre/coding`は200、未認可`/internal/review-candidates`は404、通常404応答は404であることを確認。
 - 未認可`/internal/review-candidates`レスポンスに候補タイトルや候補データが含まれないことを確認。
 - `X-Robots-Tag: noindex, nofollow`とHTML `robots` / `googlebot` `noindex`の維持を確認。
+- Cloudflare AccessのCANAE正本環境設定を完了（Team `ancient-dream-d0c9`）。`canae.tokyo@gmail.com`でAccess認証後、正本URLの`/internal/review-candidates`でReview UI 200を確認。
+- Review Action API Foundationとして、`POST /internal/api/review-candidates`を追加。承認・却下・保留の状態遷移、store hash競合検知、入力検証を実装。
+- PR #29をSquash Mergeし、Review Action API FoundationをProductionへ反映。
+- Review Action Storage Foundationとして、Cloudflare D1（`REVIEW_ACTION_DB`、database_id `48bc9be4-5219-49cc-a2ea-9428db53bc0a`）へのレビュー最新状態と監査ログ保存を追加。`migrations/0001_review_action_storage.sql`を追加。
+- PR #30をSquash Mergeし、Review Action Storage FoundationをProductionへ反映。
+- Review Action UI Foundationとして、`/internal/review-candidates`に`承認` / `却下` / `保留`操作を追加。
+- PR #31をSquash Mergeし、Review Action UI FoundationをProductionへ反映。
+- Verified Promotion Automation Foundationとして、`GET /internal/api/promotion-candidates`、`POST /internal/api/promotion-plan`、`POST /internal/api/promotion-pr`を追加。承認済み候補のGitHub Promotion PR自動作成（branch作成、ファイル更新、PR作成）を実装。`migrations/0002_verified_promotion.sql`（`promotion_runs` / `promotion_run_items` / `promotion_plans`）を追加。
+- `GITHUB_PROMOTION_TOKEN`未設定時は`501 github-promotion-not-configured`でfail-closed。main自動merge・merge API呼び出しは一切実装しない境界を明記。
+- PR #32をSquash Mergeし、Verified Promotion Automation FoundationをProductionへ反映。
+- `data/update-candidates.json`へ`proposedRecord`を完全に満たすpromotion-ready検証候補（GitHub Copilotデスクトップアプリnews）を1件追加。
+- PR #33をSquash Mergeし、promotion-ready candidateをProductionへ反映。
+- D1 migration `0001` / `0002`を正本Cloudflareアカウントへ適用、`GITHUB_PROMOTION_TOKEN`をWorker secretとして登録。
+- Review Action（承認）→ Promotion Plan生成 → GitHub PR自動作成までの本番エンドツーエンド確認中に、GitHub Contents APIの呼び出しパスが実際のリポジトリ構成（`C-Ai-Map/`サブディレクトリ）と不一致で404する不具合、および昇格後newsの`status`/`dataQuality`が`verified`へ反映されない不具合を発見。
+- PR #34をSquash Mergeし、上記2件の不具合を修正。GitHub Contents API呼び出しに`C-Ai-Map/`プレフィックスを付与するヘルパーを追加し、newsのpromotion時に`status`/`dataQuality`を`verified`へ上書きする処理を追加。
+- Merge Commit `fd54768` を確認。GitHub Actions CIとCloudflare Workers Buildsの成功を確認。
+- Review UIから候補`candidate-news-github-changelog-2026-07-07-github-copilot-app-available-to-all`を承認し、Promotion PR #35（Promote verified AI intelligence candidates）を自動作成。`data/news.json`へ`news-2026-07-07-001`を追加、`data/update-candidates.json`の昇格記録を更新。
+- PR #35をSquash Mergeし、Verified Promotion本番稼働をProductionへ反映。Merge Commit `f53f1f1` を確認。
+- マージ後の全検証で、`data/update-candidates.json`の`promotedAt`がYYYY-MM-DD形式でなくフルISO日時になっている不具合を`npm run validate:collection`で検出。
+- PR #36をSquash Mergeし、`promotedAt`を`YYYY-MM-DD`形式へ修正。既存データも訂正。Merge Commit `f34fd1c` を確認。
+- Cloudflare Production Version `f5d61384-c13a-4250-9ed4-a40ed4563f7a` を確認。本番URL `/`、`/news`、`/genre/coding`は200、追加news表示、未認可`/internal/review-candidates`はAccessリダイレクト、通常404、`X-Robots-Tag`とHTML `robots` / `googlebot` `noindex`の維持を確認。
 
 ## v1.1.1 - 2026-07-21
 
