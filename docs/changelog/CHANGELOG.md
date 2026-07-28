@@ -1,5 +1,24 @@
 # CHANGELOG
 
+## v1.1.3 - 2026-07-28
+
+- Public Search Releaseを開始。CANAE AI Intelligenceを限定公開・`noindex`運用から検索エンジンがクロール・インデックス可能な状態へ移行。
+- 公開前データ監査を実施。公開toolsは`dataStatus: verified`、公開newsは`status: verified`、公開benchmarksは`dataStatus: verified`、公開CANAE評価は`reviewStatus: approved`のみで構成されていることを確認。
+- `app/news/page.tsx`を`activeNews`から`verifiedNews`へ変更し、draft/archivedニュースが公開画面へ混入する余地を解消。`components/NewsListClient.tsx`のステータスフィルターからdraft/archivedオプションを削除。
+- `app/layout.tsx`を公開向けに更新。`metadataBase`、title template、公開向けdescription、`robots: index/follow true`、canonical、Open Graph、Twitter cardを追加。「社内向け」表現をapp/layout.tsx・app/page.tsx・components/Sidebar.tsxから削除。
+- `app/news/page.tsx`、`app/genre/[slug]/page.tsx`へページ別metadata（title、description、canonical）を追加。ジャンルページは`generateMetadata`で6ジャンル分を生成。
+- `app/robots.ts`、`app/sitemap.ts`を追加。sitemapは公開8ページ（`/`, `/news`, `/genre/model` / `coding` / `image` / `video` / `audio` / `agent`）のみを含み、`lastModified`は既存データから算出。
+- `public/_headers`から全体`X-Robots-Tag: noindex, nofollow`ルールを削除し、`/internal/*`専用ルール（`X-Robots-Tag: noindex, nofollow` / `Cache-Control: no-store`）を追加。
+- `src/worker.mjs`の`withSecurityHeaders()`が全レスポンスへ無条件で`X-Robots-Tag: noindex, nofollow`を付与していた不具合を発見。`{ noindex }`オプションを追加し、内部API・内部fail-closed 404・`/internal/*`のASSETSレスポンスのみへ限定。`scripts/validate-access-control.mjs`を更新し、公開ルートはheaderなし、認可済み`/internal/*`はheaderありを検証。
+- `scripts/validate-public-release.mjs`を追加（`npm run validate:public-release`）。公開データ検証（verified/approved限定、ID・URL重複なし）とビルド後HTML検証（公開8ページのnoindex非存在、canonical、title/description、内部ページのnoindex維持、robots.txt/sitemap.xml内容、暫定値・secret非混入）を実施。
+- PR #38をSquash Mergeし、Public Search ReleaseをProductionへ反映。Merge Commit `6885e08` を確認。
+- 本番デプロイ後、`out/404.html`にNext.js内蔵の`noindex`タグと公開layoutの`index, follow`タグが同一ページ内で矛盾していることを発見。`app/not-found.tsx`を追加し解消。
+- PR #39をSquash Mergeし、カスタム404ページをProductionへ反映。Merge Commit `70edd6d` を確認。
+- Google Search Console（アカウント`canae.tokyo@gmail.com`、URL-prefix property `https://canae-ai-intelligence.canae-tokyo.workers.dev/`）を登録。HTMLタグ方式で所有権確認用のverification meta tagを`app/layout.tsx`へ追加。
+- PR #40をSquash Mergeし、Search Console verification tagをProductionへ反映。Merge Commit `7b45587` を確認。
+- Cloudflare Production Version `241cfe79-681d-43dd-855a-3e5fc9456679` を確認。本番URL `/`、`/news`、`/genre/*`は200、公開8ページの`noindex`解除・`X-Robots-Tag`非付与、`/internal/*`のnoindex・Access保護維持、`robots.txt`・`sitemap.xml`の内容を確認。
+- Google Search Consoleで所有権確認完了、`sitemap.xml`を送信、`/`・`/news`・`/genre/coding`のURL Inspectionライブテストで「URLはGoogleに登録できます」を確認。
+
 ## v1.1.2 - 2026-07-21
 
 - PR #7をSquash Mergeし、v1.1.2 Automated Collection & Update Assistance DesignをProductionへ反映。
