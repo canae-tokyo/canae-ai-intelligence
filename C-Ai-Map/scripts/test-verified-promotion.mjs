@@ -344,7 +344,11 @@ async function planFor(candidate, db) {
   const updatedCandidate = updatedCandidates.find((c) => c.id === candidate.id);
   assert.equal(updatedCandidate.promotedRecordType, "news");
   assert.equal(updatedCandidate.promotedRecordId, approvedProposedRecord.id);
-  assert.equal(typeof updatedCandidate.promotedAt, "string");
+  assert.match(
+    updatedCandidate.promotedAt,
+    /^\d{4}-\d{2}-\d{2}$/,
+    "promotedAt must be YYYY-MM-DD (validate:collection's schema), not a full ISO datetime"
+  );
   assert.equal(
     updatedCandidate.changeLog.some((entry) => entry.type === "promoted"),
     true
