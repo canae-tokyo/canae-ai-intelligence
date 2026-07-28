@@ -32,7 +32,7 @@ export default function DashboardPage() {
             <p className="text-xs uppercase tracking-wide text-accent">Powered by Web Assist</p>
             <h1 className="mt-1 break-words text-xl font-semibold text-ink">CANAE AI Intelligence</h1>
             <p className="mt-2 text-base leading-relaxed text-ink-muted md:text-sm">
-              AI業界を構造化・可視化し、公開ベンチマークとCANAE実務評価を分離して管理する社内知識基盤です。
+              AI業界を構造化・可視化し、公開ベンチマークとCANAE実務評価を分離して管理するAI情報基盤です。
             </p>
           </div>
           <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-ink-muted">

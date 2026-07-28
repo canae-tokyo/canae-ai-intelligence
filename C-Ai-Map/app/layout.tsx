@@ -2,17 +2,46 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Sidebar from "@/components/Sidebar";
 
+const productionUrl = "https://canae-ai-intelligence.canae-tokyo.workers.dev";
+
 export const metadata: Metadata = {
-  title: "CANAE AI Intelligence Map",
-  description: "CANAE社内向け AI情報管理ダッシュボード。Powered by Web Assist.",
+  metadataBase: new URL(productionUrl),
+  title: {
+    default: "CANAE AI Intelligence",
+    template: "%s | CANAE AI Intelligence",
+  },
+  description:
+    "AIツール、企業、モデル、ニュース、公開ベンチマーク、CANAE実務評価を構造化・可視化するAI情報基盤。",
+  alternates: {
+    canonical: "/",
+  },
   robots: {
-    index: false,
-    follow: false,
+    index: true,
+    follow: true,
     googleBot: {
-      index: false,
-      follow: false,
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
     },
   },
+  openGraph: {
+    type: "website",
+    locale: "ja_JP",
+    url: productionUrl,
+    siteName: "CANAE AI Intelligence",
+    title: "CANAE AI Intelligence",
+    description: "AI業界を構造化・可視化するAI情報基盤。",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "CANAE AI Intelligence",
+    description: "AI業界を構造化・可視化するAI情報基盤。",
+  },
+  ...(process.env.GOOGLE_SITE_VERIFICATION
+    ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } }
+    : {}),
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
