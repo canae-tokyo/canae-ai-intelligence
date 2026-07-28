@@ -27,6 +27,18 @@ const CANDIDATE_TYPE_TARGET_FILE = {
   "canae-evaluation": "data/canae-evaluations.json",
 };
 
+// The GitHub repository (canae-tokyo/canae-ai-intelligence) has this Next.js
+// project checked out under a C-Ai-Map/ subdirectory, not at the repo root.
+// CANDIDATE_TYPE_TARGET_FILE / UPDATE_CANDIDATES_FILE stay repo-root-relative
+// ("data/news.json") everywhere else (D1 storage, UI, PR body) because that's
+// the path relative to this project's own root; only GitHub Contents API
+// calls need the subdirectory prepended.
+const GITHUB_REPO_SUBDIRECTORY = "C-Ai-Map";
+
+function toGithubRepoPath(projectRelativePath) {
+  return `${GITHUB_REPO_SUBDIRECTORY}/${projectRelativePath}`;
+}
+
 const TARGET_FILE_DATA = {
   "data/news.json": newsData,
   "data/tools.json": toolsData,
@@ -1329,7 +1341,7 @@ async function executePromotionChangesOnGithub(github, baseBranch, branchName, c
   }
 
   for (const [targetFile, records] of appendsByFile) {
-    const file = await github.getFileContent(targetFile, baseBranch);
+    const file = await github.getFileContent(toGithubRepoPath(targetFile), baseBranch);
     const currentArray = JSON.parse(file.contentText);
 
     if (!Array.isArray(currentArray)) {
@@ -1345,7 +1357,7 @@ async function executePromotionChangesOnGithub(github, baseBranch, branchName, c
     const updatedText = `${JSON.stringify([...currentArray, ...records], null, 2)}\n`;
 
     await github.updateFileContent({
-      path: targetFile,
+      path: toGithubRepoPath(targetFile),
       message: PROMOTION_COMMIT_MESSAGE,
       content: updatedText,
       sha: file.sha,
@@ -1353,7 +1365,7 @@ async function executePromotionChangesOnGithub(github, baseBranch, branchName, c
     });
   }
 
-  const candidateFile = await github.getFileContent(UPDATE_CANDIDATES_FILE, baseBranch);
+  const candidateFile = await github.getFileContent(toGithubRepoPath(UPDATE_CANDIDATES_FILE), baseBranch);
   const currentCandidates = JSON.parse(candidateFile.contentText);
 
   if (!Array.isArray(currentCandidates)) {
@@ -1388,7 +1400,7 @@ async function executePromotionChangesOnGithub(github, baseBranch, branchName, c
   const updatedCandidatesText = `${JSON.stringify(updatedCandidates, null, 2)}\n`;
 
   await github.updateFileContent({
-    path: UPDATE_CANDIDATES_FILE,
+    path: toGithubRepoPath(UPDATE_CANDIDATES_FILE),
     message: PROMOTION_COMMIT_MESSAGE,
     content: updatedCandidatesText,
     sha: candidateFile.sha,
