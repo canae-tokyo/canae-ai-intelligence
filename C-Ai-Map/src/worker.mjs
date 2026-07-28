@@ -1403,7 +1403,7 @@ async function executePromotionChangesOnGithub(github, baseBranch, branchName, c
       ...candidate,
       promotedRecordType: change.candidateType,
       promotedRecordId: change.record.id,
-      promotedAt: context.nowIso,
+      promotedAt: context.changeLogDate,
       changeLog: [
         ...existingChangeLog,
         {
