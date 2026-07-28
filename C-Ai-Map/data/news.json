@@ -448,5 +448,19 @@
         "actor": "CANAE/Codex"
       }
     ]
+  },
+  {
+    "id": "news-2026-07-07-001",
+    "title": "GitHub Copilotのデスクトップアプリが全プランで利用可能に",
+    "company": "GitHub",
+    "category": "coding",
+    "importance": "medium",
+    "publishedAt": "2026-07-07",
+    "summary": "GitHub Copilotのデスクトップアプリがすべてのプラン（Free、GitHub Education、Business、Enterprise、および独自モデルプロバイダーキー利用者）で利用可能になった。macOS・Windows・Linuxに対応し、GitHubアカウントでサインインしてエージェント駆動開発をデスクトップから開始できる。",
+    "impact": "デスクトップからのエージェント駆動開発が全プランへ拡大したことで、CANAEの開発支援ツール比較検証（コーディング領域）でCopilotアプリの評価対象範囲が広がる。",
+    "sourceType": "official",
+    "sourceUrl": "https://github.blog/changelog/2026-07-07-github-copilot-app-available-to-all/",
+    "sourceCheckedAt": "2026-07-24",
+    "status": "draft"
   }
 ]
