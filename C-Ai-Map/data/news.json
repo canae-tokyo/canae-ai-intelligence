@@ -461,6 +461,7 @@
     "sourceType": "official",
     "sourceUrl": "https://github.blog/changelog/2026-07-07-github-copilot-app-available-to-all/",
     "sourceCheckedAt": "2026-07-24",
-    "status": "draft"
+    "status": "verified",
+    "dataQuality": "verified"
   }
 ]
