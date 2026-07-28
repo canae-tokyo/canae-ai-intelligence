@@ -50,9 +50,9 @@
     "reviewStatus": "pending",
     "reviewedAt": null,
     "reviewedBy": null,
-    "promotedRecordType": null,
-    "promotedRecordId": null,
-    "promotedAt": null,
+    "promotedRecordType": "news",
+    "promotedRecordId": "news-2026-07-07-001",
+    "promotedAt": "2026-07-28T04:28:51.486Z",
     "notes": "GitHub Promotion Token Foundation: promotion-ready candidate used to verify the end-to-end approve -> promotion plan -> GitHub PR flow. This is real, publicly verifiable content suitable for actual publication, not synthetic test data.",
     "changeLog": [
       {
@@ -60,6 +60,12 @@
         "type": "registered",
         "summary": "Registered as a promotion-ready verification candidate with a complete proposedRecord.",
         "actor": "CANAE/Codex"
+      },
+      {
+        "date": "2026-07-28",
+        "type": "promoted",
+        "summary": "Promoted to data/news.json via automated promotion PR (promotion-run-9bd70405-fba9-4a91-a830-12574a477818).",
+        "actor": "canae.tokyo@gmail.com"
       }
     ],
     "proposedRecord": {
