@@ -180,7 +180,7 @@ function createPromotionD1({ approvedRows = [], completedCandidateIds = [] } = {
 
 function seedGithubFiles() {
   return {
-    "data/news.json": {
+    "C-Ai-Map/data/news.json": {
       sha: "news-sha-1",
       content: `${JSON.stringify(
         [{ id: "news-2026-03-09-001", title: "existing item", sourceUrl: "https://example.com/existing" }],
@@ -188,7 +188,7 @@ function seedGithubFiles() {
         2
       )}\n`,
     },
-    "data/update-candidates.json": {
+    "C-Ai-Map/data/update-candidates.json": {
       sha: "candidates-sha-1",
       content: `${JSON.stringify([makeCandidate()], null, 2)}\n`,
     },
@@ -318,9 +318,14 @@ async function planFor(candidate, db) {
   assert.equal(result.body.pullRequestNumber, 999);
   assert.match(result.body.targetBranch, /^promotion\/verified-\d{8}-\d{6}$/);
 
-  assert.equal(captured.some((call) => call.method === "PUT" && call.url.includes("/contents/data/news.json")), true);
   assert.equal(
-    captured.some((call) => call.method === "PUT" && call.url.includes("/contents/data/update-candidates.json")),
+    captured.some((call) => call.method === "PUT" && call.url.includes("/contents/C-Ai-Map/data/news.json")),
+    true
+  );
+  assert.equal(
+    captured.some(
+      (call) => call.method === "PUT" && call.url.includes("/contents/C-Ai-Map/data/update-candidates.json")
+    ),
     true
   );
   assert.equal(
@@ -329,11 +334,13 @@ async function planFor(candidate, db) {
     "the automation must never call a merge endpoint"
   );
 
-  const updatedNews = JSON.parse(files["data/news.json"].content);
+  const updatedNews = JSON.parse(files["C-Ai-Map/data/news.json"].content);
   assert.equal(updatedNews.length, 2, "news.json must gain exactly the new record");
   assert.equal(updatedNews[1].id, approvedProposedRecord.id);
+  assert.equal(updatedNews[1].status, "verified", "promoted news must be published as verified, not left as draft");
+  assert.equal(updatedNews[1].dataQuality, "verified");
 
-  const updatedCandidates = JSON.parse(files["data/update-candidates.json"].content);
+  const updatedCandidates = JSON.parse(files["C-Ai-Map/data/update-candidates.json"].content);
   const updatedCandidate = updatedCandidates.find((c) => c.id === candidate.id);
   assert.equal(updatedCandidate.promotedRecordType, "news");
   assert.equal(updatedCandidate.promotedRecordId, approvedProposedRecord.id);

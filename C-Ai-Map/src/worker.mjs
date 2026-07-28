@@ -27,6 +27,18 @@ const CANDIDATE_TYPE_TARGET_FILE = {
   "canae-evaluation": "data/canae-evaluations.json",
 };
 
+// The GitHub repository (canae-tokyo/canae-ai-intelligence) has this Next.js
+// project checked out under a C-Ai-Map/ subdirectory, not at the repo root.
+// CANDIDATE_TYPE_TARGET_FILE / UPDATE_CANDIDATES_FILE stay repo-root-relative
+// ("data/news.json") everywhere else (D1 storage, UI, PR body) because that's
+// the path relative to this project's own root; only GitHub Contents API
+// calls need the subdirectory prepended.
+const GITHUB_REPO_SUBDIRECTORY = "C-Ai-Map";
+
+function toGithubRepoPath(projectRelativePath) {
+  return `${GITHUB_REPO_SUBDIRECTORY}/${projectRelativePath}`;
+}
+
 const TARGET_FILE_DATA = {
   "data/news.json": newsData,
   "data/tools.json": toolsData,
@@ -95,6 +107,25 @@ const REQUIRED_PROPOSED_RECORD_FIELDS = {
     "reviewStatus",
   ],
 };
+
+// proposedRecord.status is required input (see REQUIRED_PROPOSED_RECORD_FIELDS.news)
+// and is naturally "draft" at proposal time — promotion is what publishes a news
+// item, so it must flip status/dataQuality to "verified" here rather than copying
+// the pre-promotion placeholder value through. Every existing data/news.json entry
+// carries status: "verified", dataQuality: "verified"; lib/data.ts's verifiedNews
+// filter only shows status === "verified" items, so leaving this unset means a
+// promoted item never appears on the public site.
+// Other candidate types are left untouched: benchmark/canae-evaluation already
+// require their verified-equivalent field (dataStatus/reviewStatus) as
+// proposedRecord input, and tool's dataStatus defaults to "verified" when absent
+// (see lib/data.ts), so neither has the same gap.
+function buildPromotionRecord(candidateType, proposedRecord) {
+  if (candidateType === "news") {
+    return { ...proposedRecord, status: "verified", dataQuality: "verified" };
+  }
+
+  return proposedRecord;
+}
 
 const PROMOTION_COMMIT_MESSAGE = "Promote verified AI intelligence candidates";
 const PROMOTION_PR_TITLE = "Promote verified AI intelligence candidates";
@@ -556,7 +587,7 @@ export async function processPromotionPlanRequest(body, candidateStore, options 
       targetFile,
       operation: "append",
       summary: `Add ${row.candidate_type} item: ${candidate.title}`,
-      record: proposedRecord,
+      record: buildPromotionRecord(row.candidate_type, proposedRecord),
       reviewActor: row.actor_email,
     });
   }
@@ -1329,7 +1360,7 @@ async function executePromotionChangesOnGithub(github, baseBranch, branchName, c
   }
 
   for (const [targetFile, records] of appendsByFile) {
-    const file = await github.getFileContent(targetFile, baseBranch);
+    const file = await github.getFileContent(toGithubRepoPath(targetFile), baseBranch);
     const currentArray = JSON.parse(file.contentText);
 
     if (!Array.isArray(currentArray)) {
@@ -1345,7 +1376,7 @@ async function executePromotionChangesOnGithub(github, baseBranch, branchName, c
     const updatedText = `${JSON.stringify([...currentArray, ...records], null, 2)}\n`;
 
     await github.updateFileContent({
-      path: targetFile,
+      path: toGithubRepoPath(targetFile),
       message: PROMOTION_COMMIT_MESSAGE,
       content: updatedText,
       sha: file.sha,
@@ -1353,7 +1384,7 @@ async function executePromotionChangesOnGithub(github, baseBranch, branchName, c
     });
   }
 
-  const candidateFile = await github.getFileContent(UPDATE_CANDIDATES_FILE, baseBranch);
+  const candidateFile = await github.getFileContent(toGithubRepoPath(UPDATE_CANDIDATES_FILE), baseBranch);
   const currentCandidates = JSON.parse(candidateFile.contentText);
 
   if (!Array.isArray(currentCandidates)) {
@@ -1388,7 +1419,7 @@ async function executePromotionChangesOnGithub(github, baseBranch, branchName, c
   const updatedCandidatesText = `${JSON.stringify(updatedCandidates, null, 2)}\n`;
 
   await github.updateFileContent({
-    path: UPDATE_CANDIDATES_FILE,
+    path: toGithubRepoPath(UPDATE_CANDIDATES_FILE),
     message: PROMOTION_COMMIT_MESSAGE,
     content: updatedCandidatesText,
     sha: candidateFile.sha,
