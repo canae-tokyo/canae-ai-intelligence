@@ -39,9 +39,9 @@ export const metadata: Metadata = {
     title: "CANAE AI Intelligence",
     description: "AI業界を構造化・可視化するAI情報基盤。",
   },
-  ...(process.env.GOOGLE_SITE_VERIFICATION
-    ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } }
-    : {}),
+  verification: {
+    google: "TcBPdEpbqVnIrv0V_CaXaz07BWc1D1R7go_G38uDdHY",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

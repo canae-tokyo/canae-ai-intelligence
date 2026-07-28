@@ -199,11 +199,11 @@ for (const loc of sitemapLocs) {
   }
 }
 
-if (process.env.GOOGLE_SITE_VERIFICATION) {
+{
   const indexHtml = fs.readFileSync(path.join(outDir, "index.html"), "utf8");
   assert.ok(
-    indexHtml.includes(`content="${process.env.GOOGLE_SITE_VERIFICATION}"`),
-    "GOOGLE_SITE_VERIFICATION is set but its verification meta tag is missing from the public homepage"
+    /<meta name="google-site-verification" content="[^"]+"/.test(indexHtml),
+    "Google Search Console verification meta tag must be present on the public homepage"
   );
 }
 
