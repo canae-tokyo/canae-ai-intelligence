@@ -248,6 +248,12 @@ function approvedRowFor(candidate, storeHash, overrides = {}) {
   assert.equal(result.body.changes[0].operation, "append");
   assert.equal(result.body.changes[0].record.id, approvedProposedRecord.id);
   assert.equal(
+    result.body.changes[0].record.status,
+    "verified",
+    "promotion must publish news as verified, not carry through the pre-promotion draft status"
+  );
+  assert.equal(result.body.changes[0].record.dataQuality, "verified");
+  assert.equal(
     result.body.changes[0].reviewActor,
     undefined,
     "internal reviewActor bookkeeping must not leak into the client-facing plan response"

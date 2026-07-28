@@ -337,6 +337,8 @@ async function planFor(candidate, db) {
   const updatedNews = JSON.parse(files["C-Ai-Map/data/news.json"].content);
   assert.equal(updatedNews.length, 2, "news.json must gain exactly the new record");
   assert.equal(updatedNews[1].id, approvedProposedRecord.id);
+  assert.equal(updatedNews[1].status, "verified", "promoted news must be published as verified, not left as draft");
+  assert.equal(updatedNews[1].dataQuality, "verified");
 
   const updatedCandidates = JSON.parse(files["C-Ai-Map/data/update-candidates.json"].content);
   const updatedCandidate = updatedCandidates.find((c) => c.id === candidate.id);

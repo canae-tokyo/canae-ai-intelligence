@@ -108,6 +108,25 @@ const REQUIRED_PROPOSED_RECORD_FIELDS = {
   ],
 };
 
+// proposedRecord.status is required input (see REQUIRED_PROPOSED_RECORD_FIELDS.news)
+// and is naturally "draft" at proposal time — promotion is what publishes a news
+// item, so it must flip status/dataQuality to "verified" here rather than copying
+// the pre-promotion placeholder value through. Every existing data/news.json entry
+// carries status: "verified", dataQuality: "verified"; lib/data.ts's verifiedNews
+// filter only shows status === "verified" items, so leaving this unset means a
+// promoted item never appears on the public site.
+// Other candidate types are left untouched: benchmark/canae-evaluation already
+// require their verified-equivalent field (dataStatus/reviewStatus) as
+// proposedRecord input, and tool's dataStatus defaults to "verified" when absent
+// (see lib/data.ts), so neither has the same gap.
+function buildPromotionRecord(candidateType, proposedRecord) {
+  if (candidateType === "news") {
+    return { ...proposedRecord, status: "verified", dataQuality: "verified" };
+  }
+
+  return proposedRecord;
+}
+
 const PROMOTION_COMMIT_MESSAGE = "Promote verified AI intelligence candidates";
 const PROMOTION_PR_TITLE = "Promote verified AI intelligence candidates";
 const MAX_BRANCH_NAME_ATTEMPTS = 5;
@@ -568,7 +587,7 @@ export async function processPromotionPlanRequest(body, candidateStore, options 
       targetFile,
       operation: "append",
       summary: `Add ${row.candidate_type} item: ${candidate.title}`,
-      record: proposedRecord,
+      record: buildPromotionRecord(row.candidate_type, proposedRecord),
       reviewActor: row.actor_email,
     });
   }
