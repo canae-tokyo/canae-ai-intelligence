@@ -204,3 +204,13 @@ git diff --check
 - `proposedRecord`は`news`タイプの必須フィールド（`id`/`title`/`company`/`category`/`importance`/`publishedAt`/`summary`/`impact`/`sourceType`/`sourceUrl`/`sourceCheckedAt`/`status`）をすべて満たしており、推測・捏造したフィールドはない。
 - この候補はReview UIでの承認・Promotion UIでのplan生成・PR作成の一連の流れを検証するためのものであり、実際に`data/news.json`へ掲載しても問題ない内容として作成している。
 - `news.json`等の正本JSONは本PRでは直接変更していない（`data/update-candidates.json`のみ）。
+
+## 追記：本番エンドツーエンド確認結果と発見した不具合（2026-07-28）
+
+`GITHUB_PROMOTION_TOKEN`設定後、この候補で実際にReview Action → Promotion Plan → GitHub PR作成までを本番環境で実行し、以下3件の不具合を発見・修正した（PR #34、#36。詳細は`09_本番運用開始報告書.md`）。
+
+1. **GitHub Contents APIパス不一致**：`CANDIDATE_TYPE_TARGET_FILE`等の値（`data/news.json`）はこのNext.jsプロジェクト自身のルートからは正しいが、実際のGitHubリポジトリ（`canae-tokyo/canae-ai-intelligence`）では`C-Ai-Map/`サブディレクトリ配下にあるため、GitHub Contents API呼び出しが404していた。`toGithubRepoPath()`ヘルパーを追加し、GitHub API呼び出し箇所のみへ`C-Ai-Map/`を付与して解決。
+2. **昇格後status/dataQuality未反映**：`record: proposedRecord`をそのまま使っていたため、`proposedRecord.status`の`draft`プレースホルダー値が昇格後もそのまま残り、`lib/data.ts`の`verifiedNews`フィルタにより公開画面へ表示されない状態だった。`buildPromotionRecord()`を追加し、news固有で`status`/`dataQuality`を`verified`へ上書きするよう修正。
+3. **`promotedAt`形式不正**：`context.nowIso`（フルISO日時）を使っていたため、`YYYY-MM-DD`を要求する`update-candidates.json`のスキーマ（`validate:collection`）に違反していた。既存の`context.changeLogDate`へ変更。
+
+この候補は最終的に承認・promotion planとして成功し、PR #35でGitHub Promotion PRが自動作成され、人手Squash Mergeを経て`data/news.json`へ`news-2026-07-07-001`として本番反映済み。tool / benchmark / canae-evaluation候補のpromotionは未実証のままであり、実候補が出た際に個別確認が必要。
